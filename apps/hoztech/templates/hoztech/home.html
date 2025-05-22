@@ -1,0 +1,120 @@
+{% extends 'hoztech/base.html' %}
+
+{% block title %}Hoz Tech - Início{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h1 class="hack-title display-4 mb-4" data-text="BEM-VINDO À HOZ TECH">BEM-VINDO À <span class="neon-text">HOZ TECH</span></h1>
+            <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="hero-logo mb-4" style="width: 200px; height: auto; filter: drop-shadow(0 0 10px var(--neon-red-soft));">
+            <p class="lead" style="font-size: 1.5rem;">Explorando tecnologia com elegância e inovação.</p>
+            <div class="mt-4">
+                <a href="#servicos" class="btn btn-neon btn-lg me-3">Nossos Serviços</a>
+                <a href="#" class="btn btn-neon btn-lg" data-bs-toggle="modal" data-bs-target="#contatoModal">Entre em Contato</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards Section -->
+    <div class="row mb-5" id="servicos">
+        <div class="col-12 text-center mb-4">
+            <h2 class="neon-text">Nossos Diferenciais</h2>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-lightning-charge-fill neon-icon" style="font-size: 2.5rem;"></i>
+                    <h5 class="card-title mt-3">Inovação</h5>
+                    <p class="card-text">Soluções tecnológicas inovadoras para impulsionar seu negócio ao próximo nível.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-award-fill neon-icon" style="font-size: 2.5rem;"></i>
+                    <h5 class="card-title mt-3">Qualidade</h5>
+                    <p class="card-text">Compromisso com a excelência em cada projeto desenvolvido, garantindo resultados excepcionais.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-headset neon-icon" style="font-size: 2.5rem;"></i>
+                    <h5 class="card-title mt-3">Suporte</h5>
+                    <p class="card-text">Suporte técnico especializado 24/7 para todas as suas necessidades tecnológicas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Choose Us Section -->
+    <div class="row mt-5" id="sobre">
+        <div class="col-12 text-center mb-5">
+            <h2 class="neon-text">Por que escolher a <span class="neon-text">HOZ TECH</span>?</h2>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-4">
+                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                            <h5 class="d-inline-block mb-2">Equipe Altamente Qualificada</h5>
+                            <p class="mt-2 mb-0">Profissionais certificados e em constante atualização para garantir a excelência em nossos serviços.</p>
+                        </li>
+                        <li class="mb-4">
+                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                            <h5 class="d-inline-block mb-2">Tecnologias Modernas</h5>
+                            <p class="mt-2 mb-0">Utilizamos as mais recentes tecnologias do mercado para desenvolver soluções inovadoras e eficientes.</p>
+                        </li>
+                        <li class="mb-4">
+                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                            <h5 class="d-inline-block mb-2">Suporte 24/7</h5>
+                            <p class="mt-2 mb-0">Atendimento técnico disponível a qualquer momento para garantir a continuidade do seu negócio.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-4">
+                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                            <h5 class="d-inline-block mb-2">Soluções Personalizadas</h5>
+                            <p class="mt-2 mb-0">Desenvolvemos soluções sob medida para seu negócio, atendendo às suas necessidades específicas.</p>
+                        </li>
+                        <li class="mb-4">
+                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                            <h5 class="d-inline-block mb-2">Preços Competitivos</h5>
+                            <p class="mt-2 mb-0">Oferecemos o melhor custo-benefício do mercado, sem comprometer a qualidade dos serviços.</p>
+                        </li>
+                        <li class="mb-4">
+                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                            <h5 class="d-inline-block mb-2">Garantia de Satisfação</h5>
+                            <p class="mt-2 mb-0">Compromisso total com a qualidade e satisfação do cliente em todos os nossos projetos.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact CTA Section -->
+    <div class="row mt-5" id="contato">
+        <div class="col-12 text-center">
+            <div class="card">
+                <div class="card-body py-5">
+                    <h2 class="neon-text mb-4">Pronto para Transformar seu Negócio?</h2>
+                    <p class="lead mb-4">Entre em contato conosco e descubra como podemos ajudar você a alcançar o próximo nível.</p>
+                    <a href="#" class="btn btn-neon btn-lg" data-bs-toggle="modal" data-bs-target="#contatoModal">Fale Conosco</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

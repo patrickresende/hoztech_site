@@ -1,0 +1,209 @@
+{% extends 'hoztech/base.html' %}
+
+{% block title %}Contato - Hoz Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos específicos da página de contato */
+    .contact-container {
+        min-height: calc(100vh - 300px);
+        display: flex;
+        align-items: center;
+    }
+
+    .contact-card {
+        background-color: rgba(13, 13, 13, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--neon-red);
+        box-shadow: 0 0 20px var(--neon-red-soft);
+        transition: all 0.3s ease;
+    }
+
+    .contact-card:hover {
+        box-shadow: 0 0 30px var(--neon-red-soft);
+    }
+
+    .form-control {
+        background-color: var(--darker-gray) !important;
+        border: 1px solid var(--accent-gray);
+        color: var(--light-gray) !important;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        background-color: var(--darker-gray) !important;
+        border-color: var(--neon-red) !important;
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 51, 0.25) !important;
+        color: var(--light-gray) !important;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--neon-red);
+        border-color: var(--neon-red);
+    }
+
+    .form-check-input:focus {
+        border-color: var(--neon-red);
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 51, 0.25);
+    }
+
+    .btn-neon {
+        background: var(--neon-red);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 15px rgba(255, 0, 51, 0.2);
+    }
+
+    .btn-neon:hover {
+        background: #ff1a4d;
+        transform: translateY(-1px);
+        box-shadow: 0 0 20px rgba(255, 0, 51, 0.3);
+    }
+
+    .btn-neon:focus {
+        outline: 2px solid var(--neon-red);
+        outline-offset: 2px;
+        box-shadow: 0 0 25px rgba(255, 0, 51, 0.4);
+    }
+
+    .btn-neon:active {
+        transform: translateY(1px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card contact-card">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Fale Conosco</h2>
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form id="contactForm" method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome Completo *</label>
+                                <input type="text" class="form-control" 
+                                       id="nome" name="nome" required
+                                       pattern="[A-Za-zÀ-ÿ\s]+" minlength="3" maxlength="100"
+                                       placeholder="Digite seu nome completo">
+                                <div class="invalid-feedback">
+                                    Por favor, insira seu nome completo (apenas letras e espaços).
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telefone" class="form-label">Telefone *</label>
+                                <input type="tel" class="form-control" 
+                                       id="telefone" name="telefone" required
+                                       pattern="\(\d{2}\)\s\d{5}-\d{4}"
+                                       placeholder="(00) 00000-0000">
+                                <div class="invalid-feedback">
+                                    Por favor, insira um número de telefone válido.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-mail *</label>
+                                <input type="email" class="form-control" 
+                                       id="email" name="email" required
+                                       placeholder="seu@email.com">
+                                <div class="invalid-feedback">
+                                    Por favor, insira um e-mail válido.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="assunto" class="form-label">Assunto *</label>
+                                <textarea class="form-control" 
+                                          id="assunto" name="assunto" required
+                                          rows="5" maxlength="1000"
+                                          placeholder="Digite sua mensagem (máximo 1000 caracteres)"></textarea>
+                                <div class="invalid-feedback">
+                                    Por favor, insira sua mensagem.
+                                </div>
+                                <div class="form-text text-light">
+                                    <span id="charCount">0</span>/1000 caracteres
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-neon btn-lg px-5">
+                                    Enviar Mensagem
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos do DOM
+    const form = document.getElementById('contactForm');
+    const telefoneInput = document.getElementById('telefone');
+    const assuntoTextarea = document.getElementById('assunto');
+    const charCount = document.getElementById('charCount');
+
+    // Máscara para telefone
+    function formatPhoneNumber(value) {
+        const numbers = value.replace(/\D/g, '');
+        if (numbers.length <= 11) {
+            return numbers.replace(/^(\d{2})(\d)/g, '($1) $2')
+                         .replace(/(\d)(\d{4})$/, '$1-$2');
+        }
+        return value;
+    }
+
+    telefoneInput.addEventListener('input', function(e) {
+        e.target.value = formatPhoneNumber(e.target.value);
+    });
+
+    // Contador de caracteres
+    function updateCharCount() {
+        const length = assuntoTextarea.value.length;
+        charCount.textContent = length;
+        
+        if (length > 1000) {
+            assuntoTextarea.value = assuntoTextarea.value.substring(0, 1000);
+            charCount.textContent = 1000;
+        }
+    }
+
+    assuntoTextarea.addEventListener('input', updateCharCount);
+
+    // Validação do formulário
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>
+{% endblock %} 

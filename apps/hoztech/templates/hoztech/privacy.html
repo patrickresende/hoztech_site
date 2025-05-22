@@ -1,0 +1,182 @@
+{% extends 'hoztech/base.html' %}
+
+{% block title %}Política de Privacidade - Hoz Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+    .privacy-container {
+        min-height: calc(100vh - 300px);
+        padding: 3rem 0;
+    }
+
+    .privacy-card {
+        background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+        border: 1px solid var(--neon-red);
+        box-shadow: 0 0 30px rgba(255, 0, 51, 0.15),
+                    inset 0 0 20px rgba(255, 0, 51, 0.05);
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .privacy-title {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+        text-shadow: 0 0 10px rgba(255, 0, 51, 0.3);
+    }
+
+    .privacy-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 0, 51, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .privacy-section:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 0, 51, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .privacy-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .privacy-section h2 {
+        color: var(--neon-red);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        text-shadow: 0 0 10px rgba(255, 0, 51, 0.2);
+    }
+
+    .privacy-section p {
+        color: #ffffff;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+
+    .privacy-section ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 1rem;
+    }
+
+    .privacy-section ul li {
+        color: #ffffff;
+        padding: 0.5rem 0 0.5rem 1.5rem;
+        position: relative;
+        opacity: 0.9;
+    }
+
+    .privacy-section ul li:before {
+        content: "•";
+        color: var(--neon-red);
+        position: absolute;
+        left: 0;
+        font-size: 1.2em;
+        text-shadow: 0 0 5px var(--neon-red-soft);
+    }
+
+    .btn-back {
+        background: var(--neon-red);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 15px rgba(255, 0, 51, 0.2);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-back:hover {
+        background: #ff1a4d;
+        transform: translateY(-1px);
+        box-shadow: 0 0 20px rgba(255, 0, 51, 0.3);
+        color: white;
+    }
+
+    .btn-back:focus {
+        outline: 2px solid var(--neon-red);
+        outline-offset: 2px;
+        box-shadow: 0 0 25px rgba(255, 0, 51, 0.4);
+    }
+
+    .btn-back:active {
+        transform: translateY(1px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="privacy-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="privacy-card">
+                    <h1 class="privacy-title">Política de Privacidade</h1>
+
+                    <div class="privacy-section">
+                        <h2>Lei Geral de Proteção de Dados (LGPD)</h2>
+                        <p>A Hoz Tech está comprometida com a proteção dos seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações.</p>
+                    </div>
+
+                    <div class="privacy-section">
+                        <h2>Dados que Coletamos</h2>
+                        <ul>
+                            <li>Nome completo</li>
+                            <li>E-mail</li>
+                            <li>Telefone</li>
+                            <li>Mensagens enviadas através do formulário de contato</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section">
+                        <h2>Como Usamos seus Dados</h2>
+                        <ul>
+                            <li>Para responder suas mensagens e solicitações</li>
+                            <li>Para fornecer informações sobre nossos serviços</li>
+                            <li>Para melhorar nossos serviços e atendimento</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section">
+                        <h2>Proteção de Dados</h2>
+                        <p>Seus dados são armazenados de forma segura e só são utilizados para os fins específicos mencionados acima. Não compartilhamos suas informações com terceiros sem seu consentimento.</p>
+                    </div>
+
+                    <div class="privacy-section">
+                        <h2>Seus Direitos</h2>
+                        <p>Você tem direito a:</p>
+                        <ul>
+                            <li>Acessar seus dados pessoais</li>
+                            <li>Corrigir dados incompletos ou desatualizados</li>
+                            <li>Solicitar a exclusão de seus dados</li>
+                            <li>Revogar seu consentimento a qualquer momento</li>
+                        </ul>
+                    </div>
+
+                    <div class="privacy-section">
+                        <h2>Contato</h2>
+                        <p>Para exercer seus direitos ou esclarecer dúvidas sobre nossa política de privacidade, entre em contato através do e-mail: hoztech@proton.me</p>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="javascript:history.back()" class="btn-back">Voltar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

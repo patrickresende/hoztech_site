@@ -1,0 +1,86 @@
+/* Estilos para o modal de cookies */
+.cookie-modal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 13, 13, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--neon-red);
+    box-shadow: 0 0 20px var(--neon-red-soft);
+    z-index: 1050;
+    padding: 1.5rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.cookie-modal.show {
+    transform: translateY(0);
+}
+
+.cookie-modal .cookie-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cookie-modal .cookie-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cookie-modal .btn-cookie {
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.cookie-modal .btn-cookie-accept {
+    background-color: var(--neon-red);
+    color: white;
+    border: none;
+}
+
+.cookie-modal .btn-cookie-accept:hover {
+    background-color: #ff1a4d;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px var(--neon-red-soft);
+}
+
+.cookie-modal .btn-cookie-settings {
+    background-color: transparent;
+    color: var(--light-gray);
+    border: 1px solid var(--neon-red);
+}
+
+.cookie-modal .btn-cookie-settings:hover {
+    background-color: rgba(255, 0, 51, 0.1);
+    color: var(--neon-red);
+}
+
+.cookie-settings-modal .cookie-category {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--accent-gray);
+    border-radius: 4px;
+    background: rgba(13, 13, 13, 0.5);
+}
+
+.cookie-settings-modal .cookie-category h6 {
+    color: var(--neon-red);
+    margin-bottom: 0.5rem;
+}
+
+.cookie-settings-modal .form-check {
+    margin-bottom: 0.5rem;
+}
+
+.cookie-settings-modal .form-check-input:checked {
+    background-color: var(--neon-red);
+    border-color: var(--neon-red);
+}
+
+.cookie-settings-modal .form-check-label {
+    color: var(--light-gray);
+} 

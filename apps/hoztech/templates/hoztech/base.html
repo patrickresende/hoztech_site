@@ -1,0 +1,1190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hoz Tech - Soluções tecnológicas inovadoras para seu negócio">
+    <meta name="keywords" content="tecnologia, desenvolvimento, software, soluções digitais">
+    <title>{% block title %}Hoz Tech{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/cookie_styles.css' %}">
+    <style>
+        :root {
+            --neon-red: #ff0033;
+            --neon-red-soft: rgba(255, 0, 51, 0.7);
+            --dark-gray: #1a1a1a;
+            --darker-gray: #0d0d0d;
+            --light-gray: #e6e6e6;
+            --accent-gray: #404040;
+        }
+
+        body {
+            background-color: var(--dark-gray);
+            background-image: url('/static/images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: var(--light-gray);
+            font-family: 'Share Tech Mono', monospace;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Overlay escuro para melhorar legibilidade */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(13, 13, 13, 0.85);
+            z-index: -1;
+        }
+
+        /* Ajuste para o conteúdo principal */
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1, h2, h3, h4, h5, h6, .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft);
+            font-weight: 600;
+        }
+
+        .navbar {
+            background-color: rgba(13, 13, 13, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+            filter: drop-shadow(0 0 5px var(--neon-red-soft));
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft);
+        }
+
+        .navbar-brand:hover {
+            color: var(--neon-red);
+            text-shadow: 0 0 10px var(--neon-red-soft),
+                         0 0 20px var(--neon-red-soft);
+        }
+
+        .nav-link {
+            color: var(--light-gray) !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--neon-red) !important;
+            text-shadow: 0 0 5px var(--neon-red-soft);
+        }
+
+        .nav-link.active {
+            color: var(--neon-red) !important;
+            text-shadow: 0 0 5px var(--neon-red-soft);
+        }
+
+        .card {
+            background-color: rgba(13, 13, 13, 0.9);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--neon-red-soft);
+        }
+
+        .card-body {
+            color: #ffffff;
+        }
+
+        .card-text, p, li {
+            color: var(--light-gray) !important;
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .card-title {
+            color: var(--neon-red);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .lead {
+            color: var(--light-gray) !important;
+            font-size: 1.3rem !important;
+            opacity: 0.95;
+        }
+
+        .text-muted {
+            color: var(--light-gray) !important;
+            opacity: 0.8 !important;
+        }
+
+        /* Ajuste para os itens da lista de características */
+        .list-unstyled li {
+            margin-bottom: 1.5rem;
+        }
+
+        .list-unstyled li h5 {
+            color: #ffffff;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .list-unstyled li p {
+            color: #ffffff;
+            opacity: 0.9;
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+
+        /* Ajuste para o footer */
+        footer p, footer li {
+            color: var(--light-gray) !important;
+            opacity: 0.9;
+        }
+
+        /* Ajuste para links */
+        a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft);
+        }
+
+        .bi-check-circle-fill {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft);
+        }
+
+        footer {
+            background-color: rgba(13, 13, 13, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+            position: relative;
+            z-index: 1;
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+
+        footer h5 {
+            color: var(--neon-red);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--light-gray);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft);
+        }
+
+        hr {
+            border-color: var(--neon-red);
+            opacity: 0.3;
+        }
+
+        /* Efeito de brilho neon para botões */
+        .btn-neon {
+            background-color: transparent;
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 5px var(--neon-red-soft);
+            transition: all 0.3s ease;
+        }
+
+        .btn-neon:hover {
+            background-color: var(--neon-red);
+            color: var(--darker-gray);
+            box-shadow: 0 0 20px var(--neon-red-soft);
+        }
+
+        /* Efeito de brilho para textos importantes */
+        .neon-text {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft);
+        }
+
+        /* Efeito de brilho para ícones */
+        .neon-icon {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft);
+        }
+
+        /* Efeito de scanline para cards */
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 0%,
+                rgba(255, 0, 51, 0.05) 50%,
+                transparent 100%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Efeito de glitch para títulos */
+        @keyframes glitch {
+            0% {
+                text-shadow: 0.05em 0 0 var(--neon-red-soft),
+                            -0.05em -0.025em 0 var(--neon-red-soft);
+                opacity: 1;
+            }
+            2% {
+                text-shadow: 0.05em 0 0 var(--neon-red-soft),
+                            -0.05em -0.025em 0 var(--neon-red-soft);
+                opacity: 0.8;
+            }
+            4% {
+                text-shadow: -0.05em -0.025em 0 var(--neon-red-soft),
+                            0.025em 0.025em 0 var(--neon-red-soft);
+                opacity: 0.9;
+            }
+            6% {
+                text-shadow: -0.05em -0.025em 0 var(--neon-red-soft),
+                            0.025em 0.025em 0 var(--neon-red-soft);
+                opacity: 0.7;
+            }
+            8% {
+                text-shadow: 0.025em 0.05em 0 var(--neon-red-soft),
+                            0.05em 0 0 var(--neon-red-soft);
+                opacity: 1;
+            }
+            10% {
+                text-shadow: 0.025em 0.05em 0 var(--neon-red-soft),
+                            0.05em 0 0 var(--neon-red-soft);
+                opacity: 0.8;
+            }
+            12% {
+                text-shadow: -0.025em 0 0 var(--neon-red-soft),
+                            -0.025em -0.025em 0 var(--neon-red-soft);
+                opacity: 0.9;
+            }
+            14% {
+                text-shadow: -0.025em 0 0 var(--neon-red-soft),
+                            -0.025em -0.025em 0 var(--neon-red-soft);
+                opacity: 1;
+            }
+            100% {
+                text-shadow: 0.05em 0 0 var(--neon-red-soft),
+                            -0.05em -0.025em 0 var(--neon-red-soft);
+                opacity: 1;
+            }
+        }
+
+        /* Efeito de hack para o título principal */
+        @keyframes hackText {
+            0% {
+                clip-path: inset(0 0 0 0);
+                transform: translate(0);
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            5% {
+                clip-path: inset(0 0 98% 0);
+                transform: translate(-2px, 2px);
+                opacity: 0.8;
+                text-shadow: 0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft),
+                             0 0 30px var(--neon-red-soft);
+            }
+            10% {
+                clip-path: inset(0 0 0 0);
+                transform: translate(0);
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            15% {
+                clip-path: inset(0 0 98% 0);
+                transform: translate(2px, -2px);
+                opacity: 0.7;
+                text-shadow: 0 0 15px var(--neon-red-soft),
+                             0 0 25px var(--neon-red-soft),
+                             0 0 35px var(--neon-red-soft);
+            }
+            20% {
+                clip-path: inset(0 0 0 0);
+                transform: translate(0);
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            25% {
+                clip-path: inset(0 0 98% 0);
+                transform: translate(-2px, 2px);
+                opacity: 0.9;
+                text-shadow: 0 0 20px var(--neon-red-soft),
+                             0 0 30px var(--neon-red-soft),
+                             0 0 40px var(--neon-red-soft);
+            }
+            30% {
+                clip-path: inset(0 0 0 0);
+                transform: translate(0);
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            35% {
+                clip-path: inset(0 0 98% 0);
+                transform: translate(2px, -2px);
+                opacity: 0.8;
+                text-shadow: 0 0 25px var(--neon-red-soft),
+                             0 0 35px var(--neon-red-soft),
+                             0 0 45px var(--neon-red-soft);
+            }
+            40% {
+                clip-path: inset(0 0 0 0);
+                transform: translate(0);
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            100% {
+                clip-path: inset(0 0 0 0);
+                transform: translate(0);
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+        }
+
+        /* Efeito de scan para o título */
+        @keyframes scan {
+            0% {
+                background-position: 0 -100vh;
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                background-position: 0 100vh;
+                opacity: 0.3;
+            }
+        }
+
+        .hack-title {
+            position: relative;
+            animation: hackText 4s infinite, glitch 3s infinite;
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft),
+                         0 0 20px var(--neon-red-soft);
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.2;
+        }
+
+        .hack-title:hover {
+            text-shadow: 0 0 10px var(--neon-red-soft),
+                         0 0 20px var(--neon-red-soft),
+                         0 0 30px var(--neon-red-soft);
+        }
+
+        .hack-title::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 0%,
+                rgba(255, 0, 51, 0) 50%,
+                transparent 100%
+            );
+            background-size: 100% 4px;
+            animation: scan 3s linear infinite;
+            pointer-events: none;
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .hack-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0),
+                rgba(0, 0, 0, 0) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            animation: scan 3s linear infinite;
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .hack-title .neon-text {
+            position: relative;
+            display: inline-block;
+            animation: neonPulse 2s infinite;
+        }
+
+        @keyframes neonPulse {
+            0% {
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            50% {
+                text-shadow: 0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft),
+                             0 0 30px var(--neon-red-soft);
+            }
+            100% {
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+        }
+
+        /* Removendo a animação glitch do navbar-brand */
+        h2 {
+            animation: glitch 3s infinite;
+        }
+
+        /* Estilos para a logo na seção hero */
+        .hero-logo {
+            transition: all 0.3s ease;
+            max-width: 200px;
+            height: auto;
+            margin: 1rem auto;
+            filter: drop-shadow(0 0 10px var(--neon-red-soft));
+        }
+
+        .hero-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 15px var(--neon-red-soft));
+        }
+
+        @media (max-width: 768px) {
+            .hero-logo {
+                max-width: 150px;
+            }
+        }
+
+        /* Media queries para responsividade */
+        @media (max-width: 1200px) {
+            .hack-title {
+                font-size: 3rem;
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hack-title {
+                font-size: 2.5rem;
+                padding: 0.6rem;
+                letter-spacing: 1px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hack-title {
+                font-size: 2rem;
+                padding: 0.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hack-title {
+                font-size: 1.5rem;
+                padding: 0.4rem;
+                margin-bottom: 1rem;
+                letter-spacing: 0.5px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hack-title {
+                font-size: 1.2rem;
+                padding: 0.3rem;
+            }
+        }
+
+        /* Ajuste para o efeito de hack em telas menores */
+        @media (max-width: 768px) {
+            @keyframes hackText {
+                0%, 100% {
+                    clip-path: inset(0 0 0 0);
+                    transform: translate(0);
+                }
+                5%, 15%, 25%, 35% {
+                    clip-path: inset(0 0 98% 0);
+                    transform: translate(-1px, 1px);
+                }
+                10%, 20%, 30%, 40% {
+                    clip-path: inset(0 0 0 0);
+                    transform: translate(0);
+                }
+            }
+
+            .hack-title::before,
+            .hack-title::after {
+                animation-duration: 2s;
+            }
+        }
+
+        /* Ajustes para os modais */
+        .modal-content {
+            background-color: rgba(13, 13, 13, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.8;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--neon-red);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--neon-red);
+        }
+
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .btn-close-white:hover {
+            filter: invert(1) grayscale(100%) brightness(200%) drop-shadow(0 0 2px var(--neon-red));
+        }
+
+        /* Estilos para o modal de cookies */
+        .cookie-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--neon-red);
+            box-shadow: 0 0 20px var(--neon-red-soft);
+            z-index: 1050;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cookie-modal.show {
+            transform: translateY(0);
+        }
+
+        .cookie-modal .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cookie-modal .cookie-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .cookie-modal .btn-cookie {
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cookie-modal .btn-cookie-accept {
+            background-color: var(--neon-red);
+            color: white;
+            border: none;
+        }
+
+        .cookie-modal .btn-cookie-accept:hover {
+            background-color: #ff1a4d;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--neon-red-soft);
+        }
+
+        .cookie-modal .btn-cookie-settings {
+            background-color: transparent;
+            color: var(--light-gray);
+            border: 1px solid var(--neon-red);
+        }
+
+        .cookie-modal .btn-cookie-settings:hover {
+            background-color: rgba(255, 0, 51, 0.1);
+            color: var(--neon-red);
+        }
+
+        .cookie-settings-modal .cookie-category {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid var(--accent-gray);
+            border-radius: 4px;
+            background: rgba(13, 13, 13, 0.5);
+        }
+
+        .cookie-settings-modal .cookie-category h6 {
+            color: var(--neon-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .cookie-settings-modal .form-check {
+            margin-bottom: 0.5rem;
+        }
+
+        .cookie-settings-modal .form-check-input:checked {
+            background-color: var(--neon-red);
+            border-color: var(--neon-red);
+        }
+
+        .cookie-settings-modal .form-check-label {
+            color: var(--light-gray);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="logo">
+                HOZ TECH
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#servicos">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre">A Empresa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/contato/' %}active{% endif %}" href="{% url 'contato' %}">Contato</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>HOZ TECH</h5>
+                    <p class="text-muted">Soluções tecnológicas inovadoras para impulsionar seu negócio.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Contato</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-envelope me-2 neon-icon"></i>hoztech@proton.me</li>
+                        <li><i class="bi bi-telephone me-2 neon-icon"></i>(21)97300-7575</li>
+                        <li><i class="bi bi-geo-alt me-2 neon-icon"></i>Rio de Janeiro, RJ</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Redes Sociais</h5>
+                    <div class="footer-links">
+                        <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" target="_blank"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p class="mb-0">&copy; {% now "Y" %} Hoz Tech. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Modal -->
+    <div id="cookieConsent" class="cookie-modal">
+        <div class="cookie-content">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="neon-text mb-2">Política de Cookies</h5>
+                    <p class="mb-0">Utilizamos cookies para melhorar sua experiência em nosso site. 
+                    Ao continuar navegando, você concorda com o uso de cookies conforme nossa 
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#cookiePolicyModal">Política de Cookies</a>.</p>
+                </div>
+                <div class="cookie-buttons">
+                    <button type="button" class="btn btn-cookie btn-cookie-settings" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+                        Configurações
+                    </button>
+                    <button type="button" class="btn btn-cookie btn-cookie-accept" id="acceptCookies">
+                        Aceitar Todos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div class="modal fade" id="cookieSettingsModal" tabindex="-1" aria-labelledby="cookieSettingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-neon">
+                    <h5 class="modal-title" id="cookieSettingsModalLabel">Configurações de Cookies</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cookieSettingsForm">
+                        <div class="cookie-category">
+                            <h6>Cookies Essenciais</h6>
+                            <p class="text-muted small">Necessários para o funcionamento básico do site. Não podem ser desativados.</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
+                                <label class="form-check-label" for="essentialCookies">
+                                    Cookies Essenciais
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="cookie-category">
+                            <h6>Cookies de Desempenho</h6>
+                            <p class="text-muted small">Nos ajudam a entender como os visitantes interagem com o site.</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="performanceCookies">
+                                <label class="form-check-label" for="performanceCookies">
+                                    Cookies de Análise
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="cookie-category">
+                            <h6>Cookies de Marketing</h6>
+                            <p class="text-muted small">Usados para personalizar anúncios e conteúdo.</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="marketingCookies">
+                                <label class="form-check-label" for="marketingCookies">
+                                    Cookies de Marketing
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-neon">
+                    <button type="button" class="btn btn-neon" id="saveCookieSettings">Salvar Preferências</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Policy Modal -->
+    <div class="modal fade" id="cookiePolicyModal" tabindex="-1" aria-labelledby="cookiePolicyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-neon">
+                    <h5 class="modal-title" id="cookiePolicyModalLabel">Política de Cookies</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="mb-3">O que são cookies?</h6>
+                    <p>Cookies são pequenos arquivos de texto que são armazenados no seu dispositivo quando você visita nosso site. Eles nos ajudam a melhorar sua experiência de navegação e a entender como você interage com nosso conteúdo.</p>
+
+                    <h6 class="mt-4 mb-3">Tipos de cookies que utilizamos</h6>
+                    <div class="mb-4">
+                        <h6 class="text-neon">Cookies Essenciais</h6>
+                        <p>Necessários para o funcionamento básico do site. Incluem cookies que permitem que você faça login em áreas seguras do site.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-neon">Cookies de Desempenho</h6>
+                        <p>Nos ajudam a entender como os visitantes interagem com o site, coletando e relatando informações anonimamente.</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-neon">Cookies de Marketing</h6>
+                        <p>São usados para rastrear visitantes em websites. A intenção é exibir anúncios que sejam relevantes e envolventes para o usuário individual.</p>
+                    </div>
+
+                    <h6 class="mt-4 mb-3">Como controlar os cookies</h6>
+                    <p>Você pode controlar e/ou excluir cookies conforme desejar. Você pode excluir todos os cookies que já estão no seu computador e pode configurar a maioria dos navegadores para impedir que eles sejam colocados.</p>
+                </div>
+                <div class="modal-footer border-neon">
+                    <button type="button" class="btn btn-neon" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Contato -->
+    <div class="modal fade" id="contatoModal" tabindex="-1" aria-labelledby="contatoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-neon">
+                    <h5 class="modal-title" id="contatoModalLabel">Fale Conosco</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="contatoAlert" class="alert d-none" role="alert">
+                        <span id="contatoAlertMessage"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <form id="contatoForm" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control bg-dark text-light border-neon" 
+                                   id="nome" name="nome" required
+                                   pattern="[A-Za-zÀ-ÿ\s]+" minlength="3" maxlength="100"
+                                   placeholder="Digite seu nome completo">
+                            <div class="invalid-feedback">
+                                Por favor, insira seu nome completo (apenas letras e espaços).
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="telefone" class="form-label">Telefone *</label>
+                            <input type="tel" class="form-control bg-dark text-light border-neon" 
+                                   id="telefone" name="telefone" required
+                                   pattern="\(\d{2}\)\s\d{5}-\d{4}"
+                                   placeholder="(00) 00000-0000">
+                            <div class="invalid-feedback">
+                                Por favor, insira um número de telefone válido.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail *</label>
+                            <input type="email" class="form-control bg-dark text-light border-neon" 
+                                   id="email" name="email" required
+                                   placeholder="seu@email.com">
+                            <div class="invalid-feedback">
+                                Por favor, insira um e-mail válido.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="assunto" class="form-label">Assunto *</label>
+                            <textarea class="form-control bg-dark text-light border-neon" 
+                                      id="assunto" name="assunto" required
+                                      rows="5" maxlength="1000"
+                                      placeholder="Digite sua mensagem (máximo 1000 caracteres)"></textarea>
+                            <div class="invalid-feedback">
+                                Por favor, insira sua mensagem.
+                            </div>
+                            <div class="form-text text-light">
+                                <span id="contador">0</span>/1000 caracteres
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="lgpd" required>
+                            <label class="form-check-label" for="lgpd">
+                                Li e concordo com a <a href="#" data-bs-toggle="modal" data-bs-target="#lgpdModal">Política de Privacidade</a> *
+                            </label>
+                            <div class="invalid-feedback">
+                                Você precisa concordar com a política de privacidade.
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-neon btn-lg px-5">
+                                Enviar Mensagem
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal LGPD -->
+    <div class="modal fade" id="lgpdModal" tabindex="-1" aria-labelledby="lgpdModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-neon">
+                    <h5 class="modal-title" id="lgpdModalLabel">Política de Privacidade</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="mb-3">Lei Geral de Proteção de Dados (LGPD)</h6>
+                    <p>A Hoz Tech está comprometida com a proteção dos seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações.</p>
+                    
+                    <h6 class="mt-4 mb-3">Dados que Coletamos</h6>
+                    <ul>
+                        <li>Nome completo</li>
+                        <li>E-mail</li>
+                        <li>Telefone</li>
+                        <li>Mensagens enviadas através do formulário de contato</li>
+                    </ul>
+
+                    <h6 class="mt-4 mb-3">Como Usamos seus Dados</h6>
+                    <ul>
+                        <li>Para responder suas mensagens e solicitações</li>
+                        <li>Para fornecer informações sobre nossos serviços</li>
+                        <li>Para melhorar nossos serviços e atendimento</li>
+                    </ul>
+
+                    <h6 class="mt-4 mb-3">Proteção de Dados</h6>
+                    <p>Seus dados são armazenados de forma segura e só são utilizados para os fins específicos mencionados acima. Não compartilhamos suas informações com terceiros sem seu consentimento.</p>
+
+                    <h6 class="mt-4 mb-3">Seus Direitos</h6>
+                    <p>Você tem direito a:</p>
+                    <ul>
+                        <li>Acessar seus dados pessoais</li>
+                        <li>Corrigir dados incompletos ou desatualizados</li>
+                        <li>Solicitar a exclusão de seus dados</li>
+                        <li>Revogar seu consentimento a qualquer momento</li>
+                    </ul>
+
+                    <h6 class="mt-4 mb-3">Contato</h6>
+                    <p>Para exercer seus direitos ou esclarecer dúvidas sobre nossa política de privacidade, entre em contato através do e-mail: hoztech@proton.me</p>
+                </div>
+                <div class="modal-footer border-neon">
+                    <button type="button" class="btn btn-neon" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Cookie Manager -->
+    <script src="{% static 'js/cookie_manager.js' %}"></script>
+
+    <!-- Include Cookie Modals -->
+    {% include 'hoztech/cookie_modals.html' %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Função para mostrar alerta
+        function showAlert(message, type) {
+            const alert = document.getElementById('contatoAlert');
+            const alertMessage = document.getElementById('contatoAlertMessage');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alertMessage.textContent = message;
+            alert.classList.remove('d-none');
+        }
+
+        // Máscara para telefone
+        const telefoneInput = document.getElementById('telefone');
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+
+        // Contador de caracteres
+        const assuntoTextarea = document.getElementById('assunto');
+        const contador = document.getElementById('contador');
+        
+        assuntoTextarea.addEventListener('input', function() {
+            const length = this.value.length;
+            contador.textContent = length;
+            
+            if (length > 1000) {
+                this.value = this.value.substring(0, 1000);
+                contador.textContent = 1000;
+            }
+        });
+
+        // Envio do formulário via AJAX
+        const form = document.getElementById('contatoForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+
+            const formData = new FormData(form);
+            
+            fetch('{% url "contato" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('contatoModal'));
+                        modal.hide();
+                    }, 2000);
+                } else {
+                    showAlert(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Erro ao enviar mensagem. Por favor, tente novamente.', 'danger');
+            });
+        });
+
+        // Limpar formulário quando o modal for fechado
+        const contatoModal = document.getElementById('contatoModal');
+        contatoModal.addEventListener('hidden.bs.modal', function () {
+            form.reset();
+            form.classList.remove('was-validated');
+            document.getElementById('contatoAlert').classList.add('d-none');
+        });
+
+        // Gerenciamento dos modais
+        let contatoModalInstance = null;
+        let lgpdModalInstance = null;
+
+        // Inicializa os modais
+        const contatoModalEl = document.getElementById('contatoModal');
+        const lgpdModalEl = document.getElementById('lgpdModal');
+
+        // Configuração dos modais
+        const modalOptions = {
+            backdrop: true,  // Permite fechar clicando fora
+            keyboard: true,  // Permite fechar com a tecla ESC
+            focus: true      // Foca no modal quando aberto
+        };
+
+        // Inicializa os modais com as opções
+        contatoModalInstance = new bootstrap.Modal(contatoModalEl, modalOptions);
+        lgpdModalInstance = new bootstrap.Modal(lgpdModalEl, modalOptions);
+
+        // Função para abrir o modal LGPD
+        function openLgpdModal() {
+            contatoModalInstance.hide();
+            setTimeout(() => {
+                lgpdModalInstance.show();
+            }, 150);
+        }
+
+        // Função para voltar ao modal de contato
+        function returnToContatoModal() {
+            lgpdModalInstance.hide();
+            setTimeout(() => {
+                contatoModalInstance.show();
+            }, 150);
+        }
+
+        // Link da política de privacidade
+        const lgpdLink = document.querySelector('a[data-bs-target="#lgpdModal"]');
+        lgpdLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            openLgpdModal();
+        });
+
+        // Eventos dos modais
+        lgpdModalEl.addEventListener('hidden.bs.modal', function () {
+            returnToContatoModal();
+        });
+
+        // Limpa os event listeners quando os modais são fechados
+        contatoModalEl.addEventListener('hidden.bs.modal', function () {
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
+
+        lgpdModalEl.addEventListener('hidden.bs.modal', function () {
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
