@@ -4,10 +4,21 @@
 
 {% block content %}
 <div class="container py-5">
+    <!-- IP Info Section -->
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <div class="ip-info">
+                <span class="ip-label">IP:</span>
+                <span class="ip-address">{{ client_ip }}</span>
+                <span class="ip-location">{{ client_location }}</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <div class="row mb-5">
         <div class="col-12 text-center">
-            <h1 class="hack-title display-4 mb-4" data-text="BEM-VINDO À HOZ TECH">BEM-VINDO À <span class="neon-text">HOZ TECH</span></h1>
+            <h1 class="hack-title display-4 mb-4" data-text="BEM-VINDO À HOZ TECH">BEM-VINDO À HOZ TECH</h1>
             <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="hero-logo mb-4" style="width: 200px; height: auto; filter: drop-shadow(0 0 10px var(--neon-red-soft));">
             <p class="lead" style="font-size: 1.5rem;">Explorando tecnologia com elegância e inovação.</p>
             <div class="mt-4">
@@ -54,7 +65,7 @@
     <!-- Why Choose Us Section -->
     <div class="row mt-5" id="sobre">
         <div class="col-12 text-center mb-5">
-            <h2 class="neon-text">Por que escolher a <span class="neon-text">HOZ TECH</span>?</h2>
+            <h2>Por que escolher a HOZ TECH?</h2>
         </div>
         <div class="col-md-6">
             <div class="card mb-4">

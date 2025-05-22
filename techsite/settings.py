@@ -147,15 +147,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.protonmail.ch'  # Servidor SMTP do Proton
+EMAIL_HOST = 'smtp.gmail.com'  # Servidor SMTP do Gmail
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('PROTON_EMAIL', 'hoztech@proton.me')
-EMAIL_HOST_PASSWORD = os.environ.get('PROTON_EMAIL_PASSWORD', '')
+EMAIL_HOST_USER = os.environ.get('GMAIL_USER', 'patrickresende021@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', 'ruje ntut tjym jzxy')  # Senha de app do Gmail
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_SUBJECT_PREFIX = '[Hoztech] '
-
-# WhatsApp Business API settings
-WHATSAPP_API_URL = 'https://graph.facebook.com/v17.0/YOUR_PHONE_NUMBER_ID/messages'
-WHATSAPP_TOKEN = os.environ.get('WHATSAPP_TOKEN', '')
-WHATSAPP_PHONE_NUMBER = os.environ.get('WHATSAPP_PHONE_NUMBER', '')

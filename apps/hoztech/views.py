@@ -10,18 +10,46 @@ from django.utils import timezone
 import json
 import re
 import logging
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import CookiePreference
 from django.core.serializers import serialize
 from django.db.models import Q
 from datetime import datetime, timedelta
 from .services import NotificationService
+import requests
 
 logger = logging.getLogger(__name__)
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def get_ip_location(ip):
+    try:
+        # Usando o serviço ipapi.co para obter a localização
+        response = requests.get(f'https://ipapi.co/{ip}/json/')
+        if response.status_code == 200:
+            data = response.json()
+            location = f"{data.get('city', '')}, {data.get('country_name', '')}"
+            return location
+    except:
+        pass
+    return "Localização desconhecida"
+
 def home(request):
-    return render(request, 'hoztech/home.html')
+    client_ip = get_client_ip(request)
+    client_location = get_ip_location(client_ip)
+    
+    context = {
+        'client_ip': client_ip,
+        'client_location': client_location
+    }
+    return render(request, 'hoztech/home.html', context)
 
 def send_whatsapp_message(message):
     """Envia mensagem via WhatsApp Business API"""
@@ -135,28 +163,24 @@ def contato(request):
             ⏰ Data/Hora: {timezone.localtime().strftime('%d/%m/%Y %H:%M:%S')}
             """
             
-            # Tenta enviar por email primeiro
+            # Tenta enviar por email
             try:
                 email_sent = send_mail(
                     subject=f'Nova mensagem de contato de {nome}',
                     message=mensagem,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[settings.DEFAULT_FROM_EMAIL],
-                    fail_silently=False,  # Agora vamos capturar erros
+                    fail_silently=False,
                 )
             except Exception as e:
                 logger.error(f"Erro ao enviar email: {str(e)}")
                 email_sent = False
             
-            # Tenta enviar por WhatsApp
-            whatsapp_sent = send_whatsapp_message(mensagem)
-            
-            # Verifica se pelo menos um dos métodos de envio funcionou
-            if not (email_sent or whatsapp_sent):
-                raise Exception("Falha no envio da mensagem por ambos os métodos")
+            if not email_sent:
+                raise Exception("Falha no envio da mensagem por e-mail")
             
             # Log do sucesso
-            logger.info(f"Mensagem enviada com sucesso - Email: {email_sent}, WhatsApp: {whatsapp_sent}")
+            logger.info(f"Mensagem enviada com sucesso - Email: {email_sent}")
             
             # Resposta de sucesso
             success_message = 'Mensagem enviada com sucesso! Entraremos em contato em breve.'

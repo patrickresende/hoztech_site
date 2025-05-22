@@ -95,6 +95,31 @@
                          0 0 20px var(--neon-red-soft);
         }
 
+        .navbar-brand .neon-text {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft);
+            animation: neonPulse 2s infinite;
+        }
+
+        @keyframes neonPulse {
+            0% {
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            50% {
+                text-shadow: 0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft),
+                             0 0 30px var(--neon-red-soft);
+            }
+            100% {
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+        }
+
         .nav-link {
             color: var(--light-gray) !important;
             transition: all 0.3s ease;
@@ -435,6 +460,7 @@
             word-wrap: break-word;
             white-space: normal;
             line-height: 1.2;
+            color: var(--neon-red);
         }
 
         .hack-title:hover {
@@ -483,27 +509,10 @@
         }
 
         .hack-title .neon-text {
-            position: relative;
-            display: inline-block;
-            animation: neonPulse 2s infinite;
-        }
-
-        @keyframes neonPulse {
-            0% {
-                text-shadow: 0 0 5px var(--neon-red-soft),
-                             0 0 10px var(--neon-red-soft),
-                             0 0 20px var(--neon-red-soft);
-            }
-            50% {
-                text-shadow: 0 0 10px var(--neon-red-soft),
-                             0 0 20px var(--neon-red-soft),
-                             0 0 30px var(--neon-red-soft);
-            }
-            100% {
-                text-shadow: 0 0 5px var(--neon-red-soft),
-                             0 0 10px var(--neon-red-soft),
-                             0 0 20px var(--neon-red-soft);
-            }
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft),
+                         0 0 20px var(--neon-red-soft);
         }
 
         /* Removendo a animação glitch do navbar-brand */
@@ -712,6 +721,76 @@
         .cookie-settings-modal .form-check-label {
             color: var(--light-gray);
         }
+
+        /* Estilo específico para o texto neon vermelho do logo */
+        .logo-neon-text {
+            color: var(--neon-red);
+            text-shadow: 0 0 5px var(--neon-red-soft),
+                         0 0 10px var(--neon-red-soft);
+            animation: logoNeonPulse 2s infinite;
+        }
+
+        @keyframes logoNeonPulse {
+            0% {
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+            50% {
+                text-shadow: 0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft),
+                             0 0 30px var(--neon-red-soft);
+            }
+            100% {
+                text-shadow: 0 0 5px var(--neon-red-soft),
+                             0 0 10px var(--neon-red-soft),
+                             0 0 20px var(--neon-red-soft);
+            }
+        }
+
+        /* Estilo para a seção de IP */
+        .ip-info {
+            background-color: rgba(13, 13, 13, 0.95);
+            border: 1px solid var(--neon-red);
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--light-gray);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+            animation: ipPulse 2s infinite;
+        }
+
+        .ip-label {
+            color: var(--neon-red);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .ip-address {
+            color: var(--light-gray);
+            letter-spacing: 1px;
+        }
+
+        .ip-location {
+            color: var(--neon-red-soft);
+            font-size: 0.8rem;
+            margin-left: 1rem;
+            font-style: italic;
+        }
+
+        @keyframes ipPulse {
+            0% {
+                box-shadow: 0 0 5px var(--neon-red-soft);
+            }
+            50% {
+                box-shadow: 0 0 15px var(--neon-red-soft);
+            }
+            100% {
+                box-shadow: 0 0 5px var(--neon-red-soft);
+            }
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -722,7 +801,7 @@
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="logo">
-                HOZ TECH
+                <span class="logo-neon-text">HOZ TECH</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -770,10 +849,9 @@
                 <div class="col-md-4 mb-4">
                     <h5>Redes Sociais</h5>
                     <div class="footer-links">
-                        <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
-                        <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
-                        <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" target="_blank"><i class="bi bi-github"></i></a>
+                        <a href="https://www.linkedin.com/in/patrick-resende/" target="_blank" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                        <a href="https://www.instagram.com/hoz.tech/" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://github.com/patrickresende" target="_blank" title="GitHub"><i class="bi bi-github"></i></a>
                     </div>
                 </div>
             </div>
@@ -1186,5 +1264,8 @@
     });
     </script>
     {% block extra_js %}{% endblock %}
+    
+    <!-- WhatsApp Widget -->
+    {% include 'hoztech/whatsapp_widget.html' %}
 </body>
 </html>

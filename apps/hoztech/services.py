@@ -1,5 +1,4 @@
 import json
-import requests
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -9,7 +8,7 @@ class NotificationService:
     @staticmethod
     def send_email_notification(subject, template_name, context, recipient_list):
         """
-        Envia e-mail usando o Proton Mail
+        Envia e-mail usando o Gmail
         """
         try:
             # Renderiza o template HTML
@@ -28,38 +27,6 @@ class NotificationService:
             return True, "E-mail enviado com sucesso"
         except Exception as e:
             return False, f"Erro ao enviar e-mail: {str(e)}"
-
-    @staticmethod
-    def send_whatsapp_message(phone_number, message):
-        """
-        Envia mensagem via WhatsApp Business API
-        """
-        try:
-            headers = {
-                'Authorization': f'Bearer {settings.WHATSAPP_TOKEN}',
-                'Content-Type': 'application/json',
-            }
-            
-            data = {
-                "messaging_product": "whatsapp",
-                "to": phone_number,
-                "type": "text",
-                "text": {"body": message}
-            }
-            
-            response = requests.post(
-                settings.WHATSAPP_API_URL,
-                headers=headers,
-                json=data
-            )
-            
-            if response.status_code == 200:
-                return True, "Mensagem WhatsApp enviada com sucesso"
-            else:
-                return False, f"Erro ao enviar WhatsApp: {response.text}"
-                
-        except Exception as e:
-            return False, f"Erro ao enviar WhatsApp: {str(e)}"
 
     @classmethod
     def notify_contact_form(cls, form_data):
@@ -83,31 +50,6 @@ class NotificationService:
             recipient_list=[settings.DEFAULT_FROM_EMAIL]
         )
         
-        # Envia WhatsApp se o número estiver disponível
-        whatsapp_success = True
-        whatsapp_message = "WhatsApp não enviado (sem número)"
-        
-        if form_data.get('phone'):
-            # Formata o número para o padrão internacional
-            phone = form_data['phone'].replace('(', '').replace(')', '').replace('-', '').replace(' ', '')
-            if not phone.startswith('55'):  # Adiciona código do Brasil se necessário
-                phone = f"55{phone}"
-            
-            # Prepara a mensagem do WhatsApp
-            whatsapp_text = f"""
-*Novo contato via site Hoztech*
-
-Nome: {context['name']}
-E-mail: {context['email']}
-Telefone: {context['phone']}
-Assunto: {context['subject']}
-
-Mensagem:
-{context['message']}
-"""
-            whatsapp_success, whatsapp_message = cls.send_whatsapp_message(phone, whatsapp_text)
-        
         return {
-            'email': {'success': email_success, 'message': email_message},
-            'whatsapp': {'success': whatsapp_success, 'message': whatsapp_message}
+            'email': {'success': email_success, 'message': email_message}
         } 
