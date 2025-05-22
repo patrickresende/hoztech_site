@@ -17,6 +17,7 @@ from django.core.serializers import serialize
 from django.db.models import Q
 from datetime import datetime, timedelta
 from .services import NotificationService
+from .ip_client import IPClientService
 import requests
 
 logger = logging.getLogger(__name__)
@@ -42,12 +43,14 @@ def get_ip_location(ip):
     return "Localização desconhecida"
 
 def home(request):
-    client_ip = get_client_ip(request)
-    client_location = get_ip_location(client_ip)
+    # Obtém informações do cliente usando o novo serviço
+    client_ip, location_data = IPClientService.get_client_info(request)
+    location_string = IPClientService.format_location_string(location_data)
     
     context = {
         'client_ip': client_ip,
-        'client_location': client_location
+        'client_location': location_string,
+        'location_data': location_data  # Dados completos para uso futuro
     }
     return render(request, 'hoztech/home.html', context)
 

@@ -5,12 +5,34 @@
 {% block content %}
 <div class="container py-5">
     <!-- IP Info Section -->
-    <div class="row mb-3">
-        <div class="col-12 text-center">
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="ip-info">
-                <span class="ip-label">IP:</span>
-                <span class="ip-address">{{ client_ip }}</span>
-                <span class="ip-location">{{ client_location }}</span>
+                <div class="ip-header">
+                    <div class="ip-label">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        Endereço IP
+                    </div>
+                    <div class="ip-address">{{ client_ip }}</div>
+                </div>
+                <div class="ip-details">
+                    <div class="location-info" title="Localização atual">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span class="ip-location">{{ client_location }}</span>
+                    </div>
+                    {% if location_data.isp != 'ISP desconhecido' %}
+                    <div class="isp-info" title="Provedor de Internet">
+                        <i class="bi bi-router-fill"></i>
+                        <span class="ip-isp">{{ location_data.isp }}</span>
+                    </div>
+                    {% endif %}
+                    {% if location_data.timezone != 'UTC' %}
+                    <div class="timezone-info" title="Fuso Horário">
+                        <i class="bi bi-clock-fill"></i>
+                        <span class="ip-timezone">{{ location_data.timezone }}</span>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

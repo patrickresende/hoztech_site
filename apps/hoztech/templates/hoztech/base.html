@@ -753,31 +753,119 @@
             background-color: rgba(13, 13, 13, 0.95);
             border: 1px solid var(--neon-red);
             border-radius: 4px;
-            padding: 0.5rem 1rem;
-            display: inline-block;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.9rem;
             color: var(--light-gray);
             box-shadow: 0 0 10px var(--neon-red-soft);
             animation: ipPulse 2s infinite;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .ip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--neon-red-soft);
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .ip-label {
             color: var(--neon-red);
             font-weight: bold;
-            margin-right: 0.5rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ip-label::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-red);
+            border-radius: 50%;
+            box-shadow: 0 0 5px var(--neon-red-soft);
+            animation: blink 1.5s infinite;
         }
 
         .ip-address {
             color: var(--light-gray);
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            background-color: rgba(255, 0, 51, 0.1);
+            border-radius: 3px;
+            border: 1px solid var(--neon-red-soft);
+        }
+
+        .ip-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .location-info,
+        .isp-info,
+        .timezone-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem;
+            background-color: rgba(13, 13, 13, 0.5);
+            border-radius: 3px;
+            border: 1px solid rgba(255, 0, 51, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .location-info:hover,
+        .isp-info:hover,
+        .timezone-info:hover {
+            background-color: rgba(255, 0, 51, 0.1);
+            transform: translateX(5px);
+        }
+
+        .location-info i,
+        .isp-info i,
+        .timezone-info i {
+            color: var(--neon-red);
+            font-size: 1.2rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .ip-location,
+        .ip-isp,
+        .ip-timezone {
+            color: var(--light-gray);
+            opacity: 0.95;
+            font-size: 0.9rem;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .ip-location {
-            color: var(--neon-red-soft);
-            font-size: 0.8rem;
-            margin-left: 1rem;
             font-style: italic;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
         @keyframes ipPulse {
@@ -789,6 +877,83 @@
             }
             100% {
                 box-shadow: 0 0 5px var(--neon-red-soft);
+            }
+        }
+
+        /* Media queries para responsividade do IP info */
+        @media (max-width: 768px) {
+            .ip-info {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .ip-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+
+            .ip-address {
+                width: 100%;
+                text-align: center;
+                font-size: 1rem;
+            }
+
+            .ip-details {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+
+            .location-info,
+            .isp-info,
+            .timezone-info {
+                padding: 0.4rem;
+            }
+
+            .location-info i,
+            .isp-info i,
+            .timezone-info i {
+                font-size: 1.1rem;
+            }
+
+            .ip-location,
+            .ip-isp,
+            .ip-timezone {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ip-info {
+                padding: 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .ip-label {
+                font-size: 0.9rem;
+            }
+
+            .ip-address {
+                font-size: 0.9rem;
+                padding: 0.2rem 0.6rem;
+            }
+
+            .location-info,
+            .isp-info,
+            .timezone-info {
+                padding: 0.3rem;
+            }
+
+            .location-info i,
+            .isp-info i,
+            .timezone-info i {
+                font-size: 1rem;
+            }
+
+            .ip-location,
+            .ip-isp,
+            .ip-timezone {
+                font-size: 0.8rem;
             }
         }
     </style>
