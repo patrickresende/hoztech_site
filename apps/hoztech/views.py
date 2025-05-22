@@ -16,6 +16,7 @@ from .models import CookiePreference
 from django.core.serializers import serialize
 from django.db.models import Q
 from datetime import datetime, timedelta
+from .services import NotificationService
 
 logger = logging.getLogger(__name__)
 
@@ -315,5 +316,52 @@ def export_cookie_preferences(request):
             'status': 'error',
             'message': str(e)
         }, status=400)
+
+@csrf_exempt
+@require_POST
+def contact_form(request):
+    """
+    View para processar o formulário de contato
+    """
+    try:
+        # Obtém os dados do formulário
+        form_data = {
+            'name': request.POST.get('name', '').strip(),
+            'email': request.POST.get('email', '').strip(),
+            'phone': request.POST.get('phone', '').strip(),
+            'subject': request.POST.get('subject', '').strip(),
+            'message': request.POST.get('message', '').strip(),
+        }
+        
+        # Validação básica
+        if not all([form_data['name'], form_data['email'], form_data['message']]):
+            return JsonResponse({
+                'success': False,
+                'message': 'Por favor, preencha todos os campos obrigatórios.'
+            })
+        
+        # Envia as notificações
+        result = NotificationService.notify_contact_form(form_data)
+        
+        # Verifica se pelo menos uma notificação foi enviada com sucesso
+        if result['email']['success'] or result['whatsapp']['success']:
+            return JsonResponse({
+                'success': True,
+                'message': 'Mensagem enviada com sucesso! Entraremos em contato em breve.',
+                'details': result
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Não foi possível enviar a mensagem. Por favor, tente novamente mais tarde.',
+                'details': result
+            })
+            
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': 'Ocorreu um erro ao processar sua mensagem. Por favor, tente novamente mais tarde.',
+            'error': str(e)
+        })
 
 # Create your views here.

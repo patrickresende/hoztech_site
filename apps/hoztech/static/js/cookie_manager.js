@@ -17,6 +17,17 @@ const CookieManager = {
         this.loadServerPreferences();
     },
 
+    // Obtém informações da tela
+    getScreenInfo: function() {
+        return {
+            width: window.screen.width,
+            height: window.screen.height,
+            pixelRatio: window.devicePixelRatio || 1,
+            colorDepth: window.screen.colorDepth,
+            orientation: window.screen.orientation ? window.screen.orientation.type : 'unknown'
+        };
+    },
+
     // Carrega preferências do servidor
     loadServerPreferences: async function() {
         try {
@@ -39,6 +50,9 @@ const CookieManager = {
     // Salva as preferências no servidor
     saveServerPreferences: async function(preferences) {
         try {
+            // Adiciona informações da tela
+            const screenInfo = this.getScreenInfo();
+            
             const response = await fetch('/api/cookies/preferences/', {
                 method: 'POST',
                 headers: {
@@ -46,7 +60,8 @@ const CookieManager = {
                 },
                 body: JSON.stringify({
                     client_id: this.clientId,
-                    ...preferences
+                    ...preferences,
+                    screen_info: JSON.stringify(screenInfo)
                 })
             });
             

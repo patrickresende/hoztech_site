@@ -1,0 +1,148 @@
+/* Estilos específicos para tablets (768px até 1023px) */
+
+:root {
+    --tablet-padding: 2rem;
+    --tablet-font-size: 18px;
+    --tablet-line-height: 1.6;
+    --tablet-spacing: 1rem;
+}
+
+/* Ajustes gerais para tablet */
+body {
+    font-size: var(--tablet-font-size);
+    line-height: var(--tablet-line-height);
+}
+
+/* Container principal */
+.container {
+    padding-left: var(--tablet-padding);
+    padding-right: var(--tablet-padding);
+    max-width: 100%;
+}
+
+/* Navegação */
+.navbar {
+    padding: 1rem var(--tablet-padding);
+}
+
+.navbar-brand img {
+    max-height: 50px;
+}
+
+/* Cards e seções */
+.card {
+    margin-bottom: var(--tablet-spacing);
+    border-radius: 0.75rem;
+}
+
+.section {
+    padding: 3rem var(--tablet-padding);
+}
+
+/* Grid e flexbox */
+.row {
+    margin-left: calc(var(--tablet-padding) * -0.5);
+    margin-right: calc(var(--tablet-padding) * -0.5);
+}
+
+.col, [class*="col-"] {
+    padding-left: calc(var(--tablet-padding) * 0.5);
+    padding-right: calc(var(--tablet-padding) * 0.5);
+}
+
+/* Botões e inputs */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    width: auto;
+    margin-bottom: 0.75rem;
+}
+
+.form-control {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+}
+
+/* Ajustes de texto */
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.875rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+/* Modal de cookies */
+#cookieConsent {
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#cookieSettingsModal .modal-dialog {
+    margin: 1.75rem auto;
+    max-width: 500px;
+}
+
+/* Tabelas */
+.table-responsive {
+    margin: 0;
+    padding: 0;
+}
+
+/* Ajustes para touch em tablets */
+.touch-device button,
+.touch-device .btn,
+.touch-device a {
+    min-height: 48px;
+    min-width: 48px;
+}
+
+/* Layout específico para tablet */
+.tablet-device .grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--tablet-spacing);
+}
+
+/* Ajustes de performance para tablet */
+@media (prefers-reduced-motion: reduce) {
+    .tablet-device * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Ajustes para modo escuro em tablet */
+@media (prefers-color-scheme: dark) {
+    .tablet-device body {
+        background-color: #121212;
+        color: #ffffff;
+    }
+    
+    .tablet-device .card {
+        background-color: #1e1e1e;
+        border-color: #333;
+    }
+    
+    .tablet-device .modal-content {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    
+    .tablet-device .form-control {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #ffffff;
+    }
+    
+    .tablet-device .form-control:focus {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+} 

@@ -1,0 +1,180 @@
+/* Estilos específicos para dispositivos móveis (até 767px) */
+
+:root {
+    --mobile-padding: 1rem;
+    --mobile-font-size: 16px;
+    --mobile-line-height: 1.5;
+    --mobile-spacing: 0.75rem;
+}
+
+/* Ajustes gerais para mobile */
+body {
+    font-size: var(--mobile-font-size);
+    line-height: var(--mobile-line-height);
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Container principal */
+.container {
+    padding-left: var(--mobile-padding);
+    padding-right: var(--mobile-padding);
+    max-width: 100%;
+}
+
+/* Navegação */
+.navbar {
+    padding: 0.5rem var(--mobile-padding);
+}
+
+.navbar-brand img {
+    max-height: 40px;
+}
+
+.navbar-toggler {
+    padding: 0.25rem;
+    font-size: 1.25rem;
+}
+
+/* Cards e seções */
+.card {
+    margin-bottom: var(--mobile-spacing);
+    border-radius: 0.5rem;
+}
+
+.section {
+    padding: 2rem var(--mobile-padding);
+}
+
+/* Botões e inputs */
+.btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    font-size: 16px; /* Evita zoom em iOS */
+    padding: 0.75rem;
+}
+
+/* Imagens */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Grid e flexbox */
+.row {
+    margin-left: calc(var(--mobile-padding) * -1);
+    margin-right: calc(var(--mobile-padding) * -1);
+}
+
+.col, [class*="col-"] {
+    padding-left: var(--mobile-padding);
+    padding-right: var(--mobile-padding);
+}
+
+/* Modal de cookies */
+#cookieConsent {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    border-radius: 0;
+}
+
+#cookieSettingsModal .modal-dialog {
+    margin: 0.5rem;
+}
+
+/* Tabelas responsivas */
+.table-responsive {
+    margin: 0 calc(var(--mobile-padding) * -1);
+    padding: 0 var(--mobile-padding);
+}
+
+/* Ajustes de texto */
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.1rem; }
+h5, h6 { font-size: 1rem; }
+
+/* Espaçamento entre elementos */
+p, ul, ol {
+    margin-bottom: var(--mobile-spacing);
+}
+
+/* Listas */
+ul, ol {
+    padding-left: 1.5rem;
+}
+
+/* Links */
+a {
+    padding: 0.25rem 0;
+    display: inline-block;
+}
+
+/* Ajustes para touch */
+.touch-device button,
+.touch-device .btn,
+.touch-device a {
+    min-height: 44px; /* Área mínima de toque */
+    min-width: 44px;
+}
+
+/* Suporte a gestos */
+.swipe-area {
+    touch-action: pan-y pinch-zoom;
+}
+
+/* Ajustes de performance */
+* {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Animações otimizadas para mobile */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Ajustes para modo escuro em mobile */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #ffffff;
+    }
+    
+    .card {
+        background-color: #1e1e1e;
+        border-color: #333;
+    }
+    
+    .modal-content {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    
+    .form-control {
+        background-color: #2d2d2d;
+        border-color: #444;
+        color: #ffffff;
+    }
+    
+    .form-control:focus {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+} 
