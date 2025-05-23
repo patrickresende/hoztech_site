@@ -37,6 +37,8 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.cache import never_cache
 import random
 from django.template.loader import render_to_string
+from django.core.cache import cache
+from django.db.models.functions import ExtractHour
 
 logger = logging.getLogger(__name__)
 
@@ -232,27 +234,48 @@ def privacy_modal(request):
         return render(request, 'hoztech/privacy_content.html')
     return render(request, 'hoztech/privacy.html')
 
+@require_http_methods(['POST'])
 @csrf_exempt
-@require_http_methods(["POST"])
 def update_cookie_preferences(request):
     try:
         data = json.loads(request.body)
         client_id = data.get('client_id')
+        preferences = data.get('preferences', {})
         
-        # Tenta encontrar preferências existentes
-        try:
-            cookie_pref = CookiePreference.objects.get(client_id=client_id)
-        except CookiePreference.DoesNotExist:
-            # Cria novas preferências se não existirem
-            cookie_pref = CookiePreference(client_id=client_id)
+        # Obtém ou cria o registro de preferências
+        cookie_pref, created = CookiePreference.objects.get_or_create(
+            client_id=client_id,
+            defaults={
+                'ip_address': get_client_ip(request),
+                'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                'essential_cookies': True,  # Sempre True
+                'performance_cookies': preferences.get('performance', False),
+                'marketing_cookies': preferences.get('marketing', False)
+            }
+        )
         
-        # Atualiza as preferências
-        preferences = {
-            'performance': data.get('performance', True),
-            'marketing': data.get('marketing', True)
-        }
+        if not created:
+            cookie_pref.performance_cookies = preferences.get('performance', False)
+            cookie_pref.marketing_cookies = preferences.get('marketing', False)
+            cookie_pref.save()
         
-        cookie_pref.update_preferences(preferences, request)
+        # Registra os cookies no banco de dados
+        visitor = VisitorAccess.objects.filter(
+            ip_address=get_client_ip(request),
+            session_id=request.session.session_key
+        ).order_by('-timestamp').first()
+        
+        if visitor:
+            # Registra cada cookie aceito
+            for cookie_name, cookie_data in preferences.items():
+                if cookie_data.get('consent'):
+                    CookieConsent.objects.create(
+                        visitor=visitor,
+                        cookie_name=cookie_name,
+                        value=cookie_data.get('value', ''),
+                        category=cookie_data.get('category', 'essential'),
+                        expires_at=timezone.now() + timezone.timedelta(days=365)
+                    )
         
         return JsonResponse({
             'status': 'success',
@@ -260,11 +283,16 @@ def update_cookie_preferences(request):
             'client_id': str(cookie_pref.client_id)
         })
         
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Dados inválidos'
+        }, status=400)
     except Exception as e:
         return JsonResponse({
             'status': 'error',
             'message': str(e)
-        }, status=400)
+        }, status=500)
 
 @require_http_methods(["GET"])
 def get_cookie_preferences(request, client_id):
@@ -577,21 +605,76 @@ class AdminDashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Estatísticas gerais
-        now = timezone.now()
-        last_30_days = now - timedelta(days=30)
-        
-        context.update({
-            'total_visitors': VisitorAccess.objects.count(),
-            'total_cookies': CookieConsent.objects.count(),
-            'visitors_30d': VisitorAccess.objects.filter(timestamp__gte=last_30_days).count(),
-            'unique_ips_30d': VisitorAccess.objects.filter(timestamp__gte=last_30_days).values('ip_address').distinct().count(),
-            'top_countries': VisitorAccess.objects.exclude(country__isnull=True).values('country').annotate(count=Count('id')).order_by('-count')[:5],
-            'top_browsers': VisitorAccess.objects.exclude(browser__isnull=True).values('browser').annotate(count=Count('id')).order_by('-count')[:5],
-            'recent_visitors': VisitorAccess.objects.select_related().order_by('-timestamp')[:10],
-            'recent_exports': DataExport.objects.filter(user=self.request.user).order_by('-timestamp')[:5],
-        })
-        
+        try:
+            # Estatísticas gerais (com cache)
+            cache_key = 'dashboard_stats'
+            stats = cache.get(cache_key)
+            
+            if stats is None:
+                now = timezone.now()
+                last_30_days = now - timedelta(days=30)
+                
+                # Usa select_related e prefetch_related para otimizar queries
+                visitors_30d = VisitorAccess.objects.filter(
+                    timestamp__gte=last_30_days
+                ).select_related()
+                
+                stats = {
+                    'total_visitors': VisitorAccess.objects.count(),
+                    'total_cookies': CookieConsent.objects.count(),
+                    'visitors_30d': visitors_30d.count(),
+                    'unique_ips_30d': visitors_30d.values('ip_address').distinct().count(),
+                    'top_countries': visitors_30d.exclude(
+                        country__isnull=True
+                    ).values('country').annotate(
+                        count=Count('id')
+                    ).order_by('-count')[:5],
+                    'top_browsers': visitors_30d.exclude(
+                        browser__isnull=True
+                    ).values('browser').annotate(
+                        count=Count('id')
+                    ).order_by('-count')[:5],
+                }
+                
+                # Cache por 5 minutos
+                cache.set(cache_key, stats, 300)
+            
+            context.update(stats)
+            
+            # Visitantes recentes (sem cache)
+            context['recent_visitors'] = VisitorAccess.objects.select_related(
+            ).order_by('-timestamp')[:10]
+            
+            # Exportações recentes (sem cache)
+            context['recent_exports'] = DataExport.objects.filter(
+                user=self.request.user
+            ).order_by('-timestamp')[:5]
+            
+            # Adiciona estatísticas de cookies por categoria
+            context['cookie_categories'] = CookieConsent.objects.values(
+                'category'
+            ).annotate(
+                count=Count('id')
+            ).order_by('-count')
+            
+            # Adiciona estatísticas de dispositivos
+            context['device_types'] = VisitorAccess.objects.exclude(
+                device_type__isnull=True
+            ).values('device_type').annotate(
+                count=Count('id')
+            ).order_by('-count')[:5]
+            
+            # Adiciona estatísticas de horários de acesso
+            context['access_hours'] = VisitorAccess.objects.annotate(
+                hour=ExtractHour('timestamp')
+            ).values('hour').annotate(
+                count=Count('id')
+            ).order_by('hour')
+            
+        except Exception as e:
+            logger.error(f"Erro ao carregar dashboard: {str(e)}")
+            messages.error(self.request, "Erro ao carregar estatísticas do dashboard")
+            
         return context
 
 @login_required

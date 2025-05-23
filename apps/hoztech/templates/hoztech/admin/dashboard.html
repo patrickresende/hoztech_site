@@ -135,7 +135,7 @@
 {% endblock %}
 
 {% block content %}
-<!-- Estatísticas -->
+<!-- Estatísticas Gerais -->
 <div class="admin-stats">
     <div class="stat-card">
         <div class="stat-icon" style="background-color: rgba(231, 76, 60, 0.1); color: var(--admin-accent);">
@@ -201,6 +201,39 @@
             <canvas id="browsersChart"></canvas>
         </div>
     </div>
+    
+    <!-- Gráfico de Cookies por Categoria -->
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <h2 class="card-title">
+                <i class="bi bi-pie-chart"></i>
+                Cookies por Categoria
+            </h2>
+            <canvas id="cookieCategoriesChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Dispositivos -->
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <h2 class="card-title">
+                <i class="bi bi-phone"></i>
+                Tipos de Dispositivos
+            </h2>
+            <canvas id="deviceTypesChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Horários de Acesso -->
+    <div class="col-12 mb-4">
+        <div class="admin-card">
+            <h2 class="card-title">
+                <i class="bi bi-clock"></i>
+                Horários de Acesso
+            </h2>
+            <canvas id="accessHoursChart"></canvas>
+        </div>
+    </div>
 </div>
 
 <!-- Visitantes Recentes -->
@@ -217,6 +250,7 @@
                     <th>País</th>
                     <th>Cidade</th>
                     <th>Navegador</th>
+                    <th>Dispositivo</th>
                     <th>Data/Hora</th>
                 </tr>
             </thead>
@@ -227,11 +261,12 @@
                     <td>{{ visitor.country|default:"-" }}</td>
                     <td>{{ visitor.city|default:"-" }}</td>
                     <td>{{ visitor.browser|default:"-" }}</td>
+                    <td>{{ visitor.device_type|default:"-" }}</td>
                     <td>{{ visitor.timestamp|date:"d/m/Y H:i" }}</td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center">Nenhum visitante registrado</td>
+                    <td colspan="6" class="text-center">Nenhum visitante registrado</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -308,7 +343,7 @@
 
 {% block extra_js %}
 <!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Dashboard Controls -->
 <script src="{% static 'admin/js/dashboard-controls.js' %}"></script>
 <script>
@@ -323,48 +358,162 @@
     
     // Gráfico de Visitantes por País
     const countryCtx = document.getElementById('visitorsByCountry').getContext('2d');
-    const countryData = {
-        labels: [
-            {% for country in top_countries %}
-                '{{ country.country|escapejs }}'{% if not forloop.last %},{% endif %}
-            {% endfor %}
-        ],
-        datasets: [{
-            data: [
-                {% for country in top_countries %}
-                    {{ country.count }}{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ],
-            backgroundColor: Object.values(chartColors)
-        }]
-    };
-    
     new Chart(countryCtx, {
         type: 'doughnut',
-        data: countryData
+        data: {
+            labels: [
+                {% for country in top_countries %}
+                    '{{ country.country|escapejs }}'{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            datasets: [{
+                data: [
+                    {% for country in top_countries %}
+                        {{ country.count }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                backgroundColor: Object.values(chartColors)
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
     });
     
     // Gráfico de Navegadores
     const browserCtx = document.getElementById('browsersChart').getContext('2d');
-    const browserData = {
-        labels: [
-            {% for browser in top_browsers %}
-                '{{ browser.browser|escapejs }}'{% if not forloop.last %},{% endif %}
-            {% endfor %}
-        ],
-        datasets: [{
-            data: [
-                {% for browser in top_browsers %}
-                    {{ browser.count }}{% if not forloop.last %},{% endif %}
-                {% endfor %}
-            ],
-            backgroundColor: Object.values(chartColors)
-        }]
-    };
-    
     new Chart(browserCtx, {
         type: 'pie',
-        data: browserData
+        data: {
+            labels: [
+                {% for browser in top_browsers %}
+                    '{{ browser.browser|escapejs }}'{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            datasets: [{
+                data: [
+                    {% for browser in top_browsers %}
+                        {{ browser.count }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                backgroundColor: Object.values(chartColors)
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+    
+    // Gráfico de Cookies por Categoria
+    const cookieCtx = document.getElementById('cookieCategoriesChart').getContext('2d');
+    new Chart(cookieCtx, {
+        type: 'bar',
+        data: {
+            labels: [
+                {% for cat in cookie_categories %}
+                    '{{ cat.category|escapejs }}'{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Cookies por Categoria',
+                data: [
+                    {% for cat in cookie_categories %}
+                        {{ cat.count }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                backgroundColor: chartColors.primary
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Gráfico de Dispositivos
+    const deviceCtx = document.getElementById('deviceTypesChart').getContext('2d');
+    new Chart(deviceCtx, {
+        type: 'pie',
+        data: {
+            labels: [
+                {% for device in device_types %}
+                    '{{ device.device_type|escapejs }}'{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            datasets: [{
+                data: [
+                    {% for device in device_types %}
+                        {{ device.count }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                backgroundColor: Object.values(chartColors)
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+    
+    // Gráfico de Horários de Acesso
+    const hoursCtx = document.getElementById('accessHoursChart').getContext('2d');
+    new Chart(hoursCtx, {
+        type: 'line',
+        data: {
+            labels: [
+                {% for hour in access_hours %}
+                    '{{ hour.hour }}h'{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Acessos por Hora',
+                data: [
+                    {% for hour in access_hours %}
+                        {{ hour.count }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                borderColor: chartColors.info,
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     });
 </script>
 {% endblock %} 
