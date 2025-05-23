@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 from .services import NotificationService
 from .ip_client import IPClientService
 import requests
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login, logout, authenticate
 from django.core.paginator import Paginator
 from django.contrib.auth.views import LoginView
@@ -39,6 +39,8 @@ import random
 from django.template.loader import render_to_string
 from django.core.cache import cache
 from django.db.models.functions import ExtractHour
+from django.core.management import call_command
+from contextlib import redirect_stdout
 
 logger = logging.getLogger(__name__)
 
@@ -1053,5 +1055,68 @@ def admin_downloads_list(request):
     }
     
     return render(request, 'hoztech/admin/downloads_list.html', context)
+
+@require_http_methods(["POST"])
+@user_passes_test(lambda u: u.is_superuser)
+def manage_cookies_api(request):
+    """Endpoint seguro para gerenciar cookies via API"""
+    try:
+        data = json.loads(request.body)
+        action = data.get('action')
+        
+        if not action or action not in ['list', 'export', 'cleanup', 'stats']:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Ação inválida'
+            }, status=400)
+            
+        # Captura a saída do comando
+        output = io.StringIO()
+        with redirect_stdout(output):
+            # Executa o comando
+            call_command(
+                'manage_cookies',
+                action=action,
+                days=data.get('days', 30),
+                output=data.get('output'),
+                category=data.get('category', 'all')
+            )
+            
+        # Obtém a saída
+        command_output = output.getvalue()
+        
+        # Se for export, retorna o arquivo
+        if action == 'export':
+            output_file = data.get('output') or f'cookie_export_{timezone.now().strftime("%Y%m%d_%H%M%S")}.json'
+            try:
+                with open(output_file, 'r') as f:
+                    export_data = json.load(f)
+                return JsonResponse({
+                    'status': 'success',
+                    'message': command_output,
+                    'data': export_data
+                })
+            except Exception as e:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Erro ao ler arquivo de exportação: {str(e)}'
+                }, status=500)
+        
+        # Para outras ações, retorna a saída
+        return JsonResponse({
+            'status': 'success',
+            'message': command_output
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Dados inválidos'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
 
 # Create your views here.
