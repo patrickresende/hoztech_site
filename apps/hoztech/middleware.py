@@ -27,11 +27,19 @@ class VisitorTrackingMiddleware:
             endpoint = request.path
             method = request.method
 
+            logger.info(f"Rastreando visitante: IP={ip_address}, Endpoint={endpoint}, Method={method}")
+
             # Parse user agent
-            ua = parse(user_agent)
+            try:
+                ua = parse(user_agent)
+                logger.info(f"User Agent parseado: Browser={ua.browser.family}, OS={ua.os.family}, Device={ua.device.family}")
+            except Exception as e:
+                logger.error(f"Erro ao parsear User Agent: {str(e)}")
+                ua = None
             
             # Obtém localização do IP (com cache)
             location_data = self._get_ip_location(ip_address)
+            logger.info(f"Localização obtida: {location_data}")
             
             # Cria ou atualiza o registro do visitante
             try:
@@ -40,14 +48,15 @@ class VisitorTrackingMiddleware:
                     user_agent=user_agent,
                     endpoint=endpoint,
                     method=method,
-                    browser=ua.browser.family,
-                    os=ua.os.family,
-                    device_type=ua.device.family,
+                    browser=ua.browser.family if ua else None,
+                    os=ua.os.family if ua else None,
+                    device_type=ua.device.family if ua else None,
                     session_id=request.session.session_key or str(uuid.uuid4()),
                     country=location_data.get('country'),
                     city=location_data.get('city'),
                     isp=location_data.get('isp')
                 )
+                logger.info(f"Visitante registrado com sucesso: {visitor.id}")
                 
                 # Captura cookies se houver consentimento
                 self._process_cookies(request, visitor)
@@ -70,7 +79,7 @@ class VisitorTrackingMiddleware:
         
         if location_data is None:
             try:
-                location_data = IPClientService.get_location_data(ip_address)
+                location_data = IPClientService.get_client_location(ip_address)
                 cache.set(cache_key, location_data, self.cache_timeout)
             except Exception as e:
                 logger.error(f"Erro ao obter localização do IP {ip_address}: {str(e)}")
@@ -103,8 +112,8 @@ class VisitorTrackingMiddleware:
 
     def _should_track(self, request):
         """Determina se a requisição deve ser rastreada"""
-        # Ignora arquivos estáticos
-        if request.path.startswith('/static/') or request.path.startswith('/media/'):
+        # Ignora arquivos estáticos e mídia
+        if request.path.startswith(('/static/', '/media/', '/admin/static/', '/admin/media/')):
             return False
         
         # Ignora requisições do admin Django
@@ -117,8 +126,21 @@ class VisitorTrackingMiddleware:
             
         # Ignora bots conhecidos
         user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-        bot_keywords = ['bot', 'crawler', 'spider', 'slurp', 'search', 'mediapartners']
+        bot_keywords = ['bot', 'crawler', 'spider', 'slurp', 'search', 'mediapartners', 'googlebot', 'bingbot', 'yandexbot']
+        
+        # Verifica se é um bot conhecido
         if any(keyword in user_agent for keyword in bot_keywords):
+            logger.info(f"Ignorando bot: {user_agent}")
+            return False
+            
+        # Verifica se tem user agent
+        if not user_agent:
+            logger.warning("Requisição sem User-Agent")
+            return False
+            
+        # Verifica se tem IP
+        if not self._get_client_ip(request):
+            logger.warning("Requisição sem IP")
             return False
             
         return True
