@@ -1,0 +1,214 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Mídias - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Mídias{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Nome ou descrição">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-5 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Mídias -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Mídia</th>
+                    <th>Tipo</th>
+                    <th>Tamanho</th>
+                    <th>Dimensões</th>
+                    <th>Data de Upload</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for media in medias %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if media.type == 'image' %}
+                            <img src="{{ media.file.url }}" 
+                                 alt="{{ media.name }}" 
+                                 class="rounded me-2"
+                                 width="48" 
+                                 height="48"
+                                 style="object-fit: cover;">
+                            {% elif media.type == 'video' %}
+                            <div class="admin-image-placeholder me-2">
+                                <i class="bi bi-camera-video"></i>
+                            </div>
+                            {% elif media.type == 'audio' %}
+                            <div class="admin-image-placeholder me-2">
+                                <i class="bi bi-music-note"></i>
+                            </div>
+                            {% elif media.type == 'document' %}
+                            <div class="admin-image-placeholder me-2">
+                                <i class="bi bi-file-earmark"></i>
+                            </div>
+                            {% else %}
+                            <div class="admin-image-placeholder me-2">
+                                <i class="bi bi-file"></i>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ media.name }}</span>
+                                {% if media.description %}
+                                <small class="text-muted">{{ media.description|truncatechars:50 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if media.type == 'image' %}
+                        <span class="admin-badge primary">Imagem</span>
+                        {% elif media.type == 'video' %}
+                        <span class="admin-badge info">Vídeo</span>
+                        {% elif media.type == 'audio' %}
+                        <span class="admin-badge warning">Áudio</span>
+                        {% elif media.type == 'document' %}
+                        <span class="admin-badge secondary">Documento</span>
+                        {% else %}
+                        <span class="admin-badge dark">Outro</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <code>{{ media.file.size|filesizeformat }}</code>
+                    </td>
+                    <td>
+                        {% if media.type == 'image' and media.width and media.height %}
+                        <code>{{ media.width }}x{{ media.height }}</code>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>{{ media.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhuma mídia encontrada</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if medias.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if medias.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ medias.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in medias.paginator.page_range %}
+                {% if medias.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if medias.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ medias.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            },
+            responsive: true,
+            pageLength: 25,
+            order: [[4, 'desc']], // Ordena por data de upload decrescente
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                {
+                    targets: [0], // Coluna de mídia
+                    orderable: false
+                },
+                {
+                    targets: [4], // Coluna de data/hora
+                    type: 'date-br'
+                }
+            ]
+        });
+    });
+</script>
+{% endblock %} 

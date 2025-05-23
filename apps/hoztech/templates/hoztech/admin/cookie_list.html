@@ -1,0 +1,270 @@
+{% extends "hoztech/admin/base.html" %}
+{% load static %}
+
+{% block title %}Cookies - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Cookies{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-stats {
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    .stat-card h3 {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+    .stat-card .value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        margin: 0.5rem 0;
+    }
+    .admin-table {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .admin-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    .admin-table td, .admin-table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+    .admin-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .btn-action {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .date-picker {
+        max-width: 200px;
+    }
+    .search-form {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    .search-form .form-group {
+        margin-bottom: 1rem;
+    }
+    .search-form label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .search-form .btn-search {
+        margin-top: 1.5rem;
+    }
+    .pagination {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .pagination .page-link {
+        color: #007bff;
+    }
+    .pagination .page-link:hover {
+        color: #0056b3;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .cookie-name {
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    .cookie-value {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .cookie-category {
+        white-space: nowrap;
+    }
+    .cookie-ip {
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    .cookie-date, .cookie-expires {
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+    .no-results {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+    }
+    .filter-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        margin: 0.25rem;
+        background: #e9ecef;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
+    .filter-badge .close {
+        margin-left: 0.5rem;
+        cursor: pointer;
+    }
+    .active-filters {
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Formulário de Busca -->
+            <div class="search-form">
+                <form method="get" class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="name">Nome do Cookie</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ request.GET.name }}" placeholder="Buscar por nome">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="category">Categoria</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">Todas</option>
+                                <option value="necessary" {% if request.GET.category == 'necessary' %}selected{% endif %}>Necessário</option>
+                                <option value="preferences" {% if request.GET.category == 'preferences' %}selected{% endif %}>Preferências</option>
+                                <option value="statistics" {% if request.GET.category == 'statistics' %}selected{% endif %}>Estatísticas</option>
+                                <option value="marketing" {% if request.GET.category == 'marketing' %}selected{% endif %}>Marketing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="date_from">Data Inicial</label>
+                            <input type="date" class="form-control date-picker" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="date_to">Data Final</label>
+                            <input type="date" class="form-control date-picker" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-search">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        {% if request.GET %}
+                        <a href="{% url 'admin_cookie_list' %}" class="btn btn-outline-secondary btn-search">
+                            <i class="fas fa-times"></i> Limpar Filtros
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filtros Ativos -->
+            {% if request.GET %}
+            <div class="active-filters">
+                {% for key, value in request.GET.items %}
+                    {% if value and key != 'page' %}
+                    <span class="filter-badge">
+                        {{ key|title }}: {{ value }}
+                        <a href="?{% for k, v in request.GET.items %}{% if k != key %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="close">&times;</a>
+                    </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Lista de Cookies -->
+            <div class="admin-card" id="cookie-list">
+                <div class="table-responsive">
+                    <table class="table admin-table" id="cookies-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Categoria</th>
+                                <th>IP</th>
+                                <th>Data/Hora</th>
+                                <th>Expiração</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cookie in cookies %}
+                            <tr>
+                                <td class="cookie-name">{{ cookie.cookie_name }}</td>
+                                <td class="cookie-value" title="{{ cookie.value }}">
+                                    {{ cookie.value }}
+                                </td>
+                                <td class="cookie-category">
+                                    {% if cookie.category == 'necessary' %}
+                                        <span class="badge bg-primary">Necessário</span>
+                                    {% elif cookie.category == 'preferences' %}
+                                        <span class="badge bg-info">Preferências</span>
+                                    {% elif cookie.category == 'statistics' %}
+                                        <span class="badge bg-success">Estatísticas</span>
+                                    {% elif cookie.category == 'marketing' %}
+                                        <span class="badge bg-warning">Marketing</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ cookie.category|title }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="cookie-ip">{{ cookie.ip_address }}</td>
+                                <td class="cookie-date">{{ cookie.timestamp|date:"d/m/Y H:i" }}</td>
+                                <td class="cookie-expires">
+                                    {% if cookie.expires_at %}
+                                        {{ cookie.expires_at|date:"d/m/Y H:i" }}
+                                    {% else %}
+                                        <span class="text-muted">Sessão</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="no-results">
+                                        <i class="fas fa-search fa-2x mb-3"></i>
+                                        <p>Nenhum cookie encontrado.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.13.6/sorting/datetime-moment.js"></script>
+<script src="{% static 'admin/js/admin-controls.js' %}"></script>
+<script>
+    // Configura o plugin de ordenação de data
+    $.fn.dataTable.moment('DD/MM/YYYY HH:mm');
+</script>
+{% endblock %} 

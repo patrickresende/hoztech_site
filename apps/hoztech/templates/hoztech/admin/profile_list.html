@@ -1,0 +1,206 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Perfis - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Perfis{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Nome, email ou username">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="gender" class="form-label">Gênero</label>
+            <select class="form-select" id="gender" name="gender">
+                <option value="">Todos</option>
+                {% for value, label in genders %}
+                <option value="{{ value }}" {% if gender == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_to" class="form-label">Data Final</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_to" 
+                   name="date_to"
+                   value="{{ date_to }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Perfis -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Avatar</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Gênero</th>
+                    <th>Data de Nascimento</th>
+                    <th>Data de Atualização</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in profiles %}
+                <tr>
+                    <td>
+                        {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" 
+                             alt="{{ profile.user.get_full_name }}" 
+                             class="rounded-circle"
+                             width="48" 
+                             height="48">
+                        {% else %}
+                        <div class="admin-avatar">
+                            {{ profile.user.get_full_name|make_list|first|upper }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span>{{ profile.user.get_full_name }}</span>
+                            {% if profile.bio %}
+                            <small class="text-muted">{{ profile.bio|truncatechars:50 }}</small>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-monospace">{{ profile.user.email }}</span>
+                    </td>
+                    <td>
+                        <span class="text-monospace">{{ profile.user.username }}</span>
+                    </td>
+                    <td>
+                        {% if profile.gender == 'M' %}
+                        <span class="admin-badge primary">Masculino</span>
+                        {% elif profile.gender == 'F' %}
+                        <span class="admin-badge primary">Feminino</span>
+                        {% elif profile.gender == 'O' %}
+                        <span class="admin-badge primary">Outro</span>
+                        {% else %}
+                        <span class="admin-badge secondary">Não informado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if profile.birth_date %}
+                        {{ profile.birth_date|date:"d/m/Y" }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>{{ profile.updated_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Nenhum perfil encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if profiles.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if profiles.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ profiles.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if gender %}&gender={{ gender }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in profiles.paginator.page_range %}
+                {% if profiles.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if gender %}&gender={{ gender }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if profiles.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ profiles.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if gender %}&gender={{ gender }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (profile_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[6, 'desc']], // Ordena por data de atualização decrescente (coluna 6 (índice 6) é a coluna de data de atualização)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [0], orderable: false }, // Coluna de avatar (índice 0) não ordenável
+                 { targets: [5], type: 'date-br' }, // Coluna de data de nascimento (índice 5) usa o tipo date-br
+                 { targets: [6], type: 'date-br' } // Coluna de data de atualização (índice 6) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

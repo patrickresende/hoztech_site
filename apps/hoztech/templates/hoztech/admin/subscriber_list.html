@@ -1,0 +1,195 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Assinantes - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Assinantes{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Nome ou email">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="source" class="form-label">Origem</label>
+            <select class="form-select" id="source" name="source">
+                <option value="">Todas</option>
+                {% for value, label in sources %}
+                <option value="{{ value }}" {% if source == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Assinantes -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Assinante</th>
+                    <th>Status</th>
+                    <th>Origem</th>
+                    <th>Data de Cadastro</th>
+                    <th>Data de Atualização</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subscriber in subscribers %}
+                <tr>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span>{{ subscriber.name }}</span>
+                            <small class="text-muted">{{ subscriber.email }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        {% if subscriber.status == 'active' %}
+                        <span class="admin-badge success">Ativo</span>
+                        {% elif subscriber.status == 'inactive' %}
+                        <span class="admin-badge danger">Inativo</span>
+                        {% elif subscriber.status == 'pending' %}
+                        <span class="admin-badge warning">Pendente</span>
+                        {% elif subscriber.status == 'unsubscribed' %}
+                        <span class="admin-badge secondary">Cancelado</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ subscriber.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if subscriber.source == 'website' %}
+                        <span class="admin-badge info">Website</span>
+                        {% elif subscriber.source == 'landing_page' %}
+                        <span class="admin-badge primary">Landing Page</span>
+                        {% elif subscriber.source == 'form' %}
+                        <span class="admin-badge success">Formulário</span>
+                        {% elif subscriber.source == 'api' %}
+                        <span class="admin-badge warning">API</span>
+                        {% elif subscriber.source == 'import' %}
+                        <span class="admin-badge secondary">Importação</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ subscriber.source }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ subscriber.created_at|date:"d/m/Y H:i:s" }}</td>
+                    <td>{{ subscriber.updated_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum assinante encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if subscribers.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if subscribers.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ subscribers.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if source %}&source={{ source }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in subscribers.paginator.page_range %}
+                {% if subscribers.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if source %}&source={{ source }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if subscribers.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ subscribers.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if source %}&source={{ source }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (subscriber_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[3, 'desc']], // Ordena por data de cadastro decrescente (coluna 3 (índice 3) é a coluna de data de cadastro)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                 { targets: [3, 4], type: 'date-br' } // Colunas de data (índices 3 e 4) usam o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

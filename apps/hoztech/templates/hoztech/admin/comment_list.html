@@ -1,0 +1,240 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Comentários - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Comentários{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Autor, post ou conteúdo">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="post" class="form-label">Post</label>
+            <select class="form-select" id="post" name="post">
+                <option value="">Todos</option>
+                {% for value, label in posts %}
+                <option value="{{ value }}" {% if post == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Comentários -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Comentário</th>
+                    <th>Post</th>
+                    <th>Autor</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comment in comments %}
+                <tr>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span>{{ comment.content|truncatechars:100 }}</span>
+                            {% if comment.content|length > 100 %}
+                            <button type="button" 
+                                    class="btn btn-link btn-sm p-0 ms-1" 
+                                    data-bs-toggle="tooltip" 
+                                    title="{{ comment.content }}">
+                                <i class="bi bi-info-circle"></i>
+                            </button>
+                            {% endif %}
+                            {% if comment.parent %}
+                            <small class="text-muted">
+                                <i class="bi bi-reply-fill me-1"></i>
+                                Resposta para: {{ comment.parent.author.get_full_name }}
+                            </small>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if comment.post.cover %}
+                            <img src="{{ comment.post.cover.url }}" 
+                                 alt="{{ comment.post.title }}" 
+                                 class="rounded me-2"
+                                 width="48" 
+                                 height="32"
+                                 style="object-fit: cover;">
+                            {% else %}
+                            <div class="admin-image-placeholder me-2">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ comment.post.title }}</span>
+                                <small class="text-muted">{{ comment.post.category|title }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if comment.author.profile.avatar %}
+                            <img src="{{ comment.author.profile.avatar.url }}" 
+                                 alt="{{ comment.author.get_full_name }}" 
+                                 class="rounded-circle me-2"
+                                 width="32" 
+                                 height="32">
+                            {% else %}
+                            <div class="admin-avatar me-2">
+                                {{ comment.author.get_full_name|make_list|first|upper }}
+                            </div>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ comment.author.get_full_name }}</span>
+                                <small class="text-muted">{{ comment.author.email }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if comment.status == 'approved' %}
+                        <span class="admin-badge success">Aprovado</span>
+                        {% elif comment.status == 'pending' %}
+                        <span class="admin-badge warning">Pendente</span>
+                        {% elif comment.status == 'rejected' %}
+                        <span class="admin-badge danger">Rejeitado</span>
+                        {% elif comment.status == 'spam' %}
+                        <span class="admin-badge dark">Spam</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ comment.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ comment.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum comentário encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if comments.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if comments.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ comments.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if post %}&post={{ post }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in comments.paginator.page_range %}
+                {% if comments.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if post %}&post={{ post }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if comments.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ comments.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if post %}&post={{ post }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            },
+            responsive: true,
+            pageLength: 25,
+            order: [[4, 'desc']], // Ordena por data decrescente
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                {
+                    targets: [0, 1], // Colunas de comentário e post
+                    orderable: false
+                },
+                {
+                    targets: [4], // Coluna de data/hora
+                    type: 'date-br'
+                }
+            ]
+        });
+    });
+</script>
+{% endblock %} 

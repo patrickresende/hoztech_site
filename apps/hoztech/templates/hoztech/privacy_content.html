@@ -49,26 +49,24 @@
 
 <style>
     .privacy-card {
-        background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
-        border: 1px solid var(--neon-red);
-        box-shadow: 0 0 30px rgba(255, 0, 51, 0.15),
-                    inset 0 0 20px rgba(255, 0, 51, 0.05);
-        border-radius: 8px;
-        padding: 2rem;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
     }
 
     .privacy-title {
         color: #ffffff;
-        font-size: 2rem;
+        font-size: 1.5rem;
         font-weight: 600;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         text-align: center;
         text-shadow: 0 0 10px rgba(255, 0, 51, 0.3);
     }
 
     .privacy-section {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
         background: rgba(255, 255, 255, 0.03);
         border-radius: 6px;
         border: 1px solid rgba(255, 0, 51, 0.1);
@@ -78,7 +76,6 @@
     .privacy-section:hover {
         background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 0, 51, 0.2);
-        transform: translateY(-1px);
     }
 
     .privacy-section:last-child {
@@ -88,29 +85,31 @@
     .privacy-section h2 {
         color: var(--neon-red);
         font-weight: 600;
-        margin-bottom: 1rem;
-        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
         text-shadow: 0 0 10px rgba(255, 0, 51, 0.2);
     }
 
     .privacy-section p {
         color: #ffffff;
-        line-height: 1.6;
-        margin-bottom: 1rem;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
         opacity: 0.9;
+        font-size: 0.95rem;
     }
 
     .privacy-section ul {
         list-style-type: none;
         padding-left: 0;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
     }
 
     .privacy-section ul li {
         color: #ffffff;
-        padding: 0.5rem 0 0.5rem 1.5rem;
+        padding: 0.4rem 0 0.4rem 1.25rem;
         position: relative;
         opacity: 0.9;
+        font-size: 0.95rem;
     }
 
     .privacy-section ul li:before {
@@ -118,7 +117,53 @@
         color: var(--neon-red);
         position: absolute;
         left: 0;
-        font-size: 1.2em;
+        font-size: 1.1em;
         text-shadow: 0 0 5px var(--neon-red-soft);
+    }
+
+    /* Estilos específicos para o modal */
+    .modal-content {
+        background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+        border: 1px solid var(--neon-red);
+        box-shadow: 0 0 30px rgba(255, 0, 51, 0.15);
+    }
+
+    .modal-header {
+        border-bottom-color: rgba(255, 0, 51, 0.2);
+    }
+
+    .modal-footer {
+        border-top-color: rgba(255, 0, 51, 0.2);
+    }
+
+    .modal-title {
+        color: var(--neon-red);
+        font-weight: 600;
+        text-shadow: 0 0 10px rgba(255, 0, 51, 0.2);
+    }
+
+    .btn-close-white {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--neon-red) rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        background-color: var(--neon-red);
+        border-radius: 4px;
     }
 </style> 

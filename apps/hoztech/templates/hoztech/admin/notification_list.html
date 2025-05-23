@@ -1,0 +1,211 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Notificações - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Notificações{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Título ou mensagem">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Notificações -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Notificação</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notification in notifications %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if notification.type == 'info' %}
+                            <i class="bi bi-info-circle me-2 fs-4"></i>
+                            {% elif notification.type == 'success' %}
+                            <i class="bi bi-check-circle me-2 fs-4"></i>
+                            {% elif notification.type == 'warning' %}
+                            <i class="bi bi-exclamation-triangle me-2 fs-4"></i>
+                            {% elif notification.type == 'error' %}
+                            <i class="bi bi-x-circle me-2 fs-4"></i>
+                            {% elif notification.type == 'system' %}
+                            <i class="bi bi-gear me-2 fs-4"></i>
+                            {% else %}
+                            <i class="bi bi-bell me-2 fs-4"></i>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ notification.title }}</span>
+                                {% if notification.message %}
+                                <small class="text-muted">{{ notification.message|truncatechars:50 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if notification.type == 'info' %}
+                        <span class="admin-badge info">Info</span>
+                        {% elif notification.type == 'success' %}
+                        <span class="admin-badge success">Sucesso</span>
+                        {% elif notification.type == 'warning' %}
+                        <span class="admin-badge warning">Alerta</span>
+                        {% elif notification.type == 'error' %}
+                        <span class="admin-badge danger">Erro</span>
+                        {% elif notification.type == 'system' %}
+                        <span class="admin-badge primary">Sistema</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ notification.type }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if notification.status == 'pending' %}
+                        <span class="admin-badge warning">Pendente</span>
+                        {% elif notification.status == 'sent' %}
+                        <span class="admin-badge success">Enviada</span>
+                        {% elif notification.status == 'read' %}
+                        <span class="admin-badge info">Lida</span>
+                        {% elif notification.status == 'failed' %}
+                        <span class="admin-badge danger">Falha</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ notification.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ notification.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">Nenhuma notificação encontrada</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if notifications.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if notifications.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ notifications.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in notifications.paginator.page_range %}
+                {% if notifications.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if notifications.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ notifications.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (notification_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[3, 'desc']], // Ordena por data decrescente (coluna 3 (índice 3) é a coluna de data/hora)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [0], orderable: false }, // Coluna de notificação (índice 0) não ordenável
+                 { targets: [3], type: 'date-br' } // Coluna de data (índice 3) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

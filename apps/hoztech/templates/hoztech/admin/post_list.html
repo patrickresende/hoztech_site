@@ -1,0 +1,226 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Posts - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Posts{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Título, autor ou conteúdo">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="category" class="form-label">Categoria</label>
+            <select class="form-select" id="category" name="category">
+                <option value="">Todas</option>
+                {% for value, label in categories %}
+                <option value="{{ value }}" {% if category == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Posts -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Post</th>
+                    <th>Categoria</th>
+                    <th>Autor</th>
+                    <th>Status</th>
+                    <th>Data de Publicação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if post.cover %}
+                            <img src="{{ post.cover.url }}" 
+                                 alt="{{ post.title }}" 
+                                 class="rounded me-2"
+                                 width="48" 
+                                 height="32"
+                                 style="object-fit: cover;">
+                            {% else %}
+                            <div class="admin-image-placeholder me-2">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ post.title }}</span>
+                                <small class="text-muted">{{ post.excerpt|truncatechars:50 }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if post.category == 'news' %}
+                        <span class="admin-badge info">Notícias</span>
+                        {% elif post.category == 'article' %}
+                        <span class="admin-badge primary">Artigos</span>
+                        {% elif post.category == 'tutorial' %}
+                        <span class="admin-badge success">Tutoriais</span>
+                        {% elif post.category == 'review' %}
+                        <span class="admin-badge warning">Reviews</span>
+                        {% elif post.category == 'other' %}
+                        <span class="admin-badge secondary">Outros</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ post.category }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if post.author.profile.avatar %}
+                            <img src="{{ post.author.profile.avatar.url }}" 
+                                 alt="{{ post.author.get_full_name }}" 
+                                 class="rounded-circle me-2"
+                                 width="32" 
+                                 height="32">
+                            {% else %}
+                            <div class="admin-avatar me-2">
+                                {{ post.author.get_full_name|make_list|first|upper }}
+                            </div>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ post.author.get_full_name }}</span>
+                                <small class="text-muted">{{ post.author.email }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if post.status == 'published' %}
+                        <span class="admin-badge success">Publicado</span>
+                        {% elif post.status == 'draft' %}
+                        <span class="admin-badge warning">Rascunho</span>
+                        {% elif post.status == 'archived' %}
+                        <span class="admin-badge secondary">Arquivado</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ post.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ post.published_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum post encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if posts.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if posts.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ posts.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in posts.paginator.page_range %}
+                {% if posts.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if posts.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ posts.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (post_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[4, 'desc']], // Ordena por data de publicação decrescente (coluna 4 (índice 4) é a coluna de data de publicação)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [0], orderable: false }, // Coluna de post (índice 0) não ordenável
+                 { targets: [4], type: 'date-br' } // Coluna de data (índice 4) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

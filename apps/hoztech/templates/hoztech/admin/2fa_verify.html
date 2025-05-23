@@ -1,0 +1,200 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Verificação 2FA - Hoz Tech Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        min-height: calc(100vh - 300px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .auth-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        width: 100%;
+        max-width: 600px;
+    }
+    
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .auth-header h1 {
+        color: var(--admin-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .auth-header p {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    
+    .auth-images {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .auth-image {
+        position: relative;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        aspect-ratio: 1;
+    }
+    
+    .auth-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-image:hover img {
+        transform: scale(1.05);
+    }
+    
+    .auth-image.selected {
+        border: 3px solid var(--admin-accent);
+    }
+    
+    .auth-image.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: var(--admin-accent);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .auth-submit {
+        text-align: center;
+    }
+    
+    .auth-submit button {
+        background-color: var(--admin-accent);
+        border-color: var(--admin-accent);
+        color: white;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        border-radius: 0.25rem;
+        transition: all 0.3s ease;
+    }
+    
+    .auth-submit button:hover {
+        background-color: #c0392b;
+        border-color: #c0392b;
+        transform: translateY(-1px);
+    }
+    
+    .auth-submit button:disabled {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .auth-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Verificação de Segurança</h1>
+            <p>Olá, {{ username }}. Por favor, selecione sua imagem de autenticação.</p>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="auth-error">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="post" id="authForm">
+            {% csrf_token %}
+            <input type="hidden" name="selected_image" id="selectedImage">
+            
+            <div class="auth-images">
+                {% for image in auth_images %}
+                    <div class="auth-image" data-image-id="{{ image.id }}">
+                        <img src="{{ image.image.url }}" alt="{{ image.name }}" title="{{ image.name }}">
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="auth-submit">
+                <button type="submit" class="btn btn-primary" disabled id="submitBtn">
+                    Verificar e Continuar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const authImages = document.querySelectorAll('.auth-image');
+    const selectedImageInput = document.getElementById('selectedImage');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    authImages.forEach(image => {
+        image.addEventListener('click', function() {
+            // Remove seleção anterior
+            authImages.forEach(img => img.classList.remove('selected'));
+            
+            // Adiciona seleção atual
+            this.classList.add('selected');
+            
+            // Atualiza input hidden
+            selectedImageInput.value = this.dataset.imageId;
+            
+            // Habilita botão
+            submitBtn.disabled = false;
+        });
+    });
+    
+    // Limpa mensagens de erro após 5 segundos
+    setTimeout(function() {
+        const errors = document.querySelectorAll('.auth-error');
+        errors.forEach(function(error) {
+            error.style.opacity = '0';
+            error.style.transition = 'opacity 0.5s ease';
+            setTimeout(function() {
+                error.remove();
+            }, 500);
+        });
+    }, 5000);
+});
+</script>
+{% endblock %} 

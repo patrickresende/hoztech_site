@@ -1,0 +1,234 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Tarefas - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Tarefas{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Nome ou descrição">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="priority" class="form-label">Prioridade</label>
+            <select class="form-select" id="priority" name="priority">
+                <option value="">Todas</option>
+                {% for value, label in priorities %}
+                <option value="{{ value }}" {% if priority == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Tarefas -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Tarefa</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Prioridade</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if task.type == 'backup' %}
+                            <i class="bi bi-database me-2 fs-4"></i>
+                            {% elif task.type == 'cleanup' %}
+                            <i class="bi bi-trash me-2 fs-4"></i>
+                            {% elif task.type == 'maintenance' %}
+                            <i class="bi bi-tools me-2 fs-4"></i>
+                            {% elif task.type == 'report' %}
+                            <i class="bi bi-file-earmark-text me-2 fs-4"></i>
+                            {% elif task.type == 'notification' %}
+                            <i class="bi bi-bell me-2 fs-4"></i>
+                            {% else %}
+                            <i class="bi bi-list-task me-2 fs-4"></i>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ task.name }}</span>
+                                {% if task.description %}
+                                <small class="text-muted">{{ task.description|truncatechars:50 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if task.type == 'backup' %}
+                        <span class="admin-badge primary">Backup</span>
+                        {% elif task.type == 'cleanup' %}
+                        <span class="admin-badge info">Limpeza</span>
+                        {% elif task.type == 'maintenance' %}
+                        <span class="admin-badge warning">Manutenção</span>
+                        {% elif task.type == 'report' %}
+                        <span class="admin-badge success">Relatório</span>
+                        {% elif task.type == 'notification' %}
+                        <span class="admin-badge danger">Notificação</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ task.type }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.status == 'pending' %}
+                        <span class="admin-badge warning">Pendente</span>
+                        {% elif task.status == 'running' %}
+                        <span class="admin-badge info">Em andamento</span>
+                        {% elif task.status == 'completed' %}
+                        <span class="admin-badge success">Concluído</span>
+                        {% elif task.status == 'failed' %}
+                        <span class="admin-badge danger">Falha</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ task.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if task.priority == 'low' %}
+                        <span class="admin-badge info">Baixa</span>
+                        {% elif task.priority == 'medium' %}
+                        <span class="admin-badge warning">Média</span>
+                        {% elif task.priority == 'high' %}
+                        <span class="admin-badge danger">Alta</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ task.priority }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ task.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhuma tarefa encontrada</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if tasks.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if tasks.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ tasks.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if priority %}&priority={{ priority }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in tasks.paginator.page_range %}
+                {% if tasks.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if priority %}&priority={{ priority }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if tasks.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ tasks.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if priority %}&priority={{ priority }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            },
+            responsive: true,
+            pageLength: 25,
+            order: [[4, 'desc']], // Ordena por data decrescente
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                {
+                    targets: [0], // Coluna de tarefa
+                    orderable: false
+                },
+                {
+                    targets: [4], // Coluna de data/hora
+                    type: 'date-br'
+                }
+            ]
+        });
+    });
+</script>
+{% endblock %} 

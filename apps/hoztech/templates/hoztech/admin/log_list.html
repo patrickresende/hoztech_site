@@ -1,0 +1,213 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Logs - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Logs{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Mensagem ou contexto">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="level" class="form-label">Nível</label>
+            <select class="form-select" id="level" name="level">
+                <option value="">Todos</option>
+                {% for value, label in levels %}
+                <option value="{{ value }}" {% if level == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Logs -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Log</th>
+                    <th>Nível</th>
+                    <th>Tipo</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if log.level == 'debug' %}
+                            <i class="bi bi-bug me-2 fs-4"></i>
+                            {% elif log.level == 'info' %}
+                            <i class="bi bi-info-circle me-2 fs-4"></i>
+                            {% elif log.level == 'warning' %}
+                            <i class="bi bi-exclamation-triangle me-2 fs-4"></i>
+                            {% elif log.level == 'error' %}
+                            <i class="bi bi-x-circle me-2 fs-4"></i>
+                            {% elif log.level == 'critical' %}
+                            <i class="bi bi-exclamation-octagon me-2 fs-4"></i>
+                            {% else %}
+                            <i class="bi bi-journal-text me-2 fs-4"></i>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ log.message }}</span>
+                                {% if log.context %}
+                                <small class="text-muted">{{ log.context|truncatechars:50 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if log.level == 'debug' %}
+                        <span class="admin-badge secondary">Debug</span>
+                        {% elif log.level == 'info' %}
+                        <span class="admin-badge info">Info</span>
+                        {% elif log.level == 'warning' %}
+                        <span class="admin-badge warning">Warning</span>
+                        {% elif log.level == 'error' %}
+                        <span class="admin-badge danger">Error</span>
+                        {% elif log.level == 'critical' %}
+                        <span class="admin-badge dark">Critical</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ log.level }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if log.type == 'system' %}
+                        <span class="admin-badge primary">Sistema</span>
+                        {% elif log.type == 'security' %}
+                        <span class="admin-badge danger">Segurança</span>
+                        {% elif log.type == 'performance' %}
+                        <span class="admin-badge warning">Performance</span>
+                        {% elif log.type == 'database' %}
+                        <span class="admin-badge info">Banco de Dados</span>
+                        {% elif log.type == 'application' %}
+                        <span class="admin-badge success">Aplicação</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ log.type }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">Nenhum log encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if logs.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if logs.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ logs.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if level %}&level={{ level }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in logs.paginator.page_range %}
+                {% if logs.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if level %}&level={{ level }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if logs.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ logs.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if level %}&level={{ level }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (log_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[3, 'desc']], // Ordena por data decrescente (coluna 3 (índice 3) é a coluna de data/hora)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [0], orderable: false }, // Coluna de log (índice 0) não ordenável
+                 { targets: [3], type: 'date-br' } // Coluna de data (índice 3) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

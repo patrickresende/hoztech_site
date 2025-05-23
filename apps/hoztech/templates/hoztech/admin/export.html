@@ -1,0 +1,167 @@
+{% extends 'hoztech/admin/base.html' %}
+{% load static %}
+
+{% block title %}Exportar Dados - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Exportar Dados{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Previne scroll automático */
+    html {
+        scroll-behavior: auto !important;
+    }
+    
+    /* Ajusta estilo dos datepickers */
+    .date-picker {
+        max-width: 100%;
+    }
+    
+    /* Ajusta estilo do formulário de exportação */
+    .export-form {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .export-form .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .export-form label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .export-form .form-check {
+        margin-top: 0.5rem;
+    }
+    
+    .export-form .btn-export {
+        min-width: 200px;
+    }
+    
+    /* Ajusta estilo das mensagens de status */
+    .export-status {
+        margin-top: 2rem;
+        padding: 1rem;
+        border-radius: 8px;
+        background: var(--admin-card-bg);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .export-status.success {
+        border-left: 4px solid var(--admin-success);
+    }
+    
+    .export-status.error {
+        border-left: 4px solid var(--admin-danger);
+    }
+    
+    .export-status.warning {
+        border-left: 4px solid var(--admin-warning);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-card export-form">
+    <form method="post" id="export-form" action="{% url 'admin_export_data' %}" target="_blank">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="export_type">Tipo de Exportação</label>
+            <select class="form-select" id="export_type" name="export_type" required>
+                <option value="">Selecione o tipo de exportação</option>
+                <option value="cookies">Cookies</option>
+                <option value="access">Acessos</option>
+                <option value="all">Todos os Dados</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="date_from">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   required>
+        </div>
+        
+        <div class="form-group">
+            <label for="date_to">Data Final</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_to" 
+                   name="date_to"
+                   required>
+        </div>
+        
+        <div class="form-group">
+            <label>Formato</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="format" id="format_json" value="json" checked>
+                <label class="form-check-label" for="format_json">
+                    JSON
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv">
+                <label class="form-check-label" for="format_csv">
+                    CSV
+                </label>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-export">
+                <i class="bi bi-download me-2"></i>
+                Exportar Dados
+            </button>
+        </div>
+    </form>
+    
+    {% if messages %}
+    <div class="export-status {% if messages.0.tags %}{{ messages.0.tags }}{% endif %}">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-0">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Admin Controls -->
+<script src="{% static 'admin/js/admin-controls.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        // Configura validação de datas
+        $('#date_from, #date_to').on('change', function() {
+            const dateFrom = $('#date_from').val();
+            const dateTo = $('#date_to').val();
+            
+            if (dateFrom && dateTo && dateFrom > dateTo) {
+                alert('A data inicial não pode ser maior que a data final.');
+                $(this).val('');
+            }
+        });
+        
+        // Configura o formulário para mostrar mensagem de processamento
+        $('#export-form').on('submit', function() {
+            const submitBtn = $(this).find('button[type="submit"]');
+            submitBtn.prop('disabled', true);
+            submitBtn.html('<i class="bi bi-hourglass-split me-2"></i>Processando...');
+            
+            // Reabilita o botão após 5 segundos (caso o download não inicie)
+            setTimeout(function() {
+                submitBtn.prop('disabled', false);
+                submitBtn.html('<i class="bi bi-download me-2"></i>Exportar Dados');
+            }, 5000);
+        });
+    });
+</script>
+{% endblock %} 

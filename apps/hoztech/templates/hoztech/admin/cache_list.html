@@ -1,0 +1,224 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Cache - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Cache{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Chave ou valor">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Cache -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Cache</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Tamanho</th>
+                    <th>Expiração</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cache in caches %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if cache.type == 'page' %}
+                            <i class="bi bi-file-earmark me-2 fs-4"></i>
+                            {% elif cache.type == 'template' %}
+                            <i class="bi bi-file-earmark-text me-2 fs-4"></i>
+                            {% elif cache.type == 'query' %}
+                            <i class="bi bi-database me-2 fs-4"></i>
+                            {% elif cache.type == 'session' %}
+                            <i class="bi bi-person me-2 fs-4"></i>
+                            {% elif cache.type == 'api' %}
+                            <i class="bi bi-code-square me-2 fs-4"></i>
+                            {% else %}
+                            <i class="bi bi-hdd-stack me-2 fs-4"></i>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ cache.key }}</span>
+                                {% if cache.description %}
+                                <small class="text-muted">{{ cache.description|truncatechars:50 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if cache.type == 'page' %}
+                        <span class="admin-badge primary">Página</span>
+                        {% elif cache.type == 'template' %}
+                        <span class="admin-badge info">Template</span>
+                        {% elif cache.type == 'query' %}
+                        <span class="admin-badge warning">Query</span>
+                        {% elif cache.type == 'session' %}
+                        <span class="admin-badge success">Sessão</span>
+                        {% elif cache.type == 'api' %}
+                        <span class="admin-badge danger">API</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ cache.type }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cache.is_valid %}
+                        <span class="admin-badge success">Válido</span>
+                        {% else %}
+                        <span class="admin-badge danger">Expirado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cache.size %}
+                        <span>{{ cache.size|filesizeformat }}</span>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if cache.expires_at %}
+                            {% if cache.is_expired %}
+                            <span class="text-danger">Expirado</span>
+                            {% else %}
+                            {{ cache.expires_at|date:"d/m/Y H:i:s" }}
+                            {% endif %}
+                        {% else %}
+                        <span class="text-muted">Nunca</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum cache encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if caches.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if caches.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ caches.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in caches.paginator.page_range %}
+                {% if caches.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if caches.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ caches.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (cache_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[4, 'asc']], // Ordena por expiração crescente (coluna 4 (índice 4) é a coluna de expiração)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [0], orderable: false }, // Coluna de cache (índice 0) não ordenável
+                 { targets: [3], type: 'file-size' }, // Coluna de tamanho (índice 3) usa o tipo file-size
+                 { targets: [4], type: 'date-br' } // Coluna de expiração (índice 4) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

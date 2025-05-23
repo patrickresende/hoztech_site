@@ -1,0 +1,203 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Requisições - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Requisições{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="IP, endpoint ou método">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="method" class="form-label">Método</label>
+            <select class="form-select" id="method" name="method">
+                <option value="">Todos</option>
+                {% for value, label in methods %}
+                <option value="{{ value }}" {% if method == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_to" class="form-label">Data Final</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_to" 
+                   name="date_to"
+                   value="{{ date_to }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Requisições -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Método</th>
+                    <th>IP</th>
+                    <th>Endpoint</th>
+                    <th>Status</th>
+                    <th>Tempo</th>
+                    <th>Data/Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td>
+                        {% if request.method == 'GET' %}
+                        <span class="admin-badge success">GET</span>
+                        {% elif request.method == 'POST' %}
+                        <span class="admin-badge primary">POST</span>
+                        {% elif request.method == 'PUT' %}
+                        <span class="admin-badge info">PUT</span>
+                        {% elif request.method == 'PATCH' %}
+                        <span class="admin-badge info">PATCH</span>
+                        {% elif request.method == 'DELETE' %}
+                        <span class="admin-badge danger">DELETE</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ request.method }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="text-monospace">{{ request.visitor.ip_address }}</span>
+                    </td>
+                    <td>
+                        <span class="text-monospace small">{{ request.endpoint }}</span>
+                    </td>
+                    <td>
+                        {% if request.status >= 200 and request.status < 300 %}
+                        <span class="admin-badge success">{{ request.status }}</span>
+                        {% elif request.status >= 300 and request.status < 400 %}
+                        <span class="admin-badge info">{{ request.status }}</span>
+                        {% elif request.status >= 400 and request.status < 500 %}
+                        <span class="admin-badge warning">{{ request.status }}</span>
+                        {% elif request.status >= 500 %}
+                        <span class="admin-badge danger">{{ request.status }}</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ request.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if request.response_time < 0.1 %}
+                        <span class="admin-badge success">{{ request.response_time|floatformat:3 }}s</span>
+                        {% elif request.response_time < 0.5 %}
+                        <span class="admin-badge info">{{ request.response_time|floatformat:3 }}s</span>
+                        {% elif request.response_time < 1 %}
+                        <span class="admin-badge warning">{{ request.response_time|floatformat:3 }}s</span>
+                        {% else %}
+                        <span class="admin-badge danger">{{ request.response_time|floatformat:3 }}s</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ request.timestamp|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">Nenhuma requisição encontrada</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if requests.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if requests.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ requests.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in requests.paginator.page_range %}
+                {% if requests.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if requests.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ requests.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (request_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[5, 'desc']], // Ordena por data decrescente (coluna 5 (índice 5) é a coluna de data/hora)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                 { targets: [5], type: 'date-br' } // Coluna de data (índice 5) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

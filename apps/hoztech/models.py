@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 import uuid
 import json
 from user_agents import parse
@@ -164,3 +165,206 @@ class CookiePreference(models.Model):
         except Exception as e:
             print(f"Erro ao processar user agent: {str(e)}")
             # Mantém os valores atuais em caso de erro
+
+class VisitorAccess(models.Model):
+    """Modelo para registrar acessos de visitantes"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ip_address = models.GenericIPAddressField()
+    user_agent = models.TextField()
+    endpoint = models.CharField(max_length=255)
+    method = models.CharField(max_length=10)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    isp = models.CharField(max_length=255, null=True, blank=True)
+    browser = models.CharField(max_length=100, null=True, blank=True)
+    os = models.CharField(max_length=100, null=True, blank=True)
+    device_type = models.CharField(max_length=50, null=True, blank=True)
+    session_id = models.CharField(max_length=100, null=True, blank=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['ip_address']),
+            models.Index(fields=['timestamp']),
+            models.Index(fields=['session_id']),
+        ]
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.timestamp}"
+
+class CookieConsent(models.Model):
+    """Modelo para registrar consentimentos de cookies"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    visitor = models.ForeignKey(VisitorAccess, on_delete=models.CASCADE, related_name='cookie_consents')
+    cookie_name = models.CharField(max_length=100)
+    value = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    category = models.CharField(max_length=50, choices=[
+        ('essential', 'Essencial'),
+        ('performance', 'Desempenho'),
+        ('marketing', 'Marketing'),
+        ('analytics', 'Analytics')
+    ])
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['cookie_name']),
+            models.Index(fields=['timestamp']),
+            models.Index(fields=['category']),
+        ]
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.cookie_name} - {self.visitor.ip_address}"
+
+class AdminAccessLog(models.Model):
+    """Modelo para registrar acessos à área administrativa"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    ip_address = models.GenericIPAddressField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    action = models.CharField(max_length=100)
+    details = models.JSONField(null=True, blank=True)
+    success = models.BooleanField(default=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['timestamp']),
+            models.Index(fields=['action']),
+        ]
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.user.username if self.user else 'Anonymous'} - {self.action}"
+
+class AdminAuthImage(models.Model):
+    """Modelo para armazenar imagens de autenticação 2FA"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    image = models.ImageField(upload_to='admin_auth_images/')
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['category']),
+            models.Index(fields=['is_active']),
+        ]
+        ordering = ['category', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.category})"
+
+class AdminUserAuthPreference(models.Model):
+    """Modelo para armazenar preferências de autenticação dos usuários"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='auth_preference')
+    auth_images = models.ManyToManyField(AdminAuthImage, related_name='selected_by_users')
+    is_2fa_enabled = models.BooleanField(default=True)
+    last_auth_image = models.ForeignKey(AdminAuthImage, on_delete=models.SET_NULL, null=True, blank=True, related_name='last_used_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['is_2fa_enabled']),
+        ]
+
+    def __str__(self):
+        return f"Preferências de autenticação de {self.user.username}"
+
+class DataExport(models.Model):
+    """Modelo para registrar exportações de dados"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    export_type = models.CharField(max_length=50, choices=[
+        ('cookies', 'Cookies'),
+        ('access', 'Acessos'),
+        ('all', 'Todos os Dados')
+    ])
+    date_range_start = models.DateTimeField()
+    date_range_end = models.DateTimeField()
+    file_path = models.CharField(max_length=255)
+    status = models.CharField(max_length=50, choices=[
+        ('pending', 'Pendente'),
+        ('processing', 'Processando'),
+        ('completed', 'Concluído'),
+        ('failed', 'Falhou')
+    ], default='pending')
+    error_message = models.TextField(null=True, blank=True)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['timestamp']),
+            models.Index(fields=['export_type']),
+        ]
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.export_type} - {self.timestamp}"
+
+class PDFDownload(models.Model):
+    """Modelo para armazenar informações de leads que baixam o PDF"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, verbose_name="Nome")
+    email = models.EmailField(verbose_name="E-mail")
+    company = models.CharField(max_length=100, blank=True, null=True, verbose_name="Empresa")
+    role = models.CharField(max_length=100, blank=True, null=True, verbose_name="Cargo")
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone")
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    marketing_consent = models.BooleanField(default=False, verbose_name="Aceito receber comunicações de marketing")
+    source = models.CharField(max_length=50, default="website", verbose_name="Origem do lead")
+    user = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Usuário que realizou o download",
+        related_name='pdf_downloads'
+    )
+    
+    # Campos para controle do PDF
+    pdf_file = models.FileField(
+        upload_to='pdfs/manual_cyberseguranca/',
+        verbose_name="Arquivo PDF",
+        help_text="Arquivo PDF do manual",
+        null=True,
+        blank=True
+    )
+    download_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name="Número de downloads",
+        help_text="Quantidade de vezes que o PDF foi baixado"
+    )
+    last_download = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Último download",
+        help_text="Data e hora do último download do PDF"
+    )
+    
+    class Meta:
+        verbose_name = "Download de PDF"
+        verbose_name_plural = "Downloads de PDF"
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['marketing_consent']),
+        ]
+    
+    def __str__(self):
+        return f"{self.name} - {self.email} ({self.created_at.strftime('%d/%m/%Y')})"
+    
+    def increment_download_count(self):
+        """Incrementa o contador de downloads e atualiza a data do último download"""
+        self.download_count += 1
+        self.last_download = timezone.now()
+        self.save(update_fields=['download_count', 'last_download'])

@@ -1,0 +1,370 @@
+{% extends 'hoztech/admin/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<style>
+    .admin-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: var(--admin-card-bg);
+        border-radius: 8px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .stat-info h3 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--admin-text);
+    }
+    
+    .stat-info p {
+        margin: 0.25rem 0 0;
+        color: var(--admin-text-light);
+        font-size: 0.9rem;
+    }
+    
+    .admin-card {
+        background: var(--admin-card-bg);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .card-title {
+        margin: 0 0 1.5rem;
+        font-size: 1.2rem;
+        color: var(--admin-text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .card-title i {
+        color: var(--admin-accent);
+    }
+    
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--admin-border);
+        text-align: left;
+    }
+    
+    .admin-table th {
+        font-weight: 600;
+        color: var(--admin-text);
+        background: var(--admin-bg-light);
+    }
+    
+    .admin-table td {
+        color: var(--admin-text-light);
+    }
+    
+    .admin-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .admin-badge.success { background: var(--admin-success-light); color: var(--admin-success); }
+    .admin-badge.warning { background: var(--admin-warning-light); color: var(--admin-warning); }
+    .admin-badge.danger { background: var(--admin-danger-light); color: var(--admin-danger); }
+    .admin-badge.info { background: var(--admin-info-light); color: var(--admin-info); }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 4px;
+    }
+    
+    .btn-primary {
+        background: var(--admin-accent);
+        color: white;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .btn-primary:hover {
+        background: var(--admin-accent-dark);
+        color: white;
+    }
+    
+    /* Previne scroll automático */
+    html {
+        scroll-behavior: auto !important;
+    }
+    
+    /* Ajusta altura dos gráficos */
+    canvas {
+        max-height: 300px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Estatísticas -->
+<div class="admin-stats">
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(231, 76, 60, 0.1); color: var(--admin-accent);">
+            <i class="bi bi-people"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ total_visitors }}</h3>
+            <p>Total de Visitantes</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(39, 174, 96, 0.1); color: var(--admin-success);">
+            <i class="bi bi-cookie"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ total_cookies }}</h3>
+            <p>Total de Cookies</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(243, 156, 18, 0.1); color: var(--admin-warning);">
+            <i class="bi bi-graph-up"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ visitors_30d }}</h3>
+            <p>Visitantes (30 dias)</p>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(52, 152, 219, 0.1); color: #3498db;">
+            <i class="bi bi-globe"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ unique_ips_30d }}</h3>
+            <p>IPs Únicos (30 dias)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="row">
+    <!-- Gráfico de Visitantes por País -->
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <h2 class="card-title">
+                <i class="bi bi-globe"></i>
+                Visitantes por País
+            </h2>
+            <canvas id="visitorsByCountry"></canvas>
+        </div>
+    </div>
+    
+    <!-- Gráfico de Navegadores -->
+    <div class="col-md-6 mb-4">
+        <div class="admin-card">
+            <h2 class="card-title">
+                <i class="bi bi-browser"></i>
+                Navegadores
+            </h2>
+            <canvas id="browsersChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Visitantes Recentes -->
+<div class="admin-card">
+    <h2 class="card-title">
+        <i class="bi bi-clock-history"></i>
+        Visitantes Recentes
+    </h2>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>IP</th>
+                    <th>País</th>
+                    <th>Cidade</th>
+                    <th>Navegador</th>
+                    <th>Data/Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visitor in recent_visitors %}
+                <tr>
+                    <td>{{ visitor.ip_address }}</td>
+                    <td>{{ visitor.country|default:"-" }}</td>
+                    <td>{{ visitor.city|default:"-" }}</td>
+                    <td>{{ visitor.browser|default:"-" }}</td>
+                    <td>{{ visitor.timestamp|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum visitante registrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Exportações Recentes -->
+<div class="admin-card">
+    <h2 class="card-title">
+        <i class="bi bi-download"></i>
+        Exportações Recentes
+    </h2>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Período</th>
+                    <th>Status</th>
+                    <th>Data/Hora</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for export in recent_exports %}
+                <tr>
+                    <td>
+                        {% if export.export_type == 'cookies' %}
+                        <span class="admin-badge info">Cookies</span>
+                        {% elif export.export_type == 'access' %}
+                        <span class="admin-badge info">Acessos</span>
+                        {% else %}
+                        <span class="admin-badge info">Todos</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ export.date_range_start|date:"d/m/Y" }} - 
+                        {{ export.date_range_end|date:"d/m/Y" }}
+                    </td>
+                    <td>
+                        {% if export.status == 'completed' %}
+                        <span class="admin-badge success">Concluído</span>
+                        {% elif export.status == 'processing' %}
+                        <span class="admin-badge warning">Processando</span>
+                        {% elif export.status == 'failed' %}
+                        <span class="admin-badge danger">Falhou</span>
+                        {% else %}
+                        <span class="admin-badge info">Pendente</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ export.timestamp|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if export.status == 'completed' %}
+                        <a href="{% url 'admin_download' export.id %}" 
+                           class="btn btn-sm btn-primary"
+                           data-bs-toggle="tooltip"
+                           title="Download">
+                            <i class="bi bi-download"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhuma exportação realizada</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<!-- Dashboard Controls -->
+<script src="{% static 'admin/js/dashboard-controls.js' %}"></script>
+<script>
+    // Configurações dos gráficos
+    const chartColors = {
+        primary: 'rgba(231, 76, 60, 0.8)',
+        success: 'rgba(39, 174, 96, 0.8)',
+        warning: 'rgba(243, 156, 18, 0.8)',
+        info: 'rgba(52, 152, 219, 0.8)',
+        secondary: 'rgba(149, 165, 166, 0.8)'
+    };
+    
+    // Gráfico de Visitantes por País
+    const countryCtx = document.getElementById('visitorsByCountry').getContext('2d');
+    const countryData = {
+        labels: [
+            {% for country in top_countries %}
+                '{{ country.country|escapejs }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        datasets: [{
+            data: [
+                {% for country in top_countries %}
+                    {{ country.count }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            backgroundColor: Object.values(chartColors)
+        }]
+    };
+    
+    new Chart(countryCtx, {
+        type: 'doughnut',
+        data: countryData
+    });
+    
+    // Gráfico de Navegadores
+    const browserCtx = document.getElementById('browsersChart').getContext('2d');
+    const browserData = {
+        labels: [
+            {% for browser in top_browsers %}
+                '{{ browser.browser|escapejs }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
+        datasets: [{
+            data: [
+                {% for browser in top_browsers %}
+                    {{ browser.count }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            backgroundColor: Object.values(chartColors)
+        }]
+    };
+    
+    new Chart(browserCtx, {
+        type: 'pie',
+        data: browserData
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,234 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Configurações - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Configurações{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Nome ou descrição">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="group" class="form-label">Grupo</label>
+            <select class="form-select" id="group" name="group">
+                <option value="">Todos</option>
+                {% for value, label in groups %}
+                <option value="{{ value }}" {% if group == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Configurações -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Configuração</th>
+                    <th>Grupo</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for setting in settings %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if setting.group == 'system' %}
+                            <i class="bi bi-gear me-2 fs-4"></i>
+                            {% elif setting.group == 'security' %}
+                            <i class="bi bi-shield-lock me-2 fs-4"></i>
+                            {% elif setting.group == 'email' %}
+                            <i class="bi bi-envelope me-2 fs-4"></i>
+                            {% elif setting.group == 'backup' %}
+                            <i class="bi bi-database me-2 fs-4"></i>
+                            {% elif setting.group == 'notification' %}
+                            <i class="bi bi-bell me-2 fs-4"></i>
+                            {% else %}
+                            <i class="bi bi-sliders me-2 fs-4"></i>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ setting.name }}</span>
+                                {% if setting.description %}
+                                <small class="text-muted">{{ setting.description|truncatechars:50 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if setting.group == 'system' %}
+                        <span class="admin-badge primary">Sistema</span>
+                        {% elif setting.group == 'security' %}
+                        <span class="admin-badge danger">Segurança</span>
+                        {% elif setting.group == 'email' %}
+                        <span class="admin-badge info">Email</span>
+                        {% elif setting.group == 'backup' %}
+                        <span class="admin-badge warning">Backup</span>
+                        {% elif setting.group == 'notification' %}
+                        <span class="admin-badge success">Notificação</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ setting.group }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if setting.type == 'string' %}
+                        <span class="admin-badge info">Texto</span>
+                        {% elif setting.type == 'integer' %}
+                        <span class="admin-badge warning">Número</span>
+                        {% elif setting.type == 'boolean' %}
+                        <span class="admin-badge success">Booleano</span>
+                        {% elif setting.type == 'json' %}
+                        <span class="admin-badge primary">JSON</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ setting.type }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if setting.is_active %}
+                        <span class="admin-badge success">Ativo</span>
+                        {% else %}
+                        <span class="admin-badge danger">Inativo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if setting.type == 'boolean' %}
+                            {% if setting.value %}
+                            <span class="admin-badge success">Sim</span>
+                            {% else %}
+                            <span class="admin-badge danger">Não</span>
+                            {% endif %}
+                        {% elif setting.type == 'json' %}
+                        <code>{{ setting.value|truncatechars:50 }}</code>
+                        {% else %}
+                        <span>{{ setting.value|truncatechars:50 }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhuma configuração encontrada</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if settings.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if settings.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ settings.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if group %}&group={{ group }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in settings.paginator.page_range %}
+                {% if settings.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if group %}&group={{ group }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if settings.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ settings.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if group %}&group={{ group }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (setting_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[0, 'asc']], // Ordena por nome (coluna 0 (índice 0) é a coluna de nome)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                 { targets: [0], orderable: true }, // Coluna de configuração (índice 0) ordenável
+                 { targets: [4], orderable: false } // Coluna de valor (índice 4) não ordenável
+            ]
+        });
+    });
+</script>
+{% endblock %} 

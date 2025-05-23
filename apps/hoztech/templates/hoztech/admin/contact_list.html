@@ -1,0 +1,209 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Contatos - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Contatos{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Nome, email ou telefone">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="subject" class="form-label">Assunto</label>
+            <select class="form-select" id="subject" name="subject">
+                <option value="">Todos</option>
+                {% for value, label in subjects %}
+                <option value="{{ value }}" {% if subject == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Contatos -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Contato</th>
+                    <th>Assunto</th>
+                    <th>Mensagem</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                <tr>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span>{{ contact.name }}</span>
+                            <small class="text-muted">{{ contact.email }}</small>
+                            {% if contact.phone %}
+                            <small class="text-muted">{{ contact.phone }}</small>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if contact.subject == 'general' %}
+                        <span class="admin-badge info">Geral</span>
+                        {% elif contact.subject == 'support' %}
+                        <span class="admin-badge primary">Suporte</span>
+                        {% elif contact.subject == 'commercial' %}
+                        <span class="admin-badge success">Comercial</span>
+                        {% elif contact.subject == 'partnership' %}
+                        <span class="admin-badge warning">Parceria</span>
+                        {% elif contact.subject == 'other' %}
+                        <span class="admin-badge secondary">Outro</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ contact.subject }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="small">{{ contact.message|truncatechars:100 }}</span>
+                        {% if contact.message|length > 100 %}
+                        <button type="button" 
+                                class="btn btn-link btn-sm p-0 ms-1" 
+                                data-bs-toggle="tooltip" 
+                                title="{{ contact.message }}">
+                            <i class="bi bi-info-circle"></i>
+                        </button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if contact.status == 'pending' %}
+                        <span class="admin-badge warning">Pendente</span>
+                        {% elif contact.status == 'in_progress' %}
+                        <span class="admin-badge primary">Em Andamento</span>
+                        {% elif contact.status == 'resolved' %}
+                        <span class="admin-badge success">Resolvido</span>
+                        {% elif contact.status == 'closed' %}
+                        <span class="admin-badge secondary">Fechado</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ contact.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ contact.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Nenhum contato encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if contacts.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if contacts.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ contacts.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if subject %}&subject={{ subject }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in contacts.paginator.page_range %}
+                {% if contacts.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if subject %}&subject={{ subject }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if contacts.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ contacts.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if subject %}&subject={{ subject }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (contact_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[4, 'desc']], // Ordena por data decrescente (coluna 4 (índice 4) é a coluna de data/hora)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [2], orderable: false }, // Coluna de mensagem (índice 2) não ordenável
+                 { targets: [4], type: 'date-br' } // Coluna de data (índice 4) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 

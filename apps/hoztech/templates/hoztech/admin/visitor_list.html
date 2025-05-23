@@ -1,0 +1,272 @@
+{% extends "hoztech/admin/base.html" %}
+{% load static %}
+
+{% block title %}Visitantes - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Visitantes{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-stats {
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    .stat-card h3 {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+    .stat-card .value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        margin: 0.5rem 0;
+    }
+    .admin-table {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .admin-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    .admin-table td, .admin-table th {
+        padding: 0.75rem;
+        vertical-align: middle;
+    }
+    .admin-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .btn-action {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .date-picker {
+        max-width: 200px;
+    }
+    .search-form {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    .search-form .form-group {
+        margin-bottom: 1rem;
+    }
+    .search-form label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .search-form .btn-search {
+        margin-top: 1.5rem;
+    }
+    .pagination {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .pagination .page-link {
+        color: #007bff;
+    }
+    .pagination .page-link:hover {
+        color: #0056b3;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .visitor-ip {
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    .visitor-location {
+        white-space: nowrap;
+    }
+    .visitor-endpoint {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .visitor-browser, .visitor-os {
+        white-space: nowrap;
+    }
+    .visitor-date {
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+    .no-results {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+    }
+    .filter-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        margin: 0.25rem;
+        background: #e9ecef;
+        border-radius: 4px;
+        font-size: 0.875rem;
+    }
+    .filter-badge .close {
+        margin-left: 0.5rem;
+        cursor: pointer;
+    }
+    .active-filters {
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Formulário de Busca -->
+            <div class="search-form">
+                <form method="get" class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="ip">IP</label>
+                            <input type="text" class="form-control" id="ip" name="ip" value="{{ request.GET.ip }}" placeholder="Buscar por IP">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="country">País</label>
+                            <input type="text" class="form-control" id="country" name="country" value="{{ request.GET.country }}" placeholder="Buscar por país">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="city">Cidade</label>
+                            <input type="text" class="form-control" id="city" name="city" value="{{ request.GET.city }}" placeholder="Buscar por cidade">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="date">Data</label>
+                            <input type="date" class="form-control date-picker" id="date" name="date" value="{{ request.GET.date }}">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-search">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                        {% if request.GET %}
+                        <a href="{% url 'admin_visitor_list' %}" class="btn btn-outline-secondary btn-search">
+                            <i class="fas fa-times"></i> Limpar Filtros
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filtros Ativos -->
+            {% if request.GET %}
+            <div class="active-filters">
+                {% for key, value in request.GET.items %}
+                    {% if value and key != 'page' %}
+                    <span class="filter-badge">
+                        {{ key|title }}: {{ value }}
+                        <a href="?{% for k, v in request.GET.items %}{% if k != key %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="close">&times;</a>
+                    </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Lista de Visitantes -->
+            <div class="admin-card">
+                <div class="table-responsive">
+                    <table id="visitors-table" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th data-name="ip">IP</th>
+                                <th data-name="location">Localização</th>
+                                <th data-name="endpoint">Endpoint</th>
+                                <th data-name="browser">Navegador</th>
+                                <th data-name="os">Sistema</th>
+                                <th data-name="date">Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for visitor in visitors %}
+                            <tr>
+                                <td data-name="ip" class="visitor-ip">{{ visitor.ip_address }}</td>
+                                <td data-name="location" class="visitor-location">
+                                    {% if visitor.country %}
+                                        {{ visitor.country }}
+                                        {% if visitor.city %}, {{ visitor.city }}{% endif %}
+                                    {% else %}
+                                        <span class="text-muted">Desconhecido</span>
+                                    {% endif %}
+                                </td>
+                                <td data-name="endpoint" class="visitor-endpoint" title="{{ visitor.endpoint }}">
+                                    {{ visitor.endpoint }}
+                                </td>
+                                <td data-name="browser" class="visitor-browser">{{ visitor.browser }}</td>
+                                <td data-name="os" class="visitor-os">{{ visitor.os }}</td>
+                                <td data-name="date" class="visitor-date">{{ visitor.created_at|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="no-results">
+                                        <i class="fas fa-search fa-2x mb-3"></i>
+                                        <p>Nenhum visitante encontrado.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.13.6/sorting/datetime-moment.js"></script>
+<script src="{% static 'admin/js/admin-controls.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        // Configura o plugin de ordenação de data
+        $.fn.dataTable.moment('DD/MM/YYYY HH:mm');
+        
+        // Inicializa o DataTables manualmente
+        $('#visitors-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[5, 'desc']], // Ordena por data decrescente
+            columnDefs: [
+                { targets: [0, 1, 2], orderable: true }, // IP, Localização, Endpoint
+                { targets: [3, 4], orderable: true }, // Navegador, Sistema
+                { targets: [5], type: 'date-br' } // Data
+            ],
+            processing: true,
+            serverSide: false,
+            retrieve: true,
+            destroy: true,
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip'
+        });
+    });
+</script>
+{% endblock %} 

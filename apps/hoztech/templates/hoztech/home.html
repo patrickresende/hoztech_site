@@ -2,6 +2,188 @@
 
 {% block title %}Hoz Tech - Início{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Estilos para a seção de download do PDF */
+    .pdf-download-card {
+        background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+        border: 1px solid var(--neon-red);
+        box-shadow: 0 0 30px rgba(255, 0, 51, 0.15),
+                    inset 0 0 20px rgba(255, 0, 51, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .pdf-download-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 40px rgba(255, 0, 51, 0.2),
+                    inset 0 0 30px rgba(255, 0, 51, 0.1);
+    }
+
+    .pdf-download-card .card-body {
+        padding: 3rem 2rem;
+    }
+
+    .pdf-download-card .neon-text {
+        text-shadow: 0 0 10px rgba(255, 0, 51, 0.5);
+    }
+
+    .pdf-download-card .lead {
+        color: #ffffff;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pdf-download-card .btn-neon {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .pdf-download-card .btn-neon:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 0, 51, 0.3);
+    }
+
+    .pdf-download-card .btn-neon i {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    /* Estilos para o modal personalizado */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1050;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        margin: 1.75rem;
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.show .modal-container {
+        transform: translateY(0);
+    }
+
+    .modal-content {
+        background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+        border: 1px solid var(--neon-red);
+        box-shadow: 0 0 30px rgba(255, 0, 51, 0.15);
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 0, 51, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .modal-title {
+        color: var(--neon-red);
+        margin: 0;
+        font-size: 1.25rem;
+        text-shadow: 0 0 10px rgba(255, 0, 51, 0.3);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        max-height: calc(100vh - 210px);
+        overflow-y: auto;
+    }
+
+    .btn-close {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        cursor: pointer;
+        filter: invert(1) grayscale(100%) brightness(200%);
+        transition: all 0.3s ease;
+    }
+
+    .btn-close:hover {
+        transform: scale(1.1);
+    }
+
+    /* Estilos responsivos */
+    @media (max-width: 576px) {
+        .modal-container {
+            margin: 0.5rem;
+        }
+        
+        .modal-content {
+            border-radius: 0.5rem;
+        }
+        
+        .modal-body {
+            padding: 1rem;
+        }
+        
+        .modal-header {
+            padding: 1rem;
+        }
+    }
+
+    /* Ajustes para inputs */
+    .modal-content .form-control {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        height: 42px;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .modal-content .form-control:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--neon-red);
+        box-shadow: 0 0 0 0.25rem rgba(255, 0, 51, 0.25);
+        color: #ffffff;
+    }
+
+    .modal-content .form-label {
+        color: #ffffff;
+        opacity: 0.9;
+    }
+
+    .modal-content .form-text {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .modal-content .alert {
+        background: rgba(255, 0, 51, 0.1);
+        border: 1px solid rgba(255, 0, 51, 0.2);
+        color: #ffffff;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <!-- IP Info Section -->
@@ -137,6 +319,104 @@
         </div>
     </div>
 
+    <!-- PDF Download Section -->
+    <div class="row mt-5 mb-5">
+        <div class="col-12">
+            <div class="card pdf-download-card">
+                <div class="card-body text-center py-5">
+                    <h2 class="neon-text mb-4">Manual da Cybersegurança</h2>
+                    <p class="lead mb-4">Baixe gratuitamente nosso manual sobre cybersegurança e aprenda como proteger seu negócio.</p>
+                    <button type="button" class="btn btn-neon btn-lg" onclick="openDownloadModal()">
+                        <i class="bi bi-download me-2"></i>
+                        Baixar Manual
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download Modal -->
+    <div id="downloadModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Baixar Manual de Cybersegurança</h5>
+                    <button type="button" class="btn-close" onclick="closeDownloadModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="downloadForm" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Preencha seus dados para receber o manual gratuitamente.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   pattern="[A-Za-zÀ-ÿ\s]{3,100}" 
+                                   title="Use apenas letras e espaços (3-100 caracteres)"
+                                   autocomplete="name">
+                            <div class="invalid-feedback">Por favor, informe seu nome completo.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">E-mail *</label>
+                            <input type="email" class="form-control" id="email" name="email" required
+                                   autocomplete="email">
+                            <div class="invalid-feedback">Por favor, informe um e-mail válido.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="company" class="form-label">Empresa</label>
+                            <input type="text" class="form-control" id="company" name="company" 
+                                   maxlength="100" 
+                                   title="Nome da empresa (opcional)"
+                                   autocomplete="organization">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Cargo</label>
+                            <input type="text" class="form-control" id="role" name="role" 
+                                   maxlength="100" 
+                                   title="Seu cargo na empresa (opcional)"
+                                   autocomplete="organization-title">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   pattern="\(\d{2}\)\s\d{5}-\d{4}" 
+                                   placeholder="(00) 00000-0000"
+                                   title="Formato: (00) 00000-0000"
+                                   autocomplete="tel">
+                            <div class="form-text">Opcional. Usado apenas para contato direto.</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="marketing_consent" name="marketing_consent">
+                                <label class="form-check-label" for="marketing_consent">
+                                    Aceito receber comunicações sobre novidades e conteúdos de cybersegurança
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-neon">
+                                <i class="bi bi-download me-2"></i>
+                                Baixar Agora
+                            </button>
+                            <button type="button" class="btn btn-outline-light" onclick="closeDownloadModal()">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Contact CTA Section -->
     <div class="row mt-5" id="contato">
         <div class="col-12 text-center">
@@ -150,4 +430,122 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('downloadModal');
+    const form = document.getElementById('downloadForm');
+    
+    // Função para abrir o modal
+    window.openDownloadModal = function() {
+        modal.style.display = 'flex';
+        // Pequeno delay para garantir que o display:flex seja aplicado antes da transição
+        setTimeout(() => modal.classList.add('show'), 10);
+        document.body.style.overflow = 'hidden';
+    };
+    
+    // Função para fechar o modal
+    window.closeDownloadModal = function() {
+        modal.classList.remove('show');
+        // Aguarda a transição terminar antes de esconder o modal
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+        form.reset();
+        form.classList.remove('was-validated');
+    };
+    
+    // Fecha o modal com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('show')) {
+            closeDownloadModal();
+        }
+    });
+    
+    // Fecha o modal ao clicar fora
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeDownloadModal();
+        }
+    });
+    
+    // Manipula o envio do formulário
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!this.checkValidity()) {
+            e.stopPropagation();
+            this.classList.add('was-validated');
+            return;
+        }
+        
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        
+        try {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processando...';
+            
+            const formData = new FormData(this);
+            formData.append('marketing_consent', document.getElementById('marketing_consent').checked);
+            
+            const response = await fetch('{% url "download_pdf" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeDownloadModal();
+                showAlert('Obrigado! Seu download começará em instantes.');
+                setTimeout(() => {
+                    window.location.href = data.pdf_url;
+                }, 1000);
+            } else {
+                showAlert(data.message || 'Ocorreu um erro ao processar sua solicitação.', 'danger', form);
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showAlert('Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.', 'danger', form);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }
+    });
+    
+    // Função para mostrar alertas
+    function showAlert(message, type = 'success', target = null) {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+        alert.innerHTML = `
+            <i class="bi bi-${type === 'success' ? 'check' : 'exclamation'}-circle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+        `;
+        
+        if (target) {
+            target.insertBefore(alert, target.firstChild);
+        } else {
+            document.querySelector('.pdf-download-card .card-body').appendChild(alert);
+        }
+        
+        setTimeout(() => alert.remove(), 5000);
+    }
+    
+    // Previne o envio acidental ao pressionar Enter
+    form.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}

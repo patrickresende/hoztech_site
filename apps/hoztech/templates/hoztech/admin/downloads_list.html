@@ -1,0 +1,253 @@
+{% extends "hoztech/admin/base.html" %}
+{% load static %}
+
+{% block title %}Downloads Realizados | Painel Administrativo{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Downloads Realizados</h1>
+    
+    <!-- Cards de Estatísticas -->
+    <div class="row mt-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Downloads</h5>
+                    <h2 class="display-4">{{ total_downloads }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Usuários Únicos</h5>
+                    <h2 class="display-4">{{ total_users }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Empresas</h5>
+                    <h2 class="display-4">{{ total_companies }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Marketing Consentido</h5>
+                    <h2 class="display-4">{{ marketing_consents }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-filter me-1"></i>
+            Filtros
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="search" placeholder="Buscar..." value="{{ search }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="date_from" value="{{ date_from }}" placeholder="Data inicial">
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="date_to" value="{{ date_to }}" placeholder="Data final">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="user">
+                        <option value="">Todos os usuários</option>
+                        {% for user in users %}
+                        <option value="{{ user.username }}" {% if user_filter == user.username %}selected{% endif %}>
+                            {{ user.username }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="marketing_consent">
+                        <option value="">Marketing</option>
+                        <option value="true" {% if marketing_filter == 'true' %}selected{% endif %}>Consentido</option>
+                        <option value="false" {% if marketing_filter == 'false' %}selected{% endif %}>Não consentido</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Downloads -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Lista de Downloads
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Empresa</th>
+                            <th>Cargo</th>
+                            <th>Usuário</th>
+                            <th>Data</th>
+                            <th>Downloads</th>
+                            <th>Marketing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for download in downloads %}
+                        <tr>
+                            <td>{{ download.name }}</td>
+                            <td>{{ download.email }}</td>
+                            <td>{{ download.company|default:"-" }}</td>
+                            <td>{{ download.role|default:"-" }}</td>
+                            <td>{{ download.user.username|default:"-" }}</td>
+                            <td>{{ download.created_at|date:"d/m/Y H:i" }}</td>
+                            <td>{{ download.download_count }}</td>
+                            <td>
+                                {% if download.marketing_consent %}
+                                <span class="badge bg-success">Sim</span>
+                                {% else %}
+                                <span class="badge bg-danger">Não</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">Nenhum download encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            {% if downloads.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if downloads.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ downloads.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if user_filter %}&user={{ user_filter }}{% endif %}{% if marketing_filter %}&marketing_consent={{ marketing_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">Anterior</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in downloads.paginator.page_range %}
+                    {% if downloads.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if search %}&search={{ search }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if user_filter %}&user={{ user_filter }}{% endif %}{% if marketing_filter %}&marketing_consent={{ marketing_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if downloads.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ downloads.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if user_filter %}&user={{ user_filter }}{% endif %}{% if marketing_filter %}&marketing_consent={{ marketing_filter }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">Próxima</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Gráficos e Estatísticas -->
+    <div class="row">
+        <!-- Últimos Downloads -->
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-line me-1"></i>
+                    Últimos Downloads
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for download in recent_downloads %}
+                                <tr>
+                                    <td>{{ download.name }}</td>
+                                    <td>{{ download.email }}</td>
+                                    <td>{{ download.created_at|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Downloads por Usuário -->
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Downloads por Usuário
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Usuário</th>
+                                    <th>Downloads</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in downloads_by_user %}
+                                <tr>
+                                    <td>{{ item.user__username|default:"Anônimo" }}</td>
+                                    <td>{{ item.count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Adiciona ordenação nas colunas da tabela
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.querySelector('table');
+        const headers = table.querySelectorAll('th');
+        
+        headers.forEach((header, index) => {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', () => {
+                const currentSort = '{{ sort_by }}';
+                const newSort = currentSort.startsWith('-') ? 
+                    currentSort.substring(1) : 
+                    '-' + currentSort;
+                
+                window.location.href = `?sort=${newSort}{% if search %}&search={{ search }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}{% if user_filter %}&user={{ user_filter }}{% endif %}{% if marketing_filter %}&marketing_consent={{ marketing_filter }}{% endif %}`;
+            });
+        });
+    });
+</script>
+{% endblock %} 

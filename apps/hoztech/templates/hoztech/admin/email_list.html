@@ -1,0 +1,214 @@
+{% extends 'hoztech/admin/base.html' %}
+
+{% block title %}Emails - Hoz Tech Admin{% endblock %}
+
+{% block header_title %}Emails{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="admin-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label for="search" class="form-label">Buscar</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="search" 
+                   name="search" 
+                   value="{{ search }}"
+                   placeholder="Assunto, destinatário ou remetente">
+        </div>
+        
+        <div class="col-md-2">
+            <label for="type" class="form-label">Tipo</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">Todos</option>
+                {% for value, label in types %}
+                <option value="{{ value }}" {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">Todos</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="col-md-2">
+            <label for="date_from" class="form-label">Data Inicial</label>
+            <input type="date" 
+                   class="form-control date-picker" 
+                   id="date_from" 
+                   name="date_from"
+                   value="{{ date_from }}">
+        </div>
+        
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-search me-2"></i>
+                Filtrar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Emails -->
+<div class="admin-card">
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for email in emails %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            {% if email.type == 'welcome' %}
+                            <i class="bi bi-envelope-heart me-2 fs-4"></i>
+                            {% elif email.type == 'notification' %}
+                            <i class="bi bi-bell me-2 fs-4"></i>
+                            {% elif email.type == 'alert' %}
+                            <i class="bi bi-exclamation-triangle me-2 fs-4"></i>
+                            {% elif email.type == 'report' %}
+                            <i class="bi bi-file-earmark-text me-2 fs-4"></i>
+                            {% elif email.type == 'newsletter' %}
+                            <i class="bi bi-newspaper me-2 fs-4"></i>
+                            {% else %}
+                            <i class="bi bi-envelope me-2 fs-4"></i>
+                            {% endif %}
+                            <div class="d-flex flex-column">
+                                <span>{{ email.subject }}</span>
+                                <small class="text-muted">
+                                    De: {{ email.from_email }}<br>
+                                    Para: {{ email.to_email }}
+                                </small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if email.type == 'welcome' %}
+                        <span class="admin-badge primary">Boas-vindas</span>
+                        {% elif email.type == 'notification' %}
+                        <span class="admin-badge info">Notificação</span>
+                        {% elif email.type == 'alert' %}
+                        <span class="admin-badge warning">Alerta</span>
+                        {% elif email.type == 'report' %}
+                        <span class="admin-badge success">Relatório</span>
+                        {% elif email.type == 'newsletter' %}
+                        <span class="admin-badge danger">Newsletter</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ email.type }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if email.status == 'pending' %}
+                        <span class="admin-badge warning">Pendente</span>
+                        {% elif email.status == 'sending' %}
+                        <span class="admin-badge info">Enviando</span>
+                        {% elif email.status == 'sent' %}
+                        <span class="admin-badge success">Enviado</span>
+                        {% elif email.status == 'delivered' %}
+                        <span class="admin-badge primary">Entregue</span>
+                        {% elif email.status == 'failed' %}
+                        <span class="admin-badge danger">Falha</span>
+                        {% else %}
+                        <span class="admin-badge secondary">{{ email.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ email.created_at|date:"d/m/Y H:i:s" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">Nenhum email encontrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if emails.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if emails.has_previous %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ emails.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            {% endif %}
+            
+            {% for i in emails.paginator.page_range %}
+                {% if emails.number == i %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" 
+                       href="?page={{ i }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                        {{ i }}
+                    </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if emails.has_next %}
+            <li class="page-item">
+                <a class="page-link" 
+                   href="?page={{ emails.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if type %}&type={{ type }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializa DataTables com configurações personalizadas (email_list)
+    $(document).ready(function() {
+        $('.admin-table').DataTable({
+            language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
+            responsive: true,
+            pageLength: 25,
+            order: [[3, 'desc']], // Ordena por data decrescente (coluna 3 (índice 3) é a coluna de data/hora)
+            dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            columnDefs: [
+                { targets: [0], orderable: false }, // Coluna de email (índice 0) não ordenável
+                 { targets: [3], type: 'date-br' } // Coluna de data (índice 3) usa o tipo date-br
+            ]
+        });
+    });
+</script>
+{% endblock %} 
