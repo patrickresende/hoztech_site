@@ -668,7 +668,7 @@ class DataExport(models.Model):
     )
     
     created_at = models.DateTimeField(
-        auto_now_add=True,
+        default=timezone.now,
         verbose_name='Criado em'
     )
     
