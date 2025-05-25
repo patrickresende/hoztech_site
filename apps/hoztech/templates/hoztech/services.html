@@ -5,163 +5,166 @@
 
 {% block extra_css %}
 <style>
-    /* Variáveis */
+    /* Variáveis modernas */
     :root {
-        /* Cores */
-        --primary: var(--neon-red);
-        --primary-soft: var(--neon-red-soft);
+        --neon-red: #ff0033;
+        --neon-red-soft: rgba(255, 0, 51, 0.3);
+        --dark-bg: #0d0d0d;
+        --card-bg: rgba(13, 13, 13, 0.95);
+        --light-gray: #e0e0e0;
         --success: #28a745;
         --success-soft: rgba(40, 167, 69, 0.4);
-        --dark: rgba(13, 13, 13, 0.95);
-        --light: var(--light-gray);
-        
-        /* Dimensões */
-        --gap: 2.5rem;
-        --card-min: 336.7px;
-        --card-max: 556.7px;
-        --transition: 0.3s;
-        
-        /* Z-index */
-        --z-carousel: 1;
-        --z-nav: 10;
-        --z-seals: 3;
+        --transition-normal: 0.3s ease;
     }
 
-    /* Reset */
-    .services-carousel * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Hero */
+    /* Hero Section */
     .services-hero {
-        background: linear-gradient(var(--dark), var(--dark)),
+        background: linear-gradient(rgba(13, 13, 13, 0.95), rgba(13, 13, 13, 0.95)),
                     url('/static/images/background.png');
         background-size: cover;
         background-position: center;
-        padding: 6rem 0 4rem;
-        margin-bottom: 4rem;
-        border-bottom: 1px solid var(--primary);
-        box-shadow: 0 0 20px var(--primary-soft);
+        padding: 4rem 0;
+        margin-bottom: 2rem;
+        text-align: center;
     }
 
     .services-hero h1 {
-        font-size: clamp(2.5rem, 5vw, 3.5rem);
-        margin-bottom: 1.5rem;
-        text-align: center;
-        animation: glitch 3s infinite;
+        color: var(--light-gray);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
     }
 
     .services-hero p {
-        font-size: clamp(1rem, 2vw, 1.2rem);
-        text-align: center;
+        color: var(--light-gray);
         max-width: 800px;
         margin: 0 auto;
-        color: var(--light);
-        line-height: 1.6;
     }
 
     /* Carrossel */
     .services-carousel {
+        padding: 2rem 0;
+        background-color: var(--dark-bg);
+    }
+
+    .carousel-wrapper {
         position: relative;
-        padding: 3rem 0;
-        background-color: var(--light-background);
-        margin-bottom: 4rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        overflow: hidden;
     }
 
-    .services-carousel .carousel {
-        padding: 1rem 0;
-    }
-
-    .services-carousel .carousel-inner {
-        padding: 1rem 0;
-    }
-
-    .services-carousel .carousel-item {
-        transition: transform 0.6s ease-in-out;
-    }
-
-    .services-carousel .carousel-control-prev,
-    .services-carousel .carousel-control-next {
-        width: 5%;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .services-carousel:hover .carousel-control-prev,
-    .services-carousel:hover .carousel-control-next {
-        opacity: 0.8;
-    }
-
-    .services-carousel .carousel-control-prev-icon,
-    .services-carousel .carousel-control-next-icon {
-        background-color: var(--primary-color);
-        padding: 1.5rem;
-        border-radius: 50%;
-        background-size: 50%;
-    }
-
-    .services-carousel .carousel-indicators {
-        margin-bottom: 1rem;
-    }
-
-    .services-carousel .carousel-indicators button {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin: 0 5px;
-        background-color: var(--light-text);
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .services-carousel .carousel-indicators button.active {
-        background-color: var(--primary-color);
-        transform: scale(1.2);
-    }
-
-    /* Cards */
-    .service-card-wrapper {
-        position: relative;
-        height: 100%;
+    .carousel-track {
+        display: flex;
+        transition: transform var(--transition-normal);
+        gap: 2rem;
         padding: 1rem;
     }
 
+    .carousel-slide {
+        flex: 0 0 100%;
+        opacity: 0.5;
+        transform: scale(0.9);
+        transition: all var(--transition-normal);
+    }
+
+    .carousel-slide.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    @media (min-width: 768px) {
+        .carousel-slide {
+            flex: 0 0 calc(50% - 1rem);
+        }
+    }
+
+    @media (min-width: 992px) {
+        .carousel-slide {
+            flex: 0 0 calc(33.333% - 1.33rem);
+        }
+    }
+
+    /* Cards de Serviço */
     .service-card {
-        background: white;
+        background: var(--card-bg);
         border-radius: 1rem;
         padding: 2rem;
         height: 100%;
+        min-height: 600px;
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        border: 1px solid var(--border-color);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
     }
 
-    .service-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    .best-choice-seal {
+        position: absolute;
+        top: -0.5rem;
+        right: -0.5rem;
+        background: var(--neon-red);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        z-index: 1;
+    }
+
+    .premium-seal {
+        position: absolute;
+        top: -0.5rem;
+        right: -0.5rem;
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        z-index: 1;
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .premium-seal i {
+        color: #FFD700;
+        text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
     }
 
     .service-icon {
         font-size: 2.5rem;
-        color: var(--primary-color);
+        color: var(--neon-red);
         text-align: center;
+        margin-top: 1.5rem;
     }
 
     .service-title {
+        color: white;
         font-size: 1.5rem;
         font-weight: 600;
-        color: var(--text-color);
         text-align: center;
         margin: 0;
+        padding-top: 0.5rem;
+        transition: all var(--transition-normal);
+    }
+
+    .service-title.premium {
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .service-card:hover .service-title.premium {
+        transform: scale(1.05);
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     }
 
     .service-description {
-        color: var(--light-text);
+        color: white;
         text-align: center;
         margin: 0;
     }
@@ -169,12 +172,13 @@
     .service-features {
         list-style: none;
         padding: 0;
-        margin: 0;
+        margin: 1rem 0;
+        flex-grow: 1;
     }
 
     .service-features li {
+        color: white;
         padding: 0.5rem 0;
-        color: var(--text-color);
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -182,1011 +186,452 @@
 
     .service-features li::before {
         content: "✓";
-        color: var(--primary-color);
-        font-weight: bold;
+        color: var(--neon-red);
     }
 
+    /* Preços */
     .price-highlight {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
         text-align: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
+        margin: 1rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .price-highlight::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+        );
+        transition: left 0.5s;
+    }
+
+    .price-highlight:hover::before {
+        left: 100%;
     }
 
     .price-highlight.success {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
+        background: rgba(40, 167, 69, 0.1);
+        border-color: var(--success-soft);
+    }
+
+    .price-highlight.success::before {
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(40, 167, 69, 0.2),
+            transparent
+        );
     }
 
     .price-highlight .price-original {
-        font-size: 1rem;
-        color: var(--light-text);
+        color: white;
+        opacity: 0.7;
         text-decoration: line-through;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+        position: relative;
     }
 
     .price-highlight .price-promo {
-        color: var(--success-color);
+        color: var(--success);
+        font-size: 1.75rem;
+        font-weight: 800;
+        display: block;
+        margin: 0.5rem 0;
+        position: relative;
+        text-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
     }
 
-    .btn-cta {
-        width: 100%;
-        padding: 1rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        background: var(--primary-color);
-        border: none;
+    .price-highlight .payment-info {
         color: white;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        opacity: 0.9;
+    }
+
+    /* Botão WhatsApp */
+    .btn-cta {
+        background-color: #25D366;
+        color: white;
+        border: none;
+        padding: 1rem;
         border-radius: 0.5rem;
-        transition: all 0.3s ease;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: auto;
+        transition: all var(--transition-normal);
     }
 
     .btn-cta:hover {
-        background: var(--secondary-color);
+        background-color: #128C7E;
         transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
-    .btn-cta.success {
-        background: var(--success-color);
-    }
-
-    .btn-cta.success:hover {
-        background: var(--success-color);
-        filter: brightness(1.1);
-    }
-
-    /* Selos */
-    .best-choice-seal {
+    /* Controles do Carrossel */
+    .carousel-controls {
         position: absolute;
-        top: -0.5rem;
-        right: -0.5rem;
-        background: var(--primary-color);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 2rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        z-index: 1;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transform: rotate(15deg);
-    }
-
-    .best-choice-seal i {
-        font-size: 1rem;
-    }
-
-    /* Responsividade */
-    @media (max-width: 1200px) {
-        .service-card {
-            padding: 1.5rem;
-        }
-        
-        .service-icon {
-            font-size: 2rem;
-        }
-        
-        .service-title {
-            font-size: 1.25rem;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .services-carousel .carousel-control-prev,
-        .services-carousel .carousel-control-next {
-            opacity: 0.8;
-            width: 10%;
-        }
-        
-        .services-carousel .carousel-control-prev-icon,
-        .services-carousel .carousel-control-next-icon {
-            padding: 1rem;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .services-carousel {
-            padding: 2rem 0;
-        }
-        
-        .service-card-wrapper {
-            padding: 0.5rem;
-        }
-        
-        .service-card {
-            padding: 1.25rem;
-        }
-        
-        .service-icon {
-            font-size: 1.75rem;
-        }
-        
-        .service-title {
-            font-size: 1.1rem;
-        }
-        
-        .price-highlight {
-            font-size: 1.25rem;
-        }
-        
-        .btn-cta {
-            padding: 0.75rem;
-            font-size: 0.875rem;
-        }
-        
-        .best-choice-seal {
-            font-size: 0.75rem;
-            padding: 0.35rem 0.75rem;
-        }
-    }
-
-    /* Modal Styles */
-    .modal {
-        --modal-bg: rgba(13, 13, 13, 0.98);
-        --modal-border: var(--neon-red);
-        --modal-shadow: var(--neon-red-soft);
-        --modal-text: #ffffff;
-        --modal-text-light: #cccccc;
-        --modal-input-bg: rgba(255, 255, 255, 0.05);
-        --modal-input-border: rgba(255, 255, 255, 0.1);
-        --modal-input-focus: rgba(255, 0, 51, 0.2);
-    }
-
-    .modal-dialog {
-        max-width: 600px;
-        margin: 1.75rem auto;
-        transition: transform 0.3s ease-out;
-    }
-
-    .modal-content {
-        background: var(--modal-bg);
-        border: 1px solid var(--modal-border);
-        border-radius: 1rem;
-        box-shadow: 0 0 30px var(--modal-shadow);
-        color: var(--modal-text);
-    }
-
-    .modal-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid var(--modal-border);
-        display: flex;
-        align-items: center;
         justify-content: space-between;
-        gap: 1rem;
+        padding: 0 1rem;
+        pointer-events: none;
     }
 
-    .modal-title {
-        color: var(--modal-text);
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .modal-title i {
-        color: var(--modal-border);
-        font-size: 1.25rem;
-    }
-
-    .modal-body {
-        padding: 1.5rem;
-        max-height: calc(100vh - 210px);
-        overflow-y: auto;
-    }
-
-    .modal-footer {
-        padding: 1.25rem 1.5rem;
-        border-top: 1px solid var(--modal-border);
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-    }
-
-    .btn-close {
-        background: transparent;
-        border: none;
-        color: var(--modal-text);
-        font-size: 1.25rem;
-        padding: 0.5rem;
+    .carousel-button {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid var(--neon-red);
         cursor: pointer;
-        opacity: 0.75;
-        transition: all 0.3s ease;
-        filter: invert(1) grayscale(100%) brightness(200%);
-    }
-
-    .btn-close:hover {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-
-    /* Form Styles */
-    .form-label {
-        color: var(--modal-text);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        pointer-events: auto;
+        transition: all var(--transition-normal);
+        position: relative;
     }
 
-    .form-label i {
-        color: var(--modal-border);
-        font-size: 1rem;
+    .carousel-button::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-top: 2px solid var(--neon-red);
+        border-right: 2px solid var(--neon-red);
+        position: absolute;
     }
 
-    .form-control {
-        background: var(--modal-input-bg);
-        border: 1px solid var(--modal-input-border);
-        border-radius: 0.5rem;
-        color: var(--modal-text);
-        padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
+    #prevButton::before {
+        transform: rotate(-135deg) translateX(-2px);
     }
 
-    .form-control:focus {
-        background: var(--modal-input-bg);
-        border-color: var(--modal-border);
-        box-shadow: 0 0 0 0.25rem var(--modal-input-focus);
-        color: var(--modal-text);
+    #nextButton::before {
+        transform: rotate(45deg) translateX(-2px);
     }
 
-    .form-control::placeholder {
-        color: var(--modal-text-light);
+    .carousel-button:hover {
+        background: var(--neon-red);
+    }
+
+    .carousel-button:hover::before {
+        border-color: white;
+    }
+
+    .carousel-button:disabled {
         opacity: 0.5;
+        cursor: not-allowed;
     }
 
-    .form-text {
-        color: var(--modal-text-light);
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
-    }
-
-    .invalid-feedback {
-        color: #ff6b6b;
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
-    }
-
-    .form-check {
-        margin-top: 1.5rem;
-    }
-
-    .form-check-input {
-        background-color: var(--modal-input-bg);
-        border-color: var(--modal-input-border);
-    }
-
-    .form-check-input:checked {
-        background-color: var(--modal-border);
-        border-color: var(--modal-border);
-    }
-
-    .form-check-label {
-        color: var(--modal-text);
-        font-size: 0.95rem;
-    }
-
-    .form-check-label a {
-        color: var(--modal-border);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .form-check-label a:hover {
-        color: var(--modal-text);
-        text-decoration: underline;
-    }
-
-    /* Alert Styles */
-    .alert {
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
+    /* Indicadores */
+    .carousel-indicators {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        border: none;
-    }
-
-    .alert i {
-        font-size: 1.25rem;
-    }
-
-    .alert-info {
-        background: rgba(0, 123, 255, 0.1);
-        color: #4dabf7;
-    }
-
-    .alert-success {
-        background: rgba(40, 167, 69, 0.1);
-        color: #51cf66;
-    }
-
-    .alert-danger {
-        background: rgba(255, 107, 107, 0.1);
-        color: #ff6b6b;
-    }
-
-    /* Button Styles */
-    .btn-modal {
-        padding: 0.75rem 1.5rem;
-        font-weight: 500;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
+        justify-content: center;
         gap: 0.5rem;
+        margin-top: 2rem;
     }
 
-    .btn-modal i {
-        font-size: 1.1rem;
+    .carousel-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--neon-red-soft);
+        cursor: pointer;
+        transition: all var(--transition-normal);
     }
 
-    .btn-secondary {
-        background: var(--modal-input-bg);
-        border: 1px solid var(--modal-input-border);
-        color: var(--modal-text);
-    }
-
-    .btn-secondary:hover {
-        background: var(--modal-input-border);
-        border-color: var(--modal-input-border);
-        color: var(--modal-text);
-    }
-
-    .btn-neon {
-        background: var(--modal-border);
-        border: none;
-        color: var(--modal-text);
-    }
-
-    .btn-neon:hover {
-        background: var(--modal-border);
-        filter: brightness(1.2);
-        color: var(--modal-text);
-        transform: translateY(-2px);
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-        .modal-dialog {
-            margin: 1rem;
-            max-width: calc(100% - 2rem);
-        }
-
-        .modal-header {
-            padding: 1.25rem;
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
-        }
-
-        .modal-body {
-            padding: 1.25rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.25rem;
-            flex-direction: column;
-        }
-
-        .btn-modal {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .form-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .modal-dialog {
-            margin: 0.5rem;
-            max-width: calc(100% - 1rem);
-        }
-
-        .modal-header {
-            padding: 1rem;
-        }
-
-        .modal-body {
-            padding: 1rem;
-        }
-
-        .modal-footer {
-            padding: 1rem;
-        }
-
-        .form-control {
-            padding: 0.625rem 0.875rem;
-        }
-
-        .alert {
-            padding: 0.875rem;
-        }
+    .carousel-indicator.active {
+        background: var(--neon-red);
+        transform: scale(1.2);
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- Hero -->
-<section class="services-hero" role="banner" aria-label="Introdução aos serviços">
+<section class="services-hero">
     <div class="container">
-        <h1 class="hack-title" data-text="Nossos Serviços">Nossos Serviços</h1>
-        <p>Transforme sua presença digital com nossas soluções tecnológicas personalizadas. 
-           Escolha o plano ideal para o seu negócio e comece sua jornada digital hoje mesmo.</p>
+        <h1>Nossos Serviços</h1>
+        <p>Transforme sua presença digital com nossas soluções tecnológicas personalizadas.</p>
     </div>
 </section>
 
 <!-- Carrossel -->
-<section class="services-carousel" role="region" aria-label="Carrossel de serviços">
+<section class="services-carousel">
     <div class="container">
-        <div id="servicesCarousel" class="carousel slide" data-bs-ride="carousel">
-            <!-- Indicadores -->
-            <div class="carousel-indicators">
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="carouselTrack">
                 {% for service in services %}
-                <button type="button" 
-                        data-bs-target="#servicesCarousel" 
-                        data-bs-slide-to="{{ forloop.counter0 }}"
-                        {% if forloop.first %}class="active" aria-current="true"{% endif %}
-                        aria-label="Slide {{ forloop.counter }}">
-                </button>
-                {% endfor %}
-            </div>
-
-            <!-- Slides -->
-            <div class="carousel-inner">
-                {% for service in services %}
-                <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <div class="row g-4 justify-content-center">
-                        {% for service in services %}
-                        <div class="col-md-6 col-lg-3">
-                            <div class="service-card-wrapper">
-                                {% if service.id == 'site-institucional' %}
-                                <div class="best-choice-seal" aria-label="Melhor escolha">
-                                    <i class="bi bi-star-fill" aria-hidden="true"></i>
-                                    <span>Melhor<br>Escolha</span>
-                                </div>
-                                {% endif %}
-                                
-                                <div class="service-card" data-service="{{ service.id }}">
-                                    <div class="service-icon">
-                                        <i class="{{ service.icon }}" aria-hidden="true"></i>
-                                    </div>
-                                    <h3 class="service-title">{{ service.title|escape }}</h3>
-                                    <p class="service-description">{{ service.description|escape }}</p>
-                                    
-                                    <ul class="service-features" role="list">
-                                        {% for feature in service.features %}
-                                        <li>{{ feature|escape }}</li>
-                                        {% endfor %}
-                                    </ul>
-
-                                    {% if service.id == 'site-institucional' %}
-                                    <div class="price-highlight success">
-                                        <span class="price-original" aria-label="Preço original: R$ 349,00">
-                                            R$ 349,00
-                                        </span>
-                                        <span class="price-promo" aria-label="Preço promocional: R$ 297,90">
-                                            R$ 297,90
-                                        </span>
-                                    </div>
-                                    {% else %}
-                                    <span class="price-highlight" aria-label="Preço: R$ {{ service.price|floatformat:2 }}">
-                                        R$ {{ service.price|floatformat:2 }}
-                                    </span>
-                                    {% endif %}
-
-                                    <button class="btn btn-cta {% if service.id == 'site-institucional' %}success{% endif %}"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#serviceRequestModal"
-                                            data-service-id="{{ service.id|escape }}"
-                                            data-service-title="{{ service.title|escape }}"
-                                            aria-label="Solicitar serviço: {{ service.title|escape }}">
-                                        Solicitar Serviço
-                                    </button>
-                                </div>
-                            </div>
+                <div class="carousel-slide {% if forloop.first %}active{% endif %}"
+                     data-service-id="{{ service.id }}">
+                    <div class="service-card">
+                        {% if service.id == 'site-institucional' %}
+                        <div class="best-choice-seal">
+                            <i class="bi bi-star-fill"></i>
+                            <span>Melhor<br>Escolha</span>
                         </div>
-                        {% endfor %}
+                        {% endif %}
+
+                        <div class="service-icon">
+                            <i class="{{ service.icon }}"></i>
+                        </div>
+                        <h3 class="service-title {% if service.id == 'suporte-premium' %}premium{% endif %}">
+                            {% if service.id == 'suporte-premium' %}
+                                Modelo Premium
+                            {% else %}
+                                {{ service.title }}
+                            {% endif %}
+                        </h3>
+                        {% if service.id == 'suporte-premium' %}
+                        <div class="premium-seal">
+                            <i class="bi bi-award-fill"></i>
+                            <span>Premium</span>
+                        </div>
+                        {% endif %}
+                        <p class="service-description">{{ service.description }}</p>
+
+                        <ul class="service-features">
+                            {% for feature in service.features %}
+                            <li>{{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+
+                        {% if service.id == 'site-institucional' %}
+                        <div class="price-highlight success">
+                            <span class="price-original">R$ 349,00</span>
+                            <span class="price-promo">R$ 297,90</span>
+                            <small class="payment-info">em até 12x no cartão</small>
+                        </div>
+                        {% elif service.id == 'loja-virtual' %}
+                        <div class="price-highlight success">
+                            <span class="price-original">R$ 750,00</span>
+                            <span class="price-promo">R$ 497,00</span>
+                            <small class="payment-info">em até 12x no cartão</small>
+                        </div>
+                        {% elif service.id == 'suporte-premium' %}
+                        <div class="price-highlight success">
+                            <span class="price-promo" style="font-size: 1.5rem; color: white;">Entre em contato</span>
+                            <small class="payment-info">Fale Conosco</small>
+                        </div>
+                        {% elif service.id == 'landing-page' %}
+                        <div class="price-highlight success">
+                            <span class="price-original">R$ 249,90</span>
+                            <span class="price-promo">R$ 119,90</span>
+                            <small class="payment-info">no PIX à vista</small>
+                        </div>
+                        {% endif %}
+
+                        {% if service.id == 'site-institucional' %}
+                        <a href="https://wa.me/5521973007575?text=Olá! Gostaria de saber mais sobre o Site Institucional por R$ 297,90 em até 12x. Poderia me ajudar a criar a presença digital da minha empresa?" 
+                           class="btn-cta"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <i class="bi bi-whatsapp"></i>
+                            Solicitar pelo WhatsApp
+                        </a>
+                        {% elif service.id == 'loja-virtual' %}
+                        <a href="https://wa.me/5521973007575?text=Olá! Tenho interesse na Loja Virtual Básica por R$ 497,00 em até 12x. Poderia me ajudar a começar a vender online?" 
+                           class="btn-cta"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <i class="bi bi-whatsapp"></i>
+                            Solicitar pelo WhatsApp
+                        </a>
+                        {% elif service.id == 'suporte-premium' %}
+                        <a href="https://wa.me/5521973007575?text=Olá! Vim pelo serviço premium e gostaria de saber mais sobre o Modelo Premium. Poderia me ajudar a entender melhor as soluções personalizadas para o meu negócio?" 
+                           class="btn-cta"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <i class="bi bi-whatsapp"></i>
+                            Solicitar pelo WhatsApp
+                        </a>
+                        {% elif service.id == 'landing-page' %}
+                        <a href="https://wa.me/5521973007575?text=Olá! Tenho interesse na Landing Page por R$ 119,90 no PIX. Poderia me ajudar a criar uma página de captura para minha campanha?" 
+                           class="btn-cta"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <i class="bi bi-whatsapp"></i>
+                            Solicitar pelo WhatsApp
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
 
-            <!-- Controles -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#servicesCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#servicesCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Próximo</span>
-            </button>
+            <div class="carousel-controls">
+                <button class="carousel-button" id="prevButton" aria-label="Anterior"></button>
+                <button class="carousel-button" id="nextButton" aria-label="Próximo"></button>
+            </div>
+
+            <div class="carousel-indicators" id="carouselIndicators"></div>
         </div>
     </div>
 </section>
-
-<!-- Modal de Solicitação -->
-<div class="modal fade" id="serviceRequestModal" tabindex="-1" 
-     role="dialog" aria-labelledby="serviceRequestModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="serviceRequestModalLabel">
-                    <i class="bi bi-gear-fill"></i>
-                    Solicitar Serviço
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                        aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <div id="serviceRequestAlert" class="alert d-none" role="alert">
-                    <i class="bi bi-info-circle"></i>
-                    <span id="serviceRequestAlertMessage"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" 
-                            aria-label="Fechar"></button>
-                </div>
-
-                <form id="serviceRequestForm" class="needs-validation" novalidate>
-                    {% csrf_token %}
-                    <input type="hidden" id="serviceId" name="service_id">
-                    
-                    <div class="form-grid">
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">
-                                <i class="bi bi-person-fill"></i>
-                                Nome Completo *
-                            </label>
-                            <input type="text" class="form-control" id="nome" name="nome" required
-                                   pattern="[A-Za-zÀ-ÿ\s]{3,}" minlength="3" maxlength="100"
-                                   placeholder="Digite seu nome completo"
-                                   aria-describedby="nomeHelp">
-                            <div id="nomeHelp" class="form-text">
-                                Digite seu nome completo (mínimo 3 caracteres)
-                            </div>
-                            <div class="invalid-feedback">
-                                Por favor, insira seu nome completo.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="bi bi-envelope-fill"></i>
-                                E-mail *
-                            </label>
-                            <input type="email" class="form-control" id="email" name="email" required
-                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                                   placeholder="seu@email.com"
-                                   aria-describedby="emailHelp">
-                            <div id="emailHelp" class="form-text">
-                                Digite um e-mail válido
-                            </div>
-                            <div class="invalid-feedback">
-                                Por favor, insira um e-mail válido.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="telefone" class="form-label">
-                                <i class="bi bi-whatsapp"></i>
-                                WhatsApp *
-                            </label>
-                            <input type="tel" class="form-control" id="telefone" name="telefone" required
-                                   pattern="\(\d{2}\)\s\d{5}-\d{4}"
-                                   placeholder="(99) 99999-9999"
-                                   aria-describedby="telefoneHelp">
-                            <div id="telefoneHelp" class="form-text">
-                                Formato: (99) 99999-9999
-                            </div>
-                            <div class="invalid-feedback">
-                                Por favor, insira um número válido.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="mensagem" class="form-label">
-                                <i class="bi bi-chat-left-text-fill"></i>
-                                Mensagem (opcional)
-                            </label>
-                            <textarea class="form-control" id="mensagem" name="mensagem" rows="3"
-                                      maxlength="500" placeholder="Digite sua mensagem..."
-                                      aria-describedby="mensagemHelp"></textarea>
-                            <div id="mensagemHelp" class="form-text">
-                                Máximo 500 caracteres
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="lgpd" required
-                               aria-describedby="lgpdHelp">
-                        <label class="form-check-label" for="lgpd">
-                            Li e concordo com a <a href="#" data-bs-toggle="modal" 
-                                                 data-bs-target="#lgpdModal">Política de Privacidade</a> *
-                        </label>
-                        <div id="lgpdHelp" class="form-text">
-                            Você precisa concordar com a política de privacidade
-                        </div>
-                        <div class="invalid-feedback">
-                            Você precisa concordar com a política de privacidade.
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-modal btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-lg"></i>
-                    Fechar
-                </button>
-                <button type="button" class="btn btn-modal btn-neon" id="submitServiceRequest">
-                    <i class="bi bi-send-fill"></i>
-                    Enviar Solicitação
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal LGPD -->
-<div class="modal fade" id="lgpdModal" tabindex="-1" role="dialog" 
-     aria-labelledby="lgpdModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="lgpdModalLabel">
-                    <i class="bi bi-shield-lock-fill"></i>
-                    Política de Privacidade
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" 
-                        aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <div class="privacy-content">
-                    <section class="mb-4">
-                        <h6 class="privacy-title">
-                            <i class="bi bi-1-circle-fill"></i>
-                            1. Coleta de Dados
-                        </h6>
-                        <p class="privacy-text">
-                            Coletamos apenas os dados necessários para o contato e prestação dos serviços solicitados.
-                        </p>
-                    </section>
-
-                    <section class="mb-4">
-                        <h6 class="privacy-title">
-                            <i class="bi bi-2-circle-fill"></i>
-                            2. Uso dos Dados
-                        </h6>
-                        <p class="privacy-text">Seus dados serão utilizados exclusivamente para:</p>
-                        <ul class="privacy-list">
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Responder sua solicitação
-                            </li>
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Prestar os serviços contratados
-                            </li>
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Enviar informações relevantes sobre nossos serviços
-                            </li>
-                        </ul>
-                    </section>
-
-                    <section class="mb-4">
-                        <h6 class="privacy-title">
-                            <i class="bi bi-3-circle-fill"></i>
-                            3. Proteção dos Dados
-                        </h6>
-                        <p class="privacy-text">
-                            Seus dados são protegidos e não serão compartilhados com terceiros sem seu consentimento.
-                        </p>
-                    </section>
-
-                    <section class="mb-4">
-                        <h6 class="privacy-title">
-                            <i class="bi bi-4-circle-fill"></i>
-                            4. Seus Direitos
-                        </h6>
-                        <p class="privacy-text">Você tem direito a:</p>
-                        <ul class="privacy-list">
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Acessar seus dados
-                            </li>
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Corrigir informações
-                            </li>
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Solicitar a exclusão dos dados
-                            </li>
-                            <li>
-                                <i class="bi bi-check-circle-fill"></i>
-                                Revogar o consentimento
-                            </li>
-                        </ul>
-                    </section>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-modal btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-lg"></i>
-                    Fechar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    /* Privacy Modal Styles */
-    .privacy-content {
-        color: var(--modal-text);
-    }
-
-    .privacy-title {
-        color: var(--modal-border);
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .privacy-title i {
-        font-size: 1.25rem;
-    }
-
-    .privacy-text {
-        color: var(--modal-text-light);
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
-
-    .privacy-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .privacy-list li {
-        color: var(--modal-text-light);
-        padding: 0.5rem 0;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .privacy-list li i {
-        color: var(--modal-border);
-        font-size: 1rem;
-    }
-
-    @media (max-width: 768px) {
-        .privacy-title {
-            font-size: 1rem;
-        }
-
-        .privacy-text {
-            font-size: 0.95rem;
-        }
-
-        .privacy-list li {
-            font-size: 0.95rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .privacy-title {
-            font-size: 0.95rem;
-        }
-
-        .privacy-text {
-            font-size: 0.9rem;
-        }
-
-        .privacy-list li {
-            font-size: 0.9rem;
-        }
-    }
-</style>
+{% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const carousel = document.getElementById('servicesCarousel');
-    if (!carousel) return;
+    class Carousel {
+        constructor() {
+            this.track = document.getElementById('carouselTrack');
+            this.slides = Array.from(document.querySelectorAll('.carousel-slide'));
+            this.prevButton = document.getElementById('prevButton');
+            this.nextButton = document.getElementById('nextButton');
+            this.indicatorsContainer = document.getElementById('carouselIndicators');
+            
+            this.currentIndex = 0;
+            this.slidesPerView = this.getSlidesPerView();
+            this.isAnimating = false;
+            
+            this.init();
+        }
 
-    // Inicializa o carrossel com opções personalizadas
-    const bsCarousel = new bootstrap.Carousel(carousel, {
-        interval: 5000,
-        touch: true,
-        pause: 'hover'
-    });
+        init() {
+            this.setupEventListeners();
+            this.createIndicators();
+            this.observeResize();
+            this.updateCarousel();
+        }
 
-    // Adiciona suporte a gestos de toque
-    let touchStartX = 0;
-    let touchEndX = 0;
+        setupEventListeners() {
+            this.prevButton.addEventListener('click', () => this.slide('prev'));
+            this.nextButton.addEventListener('click', () => this.slide('next'));
+            
+            this.track.addEventListener('touchstart', (e) => {
+                this.touchStartX = e.touches[0].clientX;
+            }, { passive: true });
 
-    carousel.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+            this.track.addEventListener('touchend', (e) => {
+                this.touchEndX = e.changedTouches[0].clientX;
+                this.handleSwipe();
+            }, { passive: true });
 
-    carousel.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') this.slide('prev');
+                if (e.key === 'ArrowRight') this.slide('next');
+            });
+        }
 
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
+        handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = this.touchStartX - this.touchEndX;
 
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                bsCarousel.next();
+            if (Math.abs(diff) > swipeThreshold) {
+                this.slide(diff > 0 ? 'next' : 'prev');
+            }
+        }
+
+        getSlidesPerView() {
+            if (window.innerWidth >= 992) return 3;
+            if (window.innerWidth >= 768) return 2;
+            return 1;
+        }
+
+        observeResize() {
+            const resizeObserver = new ResizeObserver(() => {
+                const newSlidesPerView = this.getSlidesPerView();
+                if (newSlidesPerView !== this.slidesPerView) {
+                    this.slidesPerView = newSlidesPerView;
+                    this.currentIndex = 0;
+                    this.updateCarousel();
+                }
+            });
+
+            resizeObserver.observe(this.track);
+        }
+
+        slide(direction) {
+            if (this.isAnimating) return;
+
+            const totalSlides = this.slides.length;
+            const maxIndex = totalSlides - this.slidesPerView;
+
+            if (direction === 'next' && this.currentIndex < maxIndex) {
+                this.currentIndex++;
+            } else if (direction === 'prev' && this.currentIndex > 0) {
+                this.currentIndex--;
             } else {
-                bsCarousel.prev();
-            }
-        }
-    }
-
-    // Atualiza indicadores ao mudar de slide
-    carousel.addEventListener('slide.bs.carousel', function(e) {
-        const indicators = carousel.querySelectorAll('.carousel-indicators button');
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === e.to);
-        });
-    });
-
-    // Ajusta altura dos cards
-    function adjustCardHeights() {
-        const cards = document.querySelectorAll('.service-card');
-        if (!cards.length) return;
-
-        // Reseta alturas
-        cards.forEach(card => card.style.height = 'auto');
-
-        // Encontra a maior altura
-        let maxHeight = 0;
-        cards.forEach(card => {
-            maxHeight = Math.max(maxHeight, card.offsetHeight);
-        });
-
-        // Aplica a altura máxima
-        cards.forEach(card => card.style.height = maxHeight + 'px');
-    }
-
-    // Ajusta alturas inicialmente e em redimensionamento
-    adjustCardHeights();
-    window.addEventListener('resize', adjustCardHeights);
-
-    // Form Validation and Submission
-    const serviceRequestForm = document.getElementById('serviceRequestForm');
-    const serviceRequestModal = document.getElementById('serviceRequestModal');
-    const serviceRequestAlert = document.getElementById('serviceRequestAlert');
-    const serviceRequestAlertMessage = document.getElementById('serviceRequestAlertMessage');
-    const submitServiceRequest = document.getElementById('submitServiceRequest');
-
-    if (serviceRequestForm && submitServiceRequest) {
-        // Form validation
-        serviceRequestForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            if (!serviceRequestForm.checkValidity()) {
-                event.stopPropagation();
-                serviceRequestForm.classList.add('was-validated');
                 return;
             }
-            submitForm();
-        });
 
-        // Submit button click
-        submitServiceRequest.addEventListener('click', function() {
-            if (!serviceRequestForm.checkValidity()) {
-                serviceRequestForm.classList.add('was-validated');
-                return;
+            this.updateCarousel();
+        }
+
+        updateCarousel() {
+            this.isAnimating = true;
+
+            const slideWidth = this.slides[0].offsetWidth + 32;
+            const offset = -this.currentIndex * slideWidth;
+
+            this.track.style.transform = `translateX(${offset}px)`;
+
+            this.slides.forEach((slide, index) => {
+                const isActive = index >= this.currentIndex && 
+                               index < this.currentIndex + this.slidesPerView;
+                slide.classList.toggle('active', isActive);
+            });
+
+            this.updateIndicators();
+            this.updateButtons();
+
+            setTimeout(() => {
+                this.isAnimating = false;
+            }, 300);
+        }
+
+        createIndicators() {
+            const totalPages = Math.ceil(this.slides.length / this.slidesPerView);
+            
+            for (let i = 0; i < totalPages; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = `carousel-indicator ${i === 0 ? 'active' : ''}`;
+                indicator.addEventListener('click', () => {
+                    this.currentIndex = i * this.slidesPerView;
+                    this.updateCarousel();
+                });
+                this.indicatorsContainer.appendChild(indicator);
             }
-            submitForm();
-        });
+        }
 
-        // Form submission
-        function submitForm() {
-            const formData = new FormData(serviceRequestForm);
-            const data = Object.fromEntries(formData.entries());
+        updateIndicators() {
+            const indicators = this.indicatorsContainer.children;
+            const currentPage = Math.floor(this.currentIndex / this.slidesPerView);
 
-            // Show loading state
-            submitServiceRequest.disabled = true;
-            submitServiceRequest.innerHTML = `
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Enviando...
-            `;
-
-            // Send request
-            fetch('/api/service-request/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': data.csrfmiddlewaretoken
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('success', data.message);
-                    serviceRequestForm.reset();
-                    serviceRequestForm.classList.remove('was-validated');
-                    setTimeout(() => {
-                        const modal = bootstrap.Modal.getInstance(serviceRequestModal);
-                        modal.hide();
-                    }, 2000);
-                } else {
-                    showAlert('danger', data.message || 'Erro ao enviar solicitação.');
-                }
-            })
-            .catch(error => {
-                showAlert('danger', 'Erro ao enviar solicitação. Tente novamente.');
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                // Reset button state
-                submitServiceRequest.disabled = false;
-                submitServiceRequest.innerHTML = `
-                    <i class="bi bi-send-fill"></i>
-                    Enviar Solicitação
-                `;
+            Array.from(indicators).forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentPage);
             });
         }
 
-        // Show alert message
-        function showAlert(type, message) {
-            serviceRequestAlert.className = `alert alert-${type}`;
-            serviceRequestAlertMessage.textContent = message;
-            serviceRequestAlert.classList.remove('d-none');
+        updateButtons() {
+            const maxIndex = this.slides.length - this.slidesPerView;
+            this.prevButton.disabled = this.currentIndex === 0;
+            this.nextButton.disabled = this.currentIndex >= maxIndex;
         }
-
-        // Phone mask
-        const telefoneInput = document.getElementById('telefone');
-        if (telefoneInput) {
-            telefoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length <= 11) {
-                    value = value.replace(/^(\d{2})(\d)/g, '($1) $2')
-                               .replace(/(\d)(\d{4})$/, '$1-$2');
-                }
-                e.target.value = value;
-            });
-        }
-
-        // Service selection
-        const serviceButtons = document.querySelectorAll('[data-bs-target="#serviceRequestModal"]');
-        serviceButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const serviceId = this.dataset.serviceId;
-                const serviceTitle = this.dataset.serviceTitle;
-                document.getElementById('serviceId').value = serviceId;
-                document.getElementById('serviceRequestModalLabel').innerHTML = `
-                    <i class="bi bi-gear-fill"></i>
-                    Solicitar: ${serviceTitle}
-                `;
-            });
-        });
     }
+
+    // Inicializar o carrossel
+    const carousel = new Carousel();
 });
 </script>
 {% endblock %}

@@ -77,9 +77,6 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'storages',
     'corsheaders',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
     'rest_framework',
     'django_filters',
     'mercadopago',
@@ -96,7 +93,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'apps.hoztech.middleware.AdminSessionTimeoutMiddleware',  # Timeout da sessão administrativa
     'apps.hoztech.middleware.AdminIPRestrictionMiddleware',  # Restrição de IP para admin
 ]
@@ -130,25 +126,12 @@ WSGI_APPLICATION = 'techsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Configuração do banco de dados usando dj_database_url
-db_config = dj_database_url.parse(
-    env('DATABASE_URL', default='postgres://hoztech_user:hoztech_pass@localhost:5432/hoztech_db'),
-    conn_max_age=600,  # 10 minutos
-)
-
-# Adiciona as opções de conexão
-db_config.update({
-    'OPTIONS': {
-        'connect_timeout': 10,
-        'keepalives': 1,
-        'keepalives_idle': 30,
-        'keepalives_interval': 10,
-        'keepalives_count': 5,
-    }
-})
-
 DATABASES = {
-    'default': db_config
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL', default='postgres://hoztech_user:hoztech_pass@localhost:5432/hoztech_db'),
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 }
 
 # Cache
@@ -285,16 +268,9 @@ EMAIL_SUBJECT_PREFIX = '[Hoztech] '
 # Authentication
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 SITE_ID = 1
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
 
 # CORS
 CORS_ALLOWED_ORIGINS = [

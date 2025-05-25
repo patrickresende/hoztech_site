@@ -15,6 +15,33 @@
         --security-card-bg: rgba(0, 0, 0, 0.2);
         --security-card-border: rgba(255, 0, 0, 0.1);
         --security-card-hover: rgba(255, 0, 0, 0.05);
+        --transition-normal: 0.3s ease;
+        --gradient-red: linear-gradient(45deg, var(--neon-red), #ff3366);
+    }
+
+    /* Hero Section */
+    .security-hero {
+        background: linear-gradient(rgba(13, 13, 13, 0.95), rgba(13, 13, 13, 0.95)),
+                    url('/static/images/background.png');
+        background-size: cover;
+        background-position: center;
+        padding: 4rem 0;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .security-hero h1 {
+        color: var(--security-text);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 10px var(--security-shadow);
+    }
+
+    .security-hero p {
+        color: var(--security-text-light);
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 1.1rem;
     }
 
     /* Container principal */
@@ -32,7 +59,8 @@
         margin-bottom: 2rem;
         box-shadow: 0 0 20px var(--security-shadow);
         border: 1px solid var(--security-card-border);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all var(--transition-normal);
+        backdrop-filter: blur(10px);
     }
 
     .security-card:hover {
@@ -41,12 +69,18 @@
     }
 
     .security-card h2 {
-        color: var(--security-border);
+        background: var(--gradient-red);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
         margin-bottom: 1.5rem;
         font-size: 1.8rem;
         border-bottom: 2px solid var(--security-border);
         padding-bottom: 0.5rem;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     /* Grupos de informação */
@@ -56,10 +90,33 @@
         background: var(--security-card-bg);
         border-radius: 0.75rem;
         border-left: 3px solid var(--security-border);
-        transition: background-color 0.3s ease;
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .info-group::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 0, 0, 0.1),
+            transparent
+        );
+        transition: left 0.5s;
+    }
+
+    .info-group:hover::before {
+        left: 100%;
     }
 
     .info-group:hover {
+        transform: translateX(5px);
         background: var(--security-card-hover);
     }
 
@@ -68,6 +125,9 @@
         font-size: 1.2rem;
         margin-bottom: 1rem;
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     /* Itens de informação */
@@ -79,17 +139,21 @@
         padding: 0.75rem;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 0.5rem;
-        transition: background-color 0.3s ease;
+        transition: all var(--transition-normal);
     }
 
     .info-item:hover {
         background: rgba(255, 255, 255, 0.08);
+        transform: translateX(5px);
     }
 
     .info-label {
         color: var(--security-text);
         font-weight: 500;
         flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .info-value {
@@ -97,6 +161,10 @@
         text-align: right;
         flex: 1;
         padding-left: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
     }
 
     /* Status de segurança */
@@ -107,8 +175,7 @@
         border-radius: 1rem;
         font-size: 0.9rem;
         font-weight: 500;
-        margin-left: 0.5rem;
-        transition: all 0.3s ease;
+        transition: all var(--transition-normal);
     }
 
     .security-status i {
@@ -143,6 +210,9 @@
         margin-bottom: 1.5rem;
         font-size: 1.4rem;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .tip-item {
@@ -153,7 +223,29 @@
         background: var(--security-card-bg);
         border-radius: 0.75rem;
         border-left: 3px solid var(--security-border);
-        transition: all 0.3s ease;
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tip-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 0, 0, 0.1),
+            transparent
+        );
+        transition: left 0.5s;
+    }
+
+    .tip-item:hover::before {
+        left: 100%;
     }
 
     .tip-item:hover {
@@ -166,6 +258,11 @@
         font-size: 1.5rem;
         margin-right: 1rem;
         flex-shrink: 0;
+        transition: transform var(--transition-normal);
+    }
+
+    .tip-item:hover .tip-icon {
+        transform: scale(1.1);
     }
 
     .tip-content {
@@ -193,6 +290,19 @@
         overflow: hidden;
         border: 1px solid var(--security-card-border);
         box-shadow: 0 0 15px var(--security-shadow);
+        position: relative;
+    }
+
+    .map-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 1;
+        pointer-events: none;
     }
 
     /* Última atualização */
@@ -203,10 +313,22 @@
         margin-top: 1.5rem;
         padding-top: 1rem;
         border-top: 1px solid var(--security-card-border);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
     }
 
     /* Media Queries */
     @media (max-width: 992px) {
+        .security-hero {
+            padding: 3rem 0;
+        }
+
+        .security-hero h1 {
+            font-size: 2.2rem;
+        }
+
         .security-container {
             padding: 1.5rem 1rem;
         }
@@ -229,6 +351,18 @@
     }
 
     @media (max-width: 768px) {
+        .security-hero {
+            padding: 2.5rem 0;
+        }
+
+        .security-hero h1 {
+            font-size: 2rem;
+        }
+
+        .security-hero p {
+            font-size: 1rem;
+        }
+
         .security-container {
             padding: 1rem;
         }
@@ -257,6 +391,7 @@
             text-align: left;
             padding-left: 0;
             margin-top: 0.35rem;
+            justify-content: flex-start;
         }
 
         .security-status {
@@ -287,6 +422,14 @@
     }
 
     @media (max-width: 576px) {
+        .security-hero {
+            padding: 2rem 0;
+        }
+
+        .security-hero h1 {
+            font-size: 1.8rem;
+        }
+
         .security-container {
             padding: 0.75rem;
         }
@@ -345,64 +488,72 @@
 {% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<section class="security-hero">
+    <div class="container">
+        <h1>Minha Segurança</h1>
+        <p>Monitore e proteja sua presença digital com nossas ferramentas avançadas de segurança.</p>
+    </div>
+</section>
+
 <div class="security-container">
     <div class="security-card">
-        <h2><i class="bi bi-shield-lock me-2"></i>Informações de Segurança</h2>
+        <h2><i class="bi bi-shield-lock"></i>Informações de Segurança</h2>
         
         <!-- Informações de IP e Localização -->
         <div class="info-group">
-            <h3><i class="bi bi-geo-alt me-2"></i>IP e Localização</h3>
+            <h3><i class="bi bi-geo-alt"></i>IP e Localização</h3>
             <div class="info-item">
-                <span class="info-label">Endereço IP:</span>
+                <span class="info-label"><i class="bi bi-globe"></i>Endereço IP:</span>
                 <span class="info-value">{{ ip }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Localização:</span>
+                <span class="info-label"><i class="bi bi-geo"></i>Localização:</span>
                 <span class="info-value">{{ location_data.city }}, {{ location_data.region }}, {{ location_data.country }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Coordenadas:</span>
+                <span class="info-label"><i class="bi bi-geo-alt"></i>Coordenadas:</span>
                 <span class="info-value">{{ location_data.latitude }}, {{ location_data.longitude }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Fuso Horário:</span>
+                <span class="info-label"><i class="bi bi-clock"></i>Fuso Horário:</span>
                 <span class="info-value">{{ location_data.timezone }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">ISP:</span>
+                <span class="info-label"><i class="bi bi-building"></i>ISP:</span>
                 <span class="info-value">{{ location_data.isp }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">ASN:</span>
+                <span class="info-label"><i class="bi bi-diagram-3"></i>ASN:</span>
                 <span class="info-value">{{ location_data.asn }}</span>
             </div>
             {% if location_data.postal %}
             <div class="info-item">
-                <span class="info-label">CEP/Código Postal:</span>
+                <span class="info-label"><i class="bi bi-mailbox"></i>CEP/Código Postal:</span>
                 <span class="info-value">{{ location_data.postal }}</span>
             </div>
             {% endif %}
             {% if location_data.continent %}
             <div class="info-item">
-                <span class="info-label">Continente:</span>
+                <span class="info-label"><i class="bi bi-globe-americas"></i>Continente:</span>
                 <span class="info-value">{{ location_data.continent }}</span>
             </div>
             {% endif %}
             {% if location_data.currency %}
             <div class="info-item">
-                <span class="info-label">Moeda:</span>
+                <span class="info-label"><i class="bi bi-currency-dollar"></i>Moeda:</span>
                 <span class="info-value">{{ location_data.currency_name }} ({{ location_data.currency }})</span>
             </div>
             {% endif %}
             {% if location_data.languages %}
             <div class="info-item">
-                <span class="info-label">Idiomas:</span>
+                <span class="info-label"><i class="bi bi-translate"></i>Idiomas:</span>
                 <span class="info-value">{{ location_data.languages }}</span>
             </div>
             {% endif %}
             {% if location_data.calling_code %}
             <div class="info-item">
-                <span class="info-label">Código de Discagem:</span>
+                <span class="info-label"><i class="bi bi-telephone"></i>Código de Discagem:</span>
                 <span class="info-value">+{{ location_data.calling_code }}</span>
             </div>
             {% endif %}
@@ -410,36 +561,36 @@
 
         <!-- Informações de Conexão -->
         <div class="info-group">
-            <h3>Informações de Conexão</h3>
+            <h3><i class="bi bi-hdd-network"></i>Informações de Conexão</h3>
             <div class="info-item">
-                <span class="info-label">Hostname:</span>
+                <span class="info-label"><i class="bi bi-pc-display"></i>Hostname:</span>
                 <span class="info-value">{{ connection_info.hostname }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Protocolo:</span>
+                <span class="info-label"><i class="bi bi-diagram-2"></i>Protocolo:</span>
                 <span class="info-value">{{ connection_info.protocol }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Tipo de IP:</span>
+                <span class="info-label"><i class="bi bi-shield-check"></i>Tipo de IP:</span>
                 <span class="info-value">
                     {% if connection_info.is_private %}
-                        Privado
+                        <i class="bi bi-lock"></i>Privado
                     {% elif connection_info.is_loopback %}
-                        Loopback
+                        <i class="bi bi-arrow-repeat"></i>Loopback
                     {% elif connection_info.is_link_local %}
-                        Link Local
+                        <i class="bi bi-link"></i>Link Local
                     {% elif connection_info.is_multicast %}
-                        Multicast
+                        <i class="bi bi-broadcast"></i>Multicast
                     {% elif connection_info.is_reserved %}
-                        Reservado
+                        <i class="bi bi-bookmark"></i>Reservado
                     {% else %}
-                        Público
+                        <i class="bi bi-globe"></i>Público
                     {% endif %}
                 </span>
             </div>
             {% if location_data.connection_type %}
             <div class="info-item">
-                <span class="info-label">Tipo de Conexão:</span>
+                <span class="info-label"><i class="bi bi-wifi"></i>Tipo de Conexão:</span>
                 <span class="info-value">{{ location_data.connection_type }}</span>
             </div>
             {% endif %}
@@ -447,42 +598,42 @@
 
         <!-- Informações do Navegador -->
         <div class="info-group">
-            <h3><i class="bi bi-browser-chrome me-2"></i>Informações do Navegador</h3>
+            <h3><i class="bi bi-browser-chrome"></i>Informações do Navegador</h3>
             <div class="info-item">
-                <span class="info-label">Navegador:</span>
+                <span class="info-label"><i class="bi bi-window"></i>Navegador:</span>
                 <span class="info-value">{{ browser_info.browser }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Sistema Operacional:</span>
+                <span class="info-label"><i class="bi bi-cpu"></i>Sistema Operacional:</span>
                 <span class="info-value">{{ browser_info.os }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Dispositivo:</span>
+                <span class="info-label"><i class="bi bi-phone"></i>Dispositivo:</span>
                 <span class="info-value">
                     {% if browser_info.device_brand %}
-                        {{ browser_info.device_brand }} {{ browser_info.device_model }}
+                        <i class="bi bi-{{ browser_info.device_type|lower }}"></i>{{ browser_info.device_brand }} {{ browser_info.device_model }}
                     {% else %}
-                        {{ browser_info.device }}
+                        <i class="bi bi-{{ browser_info.device_type|lower }}"></i>{{ browser_info.device }}
                     {% endif %}
                 </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Tipo de Dispositivo:</span>
+                <span class="info-label"><i class="bi bi-device-hdd"></i>Tipo de Dispositivo:</span>
                 <span class="info-value">
                     {% if browser_info.is_mobile %}
-                        <i class="bi bi-phone me-1"></i>Mobile
+                        <i class="bi bi-phone"></i>Mobile
                     {% elif browser_info.is_tablet %}
-                        <i class="bi bi-tablet me-1"></i>Tablet
+                        <i class="bi bi-tablet"></i>Tablet
                     {% elif browser_info.is_pc %}
-                        <i class="bi bi-pc-display me-1"></i>Desktop
+                        <i class="bi bi-pc-display"></i>Desktop
                     {% else %}
-                        <i class="bi bi-question-circle me-1"></i>Desconhecido
+                        <i class="bi bi-question-circle"></i>Desconhecido
                     {% endif %}
                 </span>
             </div>
             {% if browser_info.is_bot %}
             <div class="info-item">
-                <span class="info-label">Status:</span>
+                <span class="info-label"><i class="bi bi-robot"></i>Status:</span>
                 <span class="info-value">
                     <span class="security-status status-warning">
                         <i class="bi bi-robot"></i>Bot Detectado
@@ -494,9 +645,9 @@
 
         <!-- Status de Segurança -->
         <div class="info-group">
-            <h3><i class="bi bi-shield-check me-2"></i>Status de Segurança</h3>
+            <h3><i class="bi bi-shield-check"></i>Status de Segurança</h3>
             <div class="info-item">
-                <span class="info-label">VPN:</span>
+                <span class="info-label"><i class="bi bi-shield-slash"></i>VPN:</span>
                 <span class="info-value">
                     {% if location_data.is_vpn %}
                         <span class="security-status status-warning">
@@ -510,7 +661,7 @@
                 </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Proxy:</span>
+                <span class="info-label"><i class="bi bi-shield-slash"></i>Proxy:</span>
                 <span class="info-value">
                     {% if location_data.is_proxy %}
                         <span class="security-status status-warning">
@@ -524,7 +675,7 @@
                 </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Tor:</span>
+                <span class="info-label"><i class="bi bi-shield-slash"></i>Tor:</span>
                 <span class="info-value">
                     {% if location_data.is_tor %}
                         <span class="security-status status-warning">
@@ -538,7 +689,7 @@
                 </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Hosting:</span>
+                <span class="info-label"><i class="bi bi-shield-slash"></i>Hosting:</span>
                 <span class="info-value">
                     {% if location_data.is_hosting %}
                         <span class="security-status status-warning">
@@ -553,7 +704,7 @@
             </div>
             {% if location_data.is_eu %}
             <div class="info-item">
-                <span class="info-label">Região:</span>
+                <span class="info-label"><i class="bi bi-globe-europe-africa"></i>Região:</span>
                 <span class="info-value">
                     <span class="security-status status-safe">
                         <i class="bi bi-globe-europe-africa"></i>União Europeia
@@ -565,12 +716,12 @@
 
         <!-- Mapa de Localização -->
         {% if location_data.latitude != '0' and location_data.longitude != '0' %}
-        <div class="map-container" id="map"></div>
+        <div class="map-container" id="map" aria-label="Mapa de localização"></div>
         {% endif %}
 
         <!-- Dicas de Segurança -->
         <div class="security-tips">
-            <h3><i class="bi bi-lightbulb me-2"></i>Dicas de Segurança</h3>
+            <h3><i class="bi bi-lightbulb"></i>Dicas de Segurança</h3>
             
             <div class="tip-item">
                 <div class="tip-icon">
@@ -579,7 +730,7 @@
                 <div class="tip-content">
                     <div class="tip-title">Proteja seu IP</div>
                     <div class="tip-description">
-                        Considere usar uma VPN confiável para proteger sua privacidade online e ocultar seu endereço IP real.
+                        Considere usar uma VPN confiável para proteger sua privacidade online e ocultar seu endereço IP real. Isso ajuda a prevenir rastreamento e ataques cibernéticos.
                     </div>
                 </div>
             </div>
@@ -591,7 +742,7 @@
                 <div class="tip-content">
                     <div class="tip-title">Mantenha seu Navegador Atualizado</div>
                     <div class="tip-description">
-                        Mantenha seu navegador sempre atualizado para garantir que você tenha as últimas correções de segurança.
+                        Mantenha seu navegador sempre atualizado para garantir que você tenha as últimas correções de segurança. Ative as atualizações automáticas quando possível.
                     </div>
                 </div>
             </div>
@@ -603,7 +754,7 @@
                 <div class="tip-content">
                     <div class="tip-title">Use Senhas Fortes</div>
                     <div class="tip-description">
-                        Crie senhas fortes e únicas para cada serviço que você usa. Considere usar um gerenciador de senhas.
+                        Crie senhas fortes e únicas para cada serviço que você usa. Use uma combinação de letras, números e símbolos. Considere usar um gerenciador de senhas para maior segurança.
                     </div>
                 </div>
             </div>
@@ -615,14 +766,39 @@
                 <div class="tip-content">
                     <div class="tip-title">Ative a Autenticação em Duas Etapas</div>
                     <div class="tip-description">
-                        Sempre que possível, ative a autenticação em duas etapas para adicionar uma camada extra de segurança às suas contas.
+                        Sempre que possível, ative a autenticação em duas etapas para adicionar uma camada extra de segurança às suas contas. Isso ajuda a proteger seus dados mesmo se sua senha for comprometida.
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="tip-content">
+                    <div class="tip-title">Verifique Regularmente suas Configurações de Privacidade</div>
+                    <div class="tip-description">
+                        Revise periodicamente as configurações de privacidade das suas contas online. Ajuste as permissões de aplicativos e serviços para garantir que apenas as informações necessárias sejam compartilhadas.
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="bi bi-cloud-check"></i>
+                </div>
+                <div class="tip-content">
+                    <div class="tip-title">Faça Backup Regularmente</div>
+                    <div class="tip-description">
+                        Mantenha backups regulares dos seus dados importantes. Use serviços de armazenamento em nuvem confiáveis e mantenha cópias locais em dispositivos externos seguros.
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="last-updated">
-            <i class="bi bi-clock-history me-1"></i>Última atualização: {{ location_data.last_updated }}
+            <i class="bi bi-clock-history"></i>
+            <span>Última atualização: {{ location_data.last_updated }}</span>
         </div>
     </div>
 </div>
@@ -630,15 +806,23 @@
 
 {% block extra_js %}
 {% if location_data.latitude != '0' and location_data.longitude != '0' %}
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 <script>
+    // Função para carregar o mapa de forma segura
+    function loadMapScript() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    }
+
     function initMap() {
         const location = {
             lat: parseFloat('{{ location_data.latitude }}'),
             lng: parseFloat('{{ location_data.longitude }}')
         };
 
-        const map = new google.maps.Map(document.getElementById('map'), {
+        const mapOptions = {
             zoom: 12,
             center: location,
             styles: [
@@ -653,8 +837,15 @@
                         { "hue": "#ff0000" }
                     ]
                 }
-            ]
-        });
+            ],
+            gestureHandling: 'cooperative',
+            zoomControl: true,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false
+        };
+
+        const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
         const marker = new google.maps.Marker({
             position: location,
@@ -672,10 +863,20 @@
         map.addListener('touchstart', function() {
             map.panTo(location);
         });
+
+        // Adiciona evento de erro
+        google.maps.event.addListener(map, 'error', function() {
+            console.error('Erro ao carregar o mapa');
+            document.getElementById('map').innerHTML = '<div class="alert alert-danger">Erro ao carregar o mapa. Por favor, tente novamente mais tarde.</div>';
+        });
     }
 
-    // Inicializa o mapa quando a página carregar
-    window.addEventListener('load', initMap);
+    // Carrega o script do mapa quando a página estiver pronta
+    if (document.readyState === 'complete') {
+        loadMapScript();
+    } else {
+        window.addEventListener('load', loadMapScript);
+    }
 </script>
 {% endif %}
 {% endblock %} 

@@ -241,18 +241,19 @@
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         letter-spacing: 0.5px;
         margin: 1rem 0 2rem 0;
-        line-height: 1.2;
+        line-height: 1.4;
         opacity: 0.95;
         max-width: 900px;
         margin-left: auto;
         margin-right: auto;
-        white-space: nowrap;
+        padding: 0 1rem;
     }
 
     @media (max-width: 992px) {
         .hero-tagline {
             font-size: 1.4rem;
             letter-spacing: 0.3px;
+            padding: 0 1.5rem;
         }
     }
 
@@ -261,6 +262,20 @@
             font-size: 1.2rem;
             letter-spacing: 0.2px;
             margin: 0.8rem 0 1.5rem 0;
+            padding: 0 1rem;
+            white-space: normal;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0 2rem;
+        }
+
+        .hero-buttons .btn-neon {
+            width: 100%;
+            margin: 0 !important;
         }
     }
 
@@ -269,6 +284,15 @@
             font-size: 1.1rem;
             letter-spacing: 0.1px;
             margin: 0.6rem 0 1.2rem 0;
+            padding: 0 0.5rem;
+        }
+
+        .hero-buttons {
+            padding: 0 1rem;
+        }
+
+        .hero-logo {
+            width: 180px !important;
         }
     }
 
@@ -435,7 +459,7 @@
                 <div class="col-12 text-center">
                     <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="hero-logo mb-3" style="width: 250px; height: auto; filter: drop-shadow(0 0 10px var(--neon-red-soft));">
                     <p class="hero-tagline">Soluções tecnológicas inovadoras para o seu negócio!</p>
-                    <div class="mt-5">
+                    <div class="mt-5 hero-buttons">
                         <a href="{% url 'services' %}" class="btn btn-neon me-3">
                             <i class="bi bi-gear-fill"></i>
                             Nossos Serviços

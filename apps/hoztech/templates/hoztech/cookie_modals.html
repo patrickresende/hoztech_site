@@ -1,22 +1,24 @@
+<!-- Cookie Consent Overlay -->
+<div id="cookieOverlay" class="cookie-overlay"></div>
+
 <!-- Cookie Consent Modal -->
 <div id="cookieConsent" class="cookie-modal">
     <div class="cookie-content">
-        <div class="cookie-header">
-            <i class="bi bi-shield-lock"></i>
-            <h5 class="cookie-title">Política de Cookies</h5>
-        </div>
-        <p class="cookie-text">
-            Utilizamos cookies para melhorar sua experiência em nosso site. 
-            Ao continuar navegando, você concorda com o uso de cookies conforme nossa 
-            <a href="#" data-bs-toggle="modal" data-bs-target="#cookiePolicyModal" class="text-primary">Política de Cookies</a>.
-        </p>
-        <div class="cookie-actions">
-            <button type="button" class="btn btn-cookie btn-settings" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
-                <i class="bi bi-gear me-2"></i>Configurações
-            </button>
-            <button type="button" class="btn btn-cookie btn-accept" id="acceptCookies">
-                <i class="bi bi-check-lg me-2"></i>Aceitar Todos
-            </button>
+        <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+            <div class="cookie-text-wrapper">
+                <h5 class="neon-text mb-2">Política de Cookies</h5>
+                <p class="mb-0">Utilizamos cookies para melhorar sua experiência em nosso site. 
+                Ao continuar navegando, você concorda com o uso de cookies conforme nossa 
+                <a href="#" data-bs-toggle="modal" data-bs-target="#cookiePolicyModal">Política de Cookies</a>.</p>
+            </div>
+            <div class="cookie-buttons">
+                <button type="button" class="btn btn-cookie btn-cookie-settings" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+                    <i class="bi bi-gear me-2"></i>Configurações
+                </button>
+                <button type="button" class="btn btn-cookie btn-cookie-accept" id="acceptCookies">
+                    <i class="bi bi-check-lg me-2"></i>Aceitar Todos
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -122,4 +124,310 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<style>
+    .cookie-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.1);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+
+    .cookie-modal {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(13, 13, 13, 0.98);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--neon-red);
+        box-shadow: 0 0 20px var(--neon-red-soft);
+        z-index: 1050;
+        padding: 1rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-in-out;
+        pointer-events: auto; /* Garante que o modal seja interativo */
+    }
+
+    .cookie-modal.show {
+        transform: translateY(0);
+    }
+
+    .cookie-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .cookie-text-wrapper {
+        flex: 1;
+        min-width: 0; /* Previne overflow em flex items */
+        margin-right: 1rem;
+    }
+
+    .cookie-text-wrapper h5 {
+        color: var(--neon-red);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 10px rgba(255, 0, 51, 0.3);
+    }
+
+    .cookie-text-wrapper p {
+        color: var(--light-gray);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0;
+        position: relative;
+    }
+
+    .cookie-text-wrapper p::after {
+        content: '*';
+        color: var(--neon-red);
+        margin-left: 2px;
+    }
+
+    .cookie-text-wrapper p::before {
+        content: 'Aceite é obrigatório para continuar navegando';
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        background: rgba(0, 0, 0, 0.9);
+        color: var(--light-gray);
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        border: 1px solid var(--neon-red);
+    }
+
+    .cookie-text-wrapper p:hover::before {
+        opacity: 1;
+        visibility: visible;
+        bottom: calc(100% + 5px);
+    }
+
+    .cookie-text-wrapper a {
+        color: var(--neon-red);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .cookie-text-wrapper a:hover {
+        color: #ff1a4d;
+        text-decoration: underline;
+    }
+
+    .cookie-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        min-width: 200px;
+    }
+
+    .btn-cookie {
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 44px;
+        width: 100%;
+        position: relative;
+    }
+
+    .btn-cookie i {
+        font-size: 1.1rem;
+    }
+
+    .btn-cookie::after {
+        content: '*';
+        position: absolute;
+        right: 10px;
+        color: var(--neon-red);
+        font-size: 1.2em;
+    }
+
+    .btn-cookie-settings {
+        background-color: transparent;
+        color: var(--light-gray);
+        border: 1px solid var(--neon-red);
+    }
+
+    .btn-cookie-settings:hover {
+        background-color: rgba(255, 0, 51, 0.1);
+        color: var(--neon-red);
+    }
+
+    .btn-cookie-accept {
+        background-color: var(--neon-red);
+        color: white;
+        border: none;
+    }
+
+    .btn-cookie-accept:hover {
+        background-color: #ff1a4d;
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px var(--neon-red-soft);
+    }
+
+    /* Estilos para tablets */
+    @media (min-width: 768px) {
+        .cookie-modal {
+            padding: 1.25rem;
+        }
+
+        .cookie-buttons {
+            flex-direction: row;
+            min-width: 220px;
+        }
+
+        .btn-cookie {
+            padding: 0.6rem 1.25rem;
+            font-size: 0.9rem;
+            min-height: 40px;
+        }
+    }
+
+    /* Estilos para desktop */
+    @media (min-width: 992px) {
+        .cookie-modal {
+            padding: 1.5rem;
+        }
+
+        .cookie-text-wrapper h5 {
+            font-size: 1.2rem;
+        }
+
+        .cookie-text-wrapper p {
+            font-size: 1rem;
+        }
+
+        .cookie-buttons {
+            min-width: 240px;
+        }
+    }
+
+    /* Ajustes específicos para telas muito pequenas */
+    @media (max-width: 360px) {
+        .cookie-modal {
+            padding: 0.75rem;
+        }
+
+        .cookie-text-wrapper h5 {
+            font-size: 1rem;
+        }
+
+        .cookie-text-wrapper p {
+            font-size: 0.85rem;
+        }
+
+        .btn-cookie {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-cookie i {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cookieConsent = document.getElementById('cookieConsent');
+    const cookieOverlay = document.getElementById('cookieOverlay');
+    const acceptCookies = document.getElementById('acceptCookies');
+    const saveCookieSettings = document.getElementById('saveCookieSettings');
+    const cookieSettingsModal = document.getElementById('cookieSettingsModal');
+    const cookiePolicyModal = document.getElementById('cookiePolicyModal');
+
+    // Função para mostrar o modal e o overlay
+    function showCookieConsent() {
+        if (!localStorage.getItem('cookieConsent')) {
+            cookieConsent.classList.add('show');
+            cookieOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Apenas previne scroll
+        }
+    }
+
+    // Função para esconder o modal e o overlay
+    function hideCookieConsent() {
+        cookieConsent.classList.remove('show');
+        cookieOverlay.classList.remove('show');
+        document.body.style.overflow = ''; // Restaura scroll
+    }
+
+    // Mostrar o modal após um pequeno delay
+    setTimeout(showCookieConsent, 1000);
+
+    // Aceitar cookies
+    acceptCookies.addEventListener('click', function() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        localStorage.setItem('performanceCookies', 'true');
+        localStorage.setItem('marketingCookies', 'true');
+        hideCookieConsent();
+    });
+
+    // Salvar configurações
+    saveCookieSettings.addEventListener('click', function() {
+        const performanceCookies = document.getElementById('performanceCookies').checked;
+        const marketingCookies = document.getElementById('marketingCookies').checked;
+        
+        localStorage.setItem('cookieConsent', 'custom');
+        localStorage.setItem('performanceCookies', performanceCookies);
+        localStorage.setItem('marketingCookies', marketingCookies);
+        
+        hideCookieConsent();
+    });
+
+    // Prevenir interação com o conteúdo principal da página
+    cookieOverlay.addEventListener('click', function(e) {
+        // Permite cliques apenas no modal de cookies e seus elementos
+        if (!e.target.closest('.cookie-modal') && 
+            !e.target.closest('.modal-content') && 
+            !e.target.closest('.modal-dialog')) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+
+    // Verificar se o usuário já aceitou os cookies
+    if (!localStorage.getItem('cookieConsent')) {
+        showCookieConsent();
+    }
+
+    // Permitir interação com os modais de cookies
+    [cookieSettingsModal, cookiePolicyModal].forEach(modal => {
+        if (modal) {
+            // Prevenir fechamento ao clicar fora do modal
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal && !localStorage.getItem('cookieConsent')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+
+            // Permitir interação com elementos dentro do modal
+            modal.querySelector('.modal-content').addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    });
+});
+</script> 
