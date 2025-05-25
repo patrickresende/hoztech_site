@@ -5,13 +5,13 @@
 
 {% block content %}
 <!-- Hero Section -->
-<div class="bg-dark text-light py-5 mb-5">
-    <div class="container">
-        <div class="row align-items-center">
+<section class="bg-dark text-light py-5 mb-5">
+    <div class="container px-4">
+        <div class="row align-items-center g-4">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold mb-4">Bem-vindo à Loja Hoztech!</h1>
                 <p class="lead mb-4">Encontre as melhores soluções em tecnologia para impulsionar seu negócio.</p>
-                <div class="d-flex gap-3">
+                <div class="d-flex flex-wrap gap-3">
                     <a href="#featured-products" class="btn btn-primary btn-lg">
                         <i class="bi bi-bag me-2"></i>Ver Produtos
                     </a>
@@ -25,14 +25,14 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <!-- Featured Categories -->
-<div class="container mb-5">
+<section class="container px-4 mb-5">
     <h2 class="h3 mb-4">Categorias em Destaque</h2>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <div class="row g-4">
         {% for category in featured_categories %}
-        <div class="col">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <a href="{{ category.get_absolute_url }}" class="text-decoration-none">
                 <div class="card h-100 border-0 shadow-sm hover-card">
                     {% if category.image %}
@@ -50,25 +50,25 @@
         </div>
         {% endfor %}
     </div>
-</div>
+</section>
 
 <!-- Produtos em Destaque -->
-<section class="py-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-md-8">
+<section class="py-5 bg-light">
+    <div class="container px-4">
+        <div class="row g-3 mb-4 align-items-center">
+            <div class="col-12 col-md-8">
                 <h2 class="h3 mb-0">Produtos em Destaque</h2>
             </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'store:search' %}" class="btn btn-outline-primary">
+            <div class="col-12 col-md-4 text-md-end">
+                <a href="{% url 'store:search' %}" class="btn btn-outline-primary w-100 w-md-auto">
                     Ver Todos os Produtos
                 </a>
             </div>
         </div>
         
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="row g-4">
             {% for product in featured_products %}
-            <div class="col">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm">
                     {% if product.images.exists %}
                     <img src="{{ product.images.first.image.url }}" 
@@ -81,17 +81,17 @@
                         <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
                     </div>
                     {% endif %}
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title">
                             <a href="{% url 'store:product_detail' product.pk %}" 
                                class="text-decoration-none text-dark">
                                 {{ product.name }}
                             </a>
                         </h5>
-                        <p class="card-text text-muted small">
+                        <p class="card-text text-muted small flex-grow-1">
                             {{ product.description|truncatechars:100 }}
                         </p>
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
                             <div>
                                 {% if product.sale_price %}
                                 <span class="text-decoration-line-through text-muted">
@@ -120,31 +120,31 @@
 </section>
 
 <!-- Benefits Section -->
-<div class="bg-light py-5">
-    <div class="container">
+<section class="bg-white py-5">
+    <div class="container px-4">
         <div class="row g-4">
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="text-center">
                     <i class="bi bi-truck text-primary" style="font-size: 2.5rem;"></i>
                     <h3 class="h5 mt-3">Entrega Rápida</h3>
                     <p class="text-muted small">Entrega em todo o Brasil</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="text-center">
                     <i class="bi bi-shield-check text-primary" style="font-size: 2.5rem;"></i>
                     <h3 class="h5 mt-3">Garantia Estendida</h3>
                     <p class="text-muted small">Produtos com garantia adicional</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="text-center">
                     <i class="bi bi-credit-card text-primary" style="font-size: 2.5rem;"></i>
                     <h3 class="h5 mt-3">Pagamento Seguro</h3>
                     <p class="text-muted small">Diversas formas de pagamento</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
                 <div class="text-center">
                     <i class="bi bi-headset text-primary" style="font-size: 2.5rem;"></i>
                     <h3 class="h5 mt-3">Suporte Dedicado</h3>
@@ -153,7 +153,7 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 
 {% block extra_css %}
 <style>
@@ -164,6 +164,36 @@
 .hover-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Ajustes de responsividade */
+@media (max-width: 576px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
 }
 </style>
 {% endblock %}
