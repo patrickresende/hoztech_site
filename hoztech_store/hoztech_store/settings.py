@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 import environ
+import dj_database_url
 
 # Initialize environ
 env = environ.Env()
@@ -104,7 +105,7 @@ WSGI_APPLICATION = 'hoztech_store.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='sqlite:///db.sqlite3')
+    "default": dj_database_url.config(default=os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3"))
 }
 
 
