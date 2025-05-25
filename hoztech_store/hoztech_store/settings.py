@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 import environ
 import dj_database_url
+import logging
+import logging.config
 
 # Initialize environ
 env = environ.Env()
@@ -102,11 +104,9 @@ WSGI_APPLICATION = 'hoztech_store.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# (Configuração do banco de dados está em techsite/settings.py, com variáveis sensíveis (POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT) definidas via variáveis de ambiente.)
 
-DATABASES = {
-    "default": dj_database_url.config(default=os.environ.get("DATABASE_URL", "sqlite:///db.sqlite3"))
-}
+# Removido bloco DATABASES sobrescrito (usando dj_database_url) para evitar conflito com techsite/settings.py.
 
 
 # Password validation
@@ -256,3 +256,64 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
 }
+
+# LOGGING
+LOG_LEVEL = 'DEBUG' if DEBUG else 'INFO'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': LOG_LEVEL,
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'error.log'),
+            'maxBytes': 1024*1024*5,  # 5MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'] if DEBUG else ['console'],
+        'level': LOG_LEVEL,
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'] if DEBUG else ['console'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console', 'file'] if DEBUG else ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+
+# Cria o diretório de logs automaticamente em ambiente local
+if DEBUG:
+    logs_dir = os.path.join(BASE_DIR, 'logs')
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir, exist_ok=True)
+
+# (Temporário: print das variáveis de ambiente do banco de dados para debug)
+print("POSTGRES_DB:", env('POSTGRES_DB', default='hoztech_db'))
+print("POSTGRES_USER:", env('POSTGRES_USER', default='hoztech_user'))
+print("POSTGRES_HOST:", env('POSTGRES_HOST', default='localhost'))
+print("POSTGRES_PORT:", env('POSTGRES_PORT', default='5432'))
