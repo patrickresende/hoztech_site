@@ -130,19 +130,25 @@ WSGI_APPLICATION = 'techsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Configuração do banco de dados usando dj_database_url
+db_config = dj_database_url.parse(
+    env('DATABASE_URL', default='postgres://hoztech_user:hoztech_pass@localhost:5432/hoztech_db'),
+    conn_max_age=600,  # 10 minutos
+)
+
+# Adiciona as opções de conexão
+db_config.update({
+    'OPTIONS': {
+        'connect_timeout': 10,
+        'keepalives': 1,
+        'keepalives_idle': 30,
+        'keepalives_interval': 10,
+        'keepalives_count': 5,
+    }
+})
+
 DATABASES = {
-    'default': dj_database_url.parse(
-        env('DATABASE_URL', default='postgres://hoztech_user:hoztech_pass@localhost:5432/hoztech_db'),
-        conn_max_age=600,  # 10 minutos
-        conn_health_checks=True,
-        options={
-            'connect_timeout': 10,
-            'keepalives': 1,
-            'keepalives_idle': 30,
-            'keepalives_interval': 10,
-            'keepalives_count': 5,
-        }
-    )
+    'default': db_config
 }
 
 # Cache
