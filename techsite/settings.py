@@ -18,6 +18,15 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 
+# Debug prints para variáveis de ambiente do banco de dados
+print("=== Database Environment Variables ===")
+print("POSTGRES_DB:", env('POSTGRES_DB', default='hoztech_db'))
+print("POSTGRES_USER:", env('POSTGRES_USER', default='hoztech_user'))
+print("POSTGRES_HOST:", env('POSTGRES_HOST', default='localhost'))
+print("POSTGRES_PORT:", env('POSTGRES_PORT', default='5432'))
+print("DATABASE_URL:", env('DATABASE_URL', default='not set'))
+print("===================================")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
