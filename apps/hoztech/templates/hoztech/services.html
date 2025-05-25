@@ -1,0 +1,1021 @@
+{% extends 'hoztech/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variáveis */
+    :root {
+        /* Cores */
+        --primary: var(--neon-red);
+        --primary-soft: var(--neon-red-soft);
+        --success: #28a745;
+        --success-soft: rgba(40, 167, 69, 0.4);
+        --dark: rgba(13, 13, 13, 0.95);
+        --light: var(--light-gray);
+        
+        /* Dimensões */
+        --gap: 2.5rem;
+        --card-min: 336.7px;
+        --card-max: 556.7px;
+        --transition: 0.3s;
+        
+        /* Z-index */
+        --z-carousel: 1;
+        --z-nav: 10;
+        --z-seals: 3;
+    }
+
+    /* Reset */
+    .services-carousel * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Hero */
+    .services-hero {
+        background: linear-gradient(var(--dark), var(--dark)),
+                    url('/static/images/background.png');
+        background-size: cover;
+        background-position: center;
+        padding: 6rem 0 4rem;
+        margin-bottom: 4rem;
+        border-bottom: 1px solid var(--primary);
+        box-shadow: 0 0 20px var(--primary-soft);
+    }
+
+    .services-hero h1 {
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
+        margin-bottom: 1.5rem;
+        text-align: center;
+        animation: glitch 3s infinite;
+    }
+
+    .services-hero p {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        color: var(--light);
+        line-height: 1.6;
+    }
+
+    /* Carrossel */
+    .services-carousel {
+        position: relative;
+        padding: 3rem 0;
+        overflow: hidden;
+        margin-bottom: 4rem;
+        z-index: var(--z-carousel);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .services-carousel .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        width: 100%;
+    }
+
+    .services-carousel-inner {
+        display: flex;
+        transition: transform var(--transition) ease;
+        gap: var(--gap);
+        padding: 1.5rem;
+        margin: 0 auto;
+        will-change: transform;
+        justify-content: center;
+    }
+
+    /* Cards */
+    .service-card-wrapper {
+        position: relative;
+        margin-top: 3rem;
+        flex: 0 0 calc(25% - var(--gap) + 56.7px);
+        min-width: var(--card-min);
+        max-width: var(--card-max);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .service-card {
+        flex: 1;
+        background: var(--dark);
+        border: 1px solid var(--primary);
+        border-radius: 12px;
+        padding: 2.5rem 2rem;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+        transition: transform var(--transition) ease,
+                    box-shadow var(--transition) ease;
+        margin: 0;
+        height: 100%;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px var(--primary-soft);
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(45deg, transparent, rgba(255, 0, 51, 0.05), transparent);
+        opacity: 0;
+        transition: opacity var(--transition) ease;
+    }
+
+    .service-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Elementos do Card */
+    .service-icon {
+        font-size: 2.75rem;
+        color: var(--primary);
+        text-shadow: 0 0 10px var(--primary-soft);
+    }
+
+    .service-title {
+        font-size: 1.75rem;
+        color: var(--light);
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .service-description {
+        color: var(--light);
+        opacity: 0.8;
+        line-height: 1.6;
+        text-align: justify;
+        min-height: 80px;
+    }
+
+    .service-features {
+        list-style: none;
+        text-align: left;
+        flex: 1;
+    }
+
+    .service-features li {
+        color: var(--light);
+        margin-bottom: 0.75rem;
+        padding-left: 1.75rem;
+        position: relative;
+        line-height: 1.5;
+    }
+
+    .service-features li::before {
+        content: '→';
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+    }
+
+    .price-highlight {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--light);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .price-highlight.success {
+        color: var(--success);
+        text-shadow: 0 0 15px var(--success-soft);
+    }
+
+    .price-original {
+        font-size: 1.5rem;
+        color: var(--light);
+        opacity: 0.7;
+        text-decoration: line-through;
+        position: relative;
+    }
+
+    .price-original::after {
+        content: '';
+        position: absolute;
+        left: -0.5rem;
+        right: -0.5rem;
+        top: 50%;
+        height: 2px;
+        background: var(--primary);
+        transform: rotate(-5deg);
+    }
+
+    .price-promo {
+        font-size: 2.5rem;
+        color: var(--success);
+        font-weight: 800;
+        text-shadow: 0 0 15px var(--success-soft);
+    }
+
+    /* Selos */
+    .best-choice-seal {
+        position: absolute;
+        top: -1rem;
+        left: -0.75rem;
+        background: #0d6efd;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 15px rgba(13, 110, 253, 0.4);
+        z-index: var(--z-seals);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transform: rotate(-15deg);
+        pointer-events: none;
+    }
+
+    /* Navegação */
+    .carousel-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 3rem;
+    }
+
+    .carousel-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--primary-soft);
+        cursor: pointer;
+        transition: all var(--transition) ease;
+        border: 1px solid transparent;
+    }
+
+    .carousel-indicator.active {
+        background: var(--primary);
+        transform: scale(1.2);
+        box-shadow: 0 0 15px var(--primary-soft);
+        border-color: var(--primary);
+    }
+
+    /* Botões */
+    .btn-cta {
+        width: 100%;
+        padding: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: var(--primary);
+        border: 1px solid var(--primary);
+        color: var(--dark);
+        transition: all var(--transition) ease;
+    }
+
+    .btn-cta:hover {
+        background: var(--primary-soft);
+        border-color: var(--primary-soft);
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px var(--primary-soft);
+    }
+
+    .btn-cta.success {
+        background: var(--success);
+        border-color: var(--success);
+    }
+
+    .btn-cta.success:hover {
+        background: #218838;
+        border-color: #1e7e34;
+        box-shadow: 0 0 20px var(--success-soft);
+    }
+
+    /* Responsividade */
+    @media (max-width: 1400px) {
+        .services-carousel .container {
+            max-width: 1200px;
+        }
+
+        .service-card-wrapper {
+            flex: 0 0 calc(33.333% - var(--gap) + 56.7px);
+            min-width: 300px;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        .services-carousel .container {
+            max-width: 992px;
+        }
+
+        .service-card-wrapper {
+            flex: 0 0 calc(50% - var(--gap) + 56.7px);
+            min-width: 280px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .services-carousel .container {
+            max-width: 720px;
+            padding: 0 1rem;
+        }
+
+        .service-card-wrapper {
+            flex: 0 0 100%;
+            min-width: 100%;
+            max-width: var(--card-max);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .services-carousel .container {
+            max-width: 100%;
+            padding: 0 0.75rem;
+        }
+
+        .service-card-wrapper {
+            margin-top: 2rem;
+        }
+
+        .best-choice-seal {
+            top: -0.6rem;
+            left: -0.4rem;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+        }
+    }
+
+    /* Fallbacks */
+    @supports not (selector(:has(*))) {
+        .services-carousel-inner {
+            justify-content: center;
+        }
+    }
+
+    @supports (selector(:has(*))) {
+        .services-carousel-inner:has(.service-card-wrapper:nth-child(3):last-child),
+        .services-carousel-inner:has(.service-card-wrapper:nth-child(2):last-child) {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="services-hero" role="banner" aria-label="Introdução aos serviços">
+    <div class="container">
+        <h1 class="hack-title" data-text="Nossos Serviços">Nossos Serviços</h1>
+        <p>Transforme sua presença digital com nossas soluções tecnológicas personalizadas. 
+           Escolha o plano ideal para o seu negócio e comece sua jornada digital hoje mesmo.</p>
+    </div>
+</section>
+
+<!-- Carrossel -->
+<section class="services-carousel" role="region" aria-label="Carrossel de serviços">
+    <div class="container">
+        <div class="services-carousel-inner" id="servicesCarousel" role="list">
+            {% for service in services %}
+            {% if service.id == 'site-institucional' %}
+            <div class="service-card-wrapper" role="listitem">
+                <div class="best-choice-seal" aria-label="Melhor escolha">
+                    <i class="bi bi-star-fill" aria-hidden="true"></i>
+                    <span>Melhor<br>Escolha</span>
+                </div>
+                <div class="service-card" data-service="site-institucional">
+            {% else %}
+            <div class="service-card-wrapper" role="listitem">
+                <div class="service-card">
+            {% endif %}
+                <div class="service-icon">
+                    <i class="{{ service.icon }}" aria-hidden="true"></i>
+                </div>
+                <h3 class="service-title">{{ service.title|escape }}</h3>
+                <p class="service-description">{{ service.description|escape }}</p>
+                
+                <ul class="service-features" role="list">
+                    {% for feature in service.features %}
+                    <li>{{ feature|escape }}</li>
+                    {% endfor %}
+                </ul>
+
+                {% if service.id == 'site-institucional' %}
+                <div class="price-highlight success">
+                    <span class="price-original" aria-label="Preço original: R$ 349,00">
+                        R$ 349,00
+                    </span>
+                    <span class="price-promo" aria-label="Preço promocional: R$ 297,90">
+                        R$ 297,90
+                    </span>
+                </div>
+                {% else %}
+                <span class="price-highlight" aria-label="Preço: R$ {{ service.price|floatformat:2 }}">
+                    R$ {{ service.price|floatformat:2 }}
+                </span>
+                {% endif %}
+
+                <button class="btn btn-cta {% if service.id == 'site-institucional' %}success{% endif %}"
+                        data-bs-toggle="modal"
+                        data-bs-target="#serviceRequestModal"
+                        data-service-id="{{ service.id|escape }}"
+                        data-service-title="{{ service.title|escape }}"
+                        aria-label="Solicitar serviço: {{ service.title|escape }}">
+                    Solicitar Serviço
+                </button>
+            </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Indicadores -->
+        <div class="carousel-indicators" id="carouselIndicators" role="tablist">
+            {% for service in services %}
+            <button class="carousel-indicator" role="tab" 
+                    aria-label="Slide {{ forloop.counter }}"
+                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                    {% if not forloop.first %}tabindex="-1"{% endif %}></button>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Solicitação -->
+<div class="modal fade" id="serviceRequestModal" tabindex="-1" 
+     role="dialog" aria-labelledby="serviceRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="serviceRequestModalLabel">Solicitar Serviço</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" 
+                        aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceRequestForm" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" id="serviceId" name="service_id">
+                    
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome Completo *</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required
+                               pattern="[A-Za-zÀ-ÿ\s]{3,}" minlength="3" maxlength="100"
+                               aria-describedby="nomeHelp">
+                        <div id="nomeHelp" class="form-text">Digite seu nome completo (mínimo 3 caracteres)</div>
+                        <div class="invalid-feedback">Por favor, insira seu nome completo.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail *</label>
+                        <input type="email" class="form-control" id="email" name="email" required
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               aria-describedby="emailHelp">
+                        <div id="emailHelp" class="form-text">Digite um e-mail válido</div>
+                        <div class="invalid-feedback">Por favor, insira um e-mail válido.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="telefone" class="form-label">WhatsApp *</label>
+                        <input type="tel" class="form-control" id="telefone" name="telefone" required
+                               pattern="\(\d{2}\)\s\d{5}-\d{4}"
+                               aria-describedby="telefoneHelp">
+                        <div id="telefoneHelp" class="form-text">Formato: (99) 99999-9999</div>
+                        <div class="invalid-feedback">Por favor, insira um número válido.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mensagem" class="form-label">Mensagem (opcional)</label>
+                        <textarea class="form-control" id="mensagem" name="mensagem" rows="3"
+                                  maxlength="500" aria-describedby="mensagemHelp"></textarea>
+                        <div id="mensagemHelp" class="form-text">Máximo 500 caracteres</div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="lgpd" required
+                               aria-describedby="lgpdHelp">
+                        <label class="form-check-label" for="lgpd">
+                            Li e concordo com a <a href="#" data-bs-toggle="modal" 
+                                                 data-bs-target="#lgpdModal">Política de Privacidade</a> *
+                        </label>
+                        <div id="lgpdHelp" class="form-text">Você precisa concordar com a política de privacidade</div>
+                        <div class="invalid-feedback">Você precisa concordar com a política de privacidade.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-neon" id="submitServiceRequest"
+                        aria-label="Enviar solicitação">Enviar Solicitação</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal LGPD -->
+<div class="modal fade" id="lgpdModal" tabindex="-1" role="dialog" 
+     aria-labelledby="lgpdModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lgpdModalLabel">Política de Privacidade</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" 
+                        aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Coleta de Dados</h6>
+                <p>Coletamos apenas os dados necessários para o contato e prestação dos serviços solicitados.</p>
+
+                <h6>2. Uso dos Dados</h6>
+                <p>Seus dados serão utilizados exclusivamente para:</p>
+                <ul>
+                    <li>Responder sua solicitação</li>
+                    <li>Prestar os serviços contratados</li>
+                    <li>Enviar informações relevantes sobre nossos serviços</li>
+                </ul>
+
+                <h6>3. Proteção dos Dados</h6>
+                <p>Seus dados são protegidos e não serão compartilhados com terceiros sem seu consentimento.</p>
+
+                <h6>4. Seus Direitos</h6>
+                <p>Você tem direito a:</p>
+                <ul>
+                    <li>Acessar seus dados</li>
+                    <li>Corrigir informações</li>
+                    <li>Solicitar a exclusão dos dados</li>
+                    <li>Revogar o consentimento</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Módulo do Carrossel
+const Carousel = (function() {
+    // Estado
+    const state = {
+        carousel: null,
+        cards: [],
+        currentIndex: 0,
+        cardWidth: 0,
+        cardsPerView: 0,
+        maxIndex: 0,
+        isInitialized: false,
+        isAdjusting: false,
+        heightCache: new Map(),
+        observer: null,
+        touchStartX: 0,
+        touchEndX: 0
+    };
+
+    // Configurações
+    const config = {
+        swipeThreshold: 50,
+        resizeDebounce: 150,
+        observerDebounce: 100
+    };
+
+    // Utilitários
+    const utils = {
+        debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        },
+
+        getCardsPerView() {
+            const width = window.innerWidth;
+            if (width >= 1400) return 4;
+            if (width >= 1200) return 3;
+            if (width >= 768) return 2;
+            return 1;
+        },
+
+        log(message, type = 'info') {
+            if (process.env.NODE_ENV === 'development') {
+                console[type](`[Carousel] ${message}`);
+            }
+        }
+    };
+
+    // Métodos privados
+    const privateMethods = {
+        async initializeImages() {
+            const images = state.carousel.querySelectorAll('img');
+            const totalImages = images.length;
+            let loadedImages = 0;
+            let hasError = false;
+
+            return new Promise((resolve) => {
+                if (totalImages === 0) {
+                    resolve();
+                    return;
+                }
+
+                const checkAllImagesLoaded = () => {
+                    loadedImages++;
+                    utils.log(`Imagens carregadas: ${loadedImages}/${totalImages}`);
+                    if (loadedImages === totalImages || hasError) {
+                        resolve();
+                    }
+                };
+
+                images.forEach(img => {
+                    if (img.complete) {
+                        checkAllImagesLoaded();
+                    } else {
+                        img.addEventListener('load', checkAllImagesLoaded);
+                        img.addEventListener('error', () => {
+                            utils.log('Erro ao carregar imagem', 'error');
+                            hasError = true;
+                            checkAllImagesLoaded();
+                        });
+                    }
+                });
+            });
+        },
+
+        adjustCardHeights() {
+            if (state.isAdjusting || !state.isInitialized) return;
+            state.isAdjusting = true;
+
+            requestAnimationFrame(() => {
+                try {
+                    const cards = document.querySelectorAll('.service-card');
+                    if (!cards.length) {
+                        state.isAdjusting = false;
+                        return;
+                    }
+
+                    const width = window.innerWidth;
+                    const cacheKey = `${width}-${cards.length}`;
+                    
+                    if (state.heightCache.has(cacheKey)) {
+                        const cachedHeights = state.heightCache.get(cacheKey);
+                        cards.forEach(card => {
+                            const currentHeight = cachedHeights.get(card);
+                            if (currentHeight) {
+                                card.style.height = `${currentHeight}px`;
+                            }
+                        });
+                        state.isAdjusting = false;
+                        return;
+                    }
+
+                    let maxHeight = 0;
+                    const heights = new Map();
+
+                    cards.forEach(card => {
+                        card.style.height = '';
+                        const rect = card.getBoundingClientRect();
+                        const height = rect.height;
+                        heights.set(card, height);
+                        maxHeight = Math.max(maxHeight, height);
+                    });
+
+                    if (maxHeight > 0) {
+                        cards.forEach(card => {
+                            const currentHeight = heights.get(card);
+                            if (currentHeight < maxHeight) {
+                                card.style.height = `${maxHeight}px`;
+                            }
+                        });
+                        state.heightCache.set(cacheKey, heights);
+                    }
+
+                    state.isAdjusting = false;
+                } catch (error) {
+                    utils.log('Erro ao ajustar alturas: ' + error.message, 'error');
+                    state.isAdjusting = false;
+                }
+            });
+        },
+
+        updateCarousel() {
+            if (!state.isInitialized || !state.cards.length) return;
+            
+            try {
+                const offset = -state.currentIndex * (state.cardWidth + parseInt(getComputedStyle(state.carousel).gap));
+                state.carousel.style.transform = `translateX(${offset}px)`;
+                
+                const indicators = document.querySelectorAll('.carousel-indicator');
+                indicators.forEach((indicator, index) => {
+                    const isActive = index === state.currentIndex;
+                    indicator.classList.toggle('active', isActive);
+                    indicator.setAttribute('aria-selected', isActive);
+                    indicator.setAttribute('tabindex', isActive ? '0' : '-1');
+                });
+                
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                if (prevBtn) prevBtn.disabled = state.currentIndex === 0;
+                if (nextBtn) nextBtn.disabled = state.currentIndex >= state.maxIndex;
+            } catch (error) {
+                utils.log('Erro ao atualizar carrossel: ' + error.message, 'error');
+            }
+        },
+
+        handleSwipe() {
+            if (!state.isInitialized) return;
+            
+            try {
+                const diff = state.touchStartX - state.touchEndX;
+                
+                if (Math.abs(diff) > config.swipeThreshold) {
+                    if (diff > 0 && state.currentIndex < state.maxIndex) {
+                        state.currentIndex++;
+                    } else if (diff < 0 && state.currentIndex > 0) {
+                        state.currentIndex--;
+                    }
+                    privateMethods.updateCarousel();
+                }
+            } catch (error) {
+                utils.log('Erro no swipe: ' + error.message, 'error');
+            }
+        }
+    };
+
+    // API pública
+    return {
+        async init() {
+            try {
+                state.carousel = document.getElementById('servicesCarousel');
+                if (!state.carousel) {
+                    throw new Error('Elemento do carrossel não encontrado');
+                }
+
+                state.cards = state.carousel.querySelectorAll('.service-card-wrapper');
+                if (!state.cards.length) {
+                    throw new Error('Nenhum card encontrado no carrossel');
+                }
+
+                await privateMethods.initializeImages();
+
+                state.cardWidth = state.cards[0].offsetWidth;
+                state.cardsPerView = utils.getCardsPerView();
+                state.maxIndex = Math.max(0, Math.ceil(state.cards.length / state.cardsPerView) - 1);
+                
+                state.cards.forEach(card => card.classList.add('loaded'));
+                state.carousel.classList.add('loaded');
+                
+                privateMethods.updateCarousel();
+                privateMethods.adjustCardHeights();
+                state.isInitialized = true;
+
+                // Eventos
+                const debouncedResize = utils.debounce(() => {
+                    if (!state.isInitialized) return;
+                    
+                    try {
+                        state.cardWidth = state.cards[0].offsetWidth;
+                        state.cardsPerView = utils.getCardsPerView();
+                        state.maxIndex = Math.max(0, Math.ceil(state.cards.length / state.cardsPerView) - 1);
+                        state.currentIndex = Math.min(state.currentIndex, state.maxIndex);
+                        
+                        privateMethods.updateCarousel();
+                        privateMethods.adjustCardHeights();
+                    } catch (error) {
+                        utils.log('Erro no resize: ' + error.message, 'error');
+                    }
+                }, config.resizeDebounce);
+
+                window.addEventListener('resize', debouncedResize);
+
+                // Observer
+                state.observer = new MutationObserver(utils.debounce((mutations) => {
+                    if (!state.isInitialized) return;
+                    
+                    try {
+                        const shouldAdjust = mutations.some(mutation => 
+                            mutation.type === 'childList' || 
+                            (mutation.type === 'attributes' && 
+                             (mutation.attributeName === 'style' || mutation.attributeName === 'class'))
+                        );
+                        
+                        if (shouldAdjust) {
+                            privateMethods.adjustCardHeights();
+                        }
+                    } catch (error) {
+                        utils.log('Erro no observer: ' + error.message, 'error');
+                    }
+                }, config.observerDebounce));
+
+                state.observer.observe(state.carousel, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['style', 'class']
+                });
+
+                // Indicadores
+                const indicators = document.querySelectorAll('.carousel-indicator');
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => {
+                        state.currentIndex = index;
+                        privateMethods.updateCarousel();
+                    });
+                });
+
+                // Swipe
+                state.carousel.addEventListener('touchstart', e => {
+                    state.touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+                
+                state.carousel.addEventListener('touchend', e => {
+                    state.touchEndX = e.changedTouches[0].screenX;
+                    privateMethods.handleSwipe();
+                }, { passive: true });
+
+                // Limpeza
+                window.addEventListener('beforeunload', () => {
+                    if (state.observer) state.observer.disconnect();
+                    window.removeEventListener('resize', debouncedResize);
+                    state.heightCache.clear();
+                });
+
+                utils.log('Carrossel inicializado com sucesso');
+            } catch (error) {
+                utils.log('Erro ao inicializar carrossel: ' + error.message, 'error');
+            }
+        }
+    };
+})();
+
+// Módulo do Formulário
+const ServiceForm = (function() {
+    // Estado
+    const state = {
+        modal: null,
+        form: null,
+        serviceIdInput: null,
+        submitButton: null,
+        telefoneInput: null
+    };
+
+    // Utilitários
+    const utils = {
+        showAlert(type, message) {
+            try {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.setAttribute('role', 'alert');
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" 
+                            aria-label="Fechar"></button>
+                `;
+                state.form.prepend(alertDiv);
+            } catch (error) {
+                console.error('Erro ao mostrar alerta:', error);
+            }
+        },
+
+        formatPhoneNumber(value) {
+            return value.replace(/\D/g, '')
+                       .replace(/^(\d{2})(\d)/g, '($1) $2')
+                       .replace(/(\d)(\d{4})$/, '$1-$2');
+        }
+    };
+
+    // API pública
+    return {
+        init() {
+            try {
+                state.modal = document.getElementById('serviceRequestModal');
+                state.form = document.getElementById('serviceRequestForm');
+                state.serviceIdInput = document.getElementById('serviceId');
+                state.submitButton = document.getElementById('submitServiceRequest');
+                state.telefoneInput = document.getElementById('telefone');
+
+                if (!state.modal || !state.form || !state.serviceIdInput) {
+                    throw new Error('Elementos do formulário não encontrados');
+                }
+
+                // Eventos do modal
+                state.modal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    if (!button) return;
+                    
+                    try {
+                        const serviceId = button.getAttribute('data-service-id');
+                        const serviceTitle = button.getAttribute('data-service-title');
+                        
+                        if (serviceId) state.serviceIdInput.value = serviceId;
+                        if (serviceTitle) {
+                            const modalTitle = state.modal.querySelector('.modal-title');
+                            if (modalTitle) {
+                                modalTitle.textContent = `Solicitar Serviço: ${serviceTitle}`;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Erro ao abrir modal:', error);
+                    }
+                });
+
+                // Envio do formulário
+                if (state.submitButton) {
+                    state.submitButton.addEventListener('click', async function() {
+                        if (!state.form.checkValidity()) {
+                            state.form.classList.add('was-validated');
+                            return;
+                        }
+
+                        try {
+                            state.submitButton.disabled = true;
+                            const formData = new FormData(state.form);
+                            const data = Object.fromEntries(formData.entries());
+                            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+                            if (!csrfToken) {
+                                throw new Error('Token CSRF não encontrado');
+                            }
+
+                            const response = await fetch('{% url "service_request" %}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': csrfToken
+                                },
+                                body: JSON.stringify(data)
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Erro na requisição');
+                            }
+
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                utils.showAlert('success', result.message);
+                                setTimeout(() => {
+                                    const modal = bootstrap.Modal.getInstance(state.modal);
+                                    if (modal) modal.hide();
+                                }, 2000);
+                            } else {
+                                utils.showAlert('danger', result.message || 'Erro ao enviar solicitação');
+                            }
+                        } catch (error) {
+                            console.error('Erro:', error);
+                            utils.showAlert('danger', 'Erro ao enviar solicitação. Por favor, tente novamente.');
+                        } finally {
+                            state.submitButton.disabled = false;
+                        }
+                    });
+                }
+
+                // Máscara de telefone
+                if (state.telefoneInput) {
+                    state.telefoneInput.addEventListener('input', function(e) {
+                        try {
+                            let value = e.target.value.replace(/\D/g, '');
+                            if (value.length <= 11) {
+                                e.target.value = utils.formatPhoneNumber(value);
+                            }
+                        } catch (error) {
+                            console.error('Erro na máscara de telefone:', error);
+                        }
+                    });
+                }
+
+                // Limpeza do formulário
+                state.modal.addEventListener('hidden.bs.modal', function() {
+                    try {
+                        state.form.reset();
+                        state.form.classList.remove('was-validated');
+                        const alerts = state.form.querySelectorAll('.alert');
+                        alerts.forEach(alert => alert.remove());
+                    } catch (error) {
+                        console.error('Erro ao limpar formulário:', error);
+                    }
+                });
+
+                console.log('Formulário inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar formulário:', error);
+            }
+        }
+    };
+})();
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    Carousel.init();
+    ServiceForm.init();
+});
+</script>
+{% endblock %}

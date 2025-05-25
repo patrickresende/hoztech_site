@@ -1,0 +1,170 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+
+{% block title %}Loja Hoztech - Sua Loja de Tecnologia{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-dark text-light py-5 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Bem-vindo à Loja Hoztech!</h1>
+                <p class="lead mb-4">Encontre as melhores soluções em tecnologia para impulsionar seu negócio.</p>
+                <div class="d-flex gap-3">
+                    <a href="#featured-products" class="btn btn-primary btn-lg">
+                        <i class="bi bi-bag me-2"></i>Ver Produtos
+                    </a>
+                    <a href="{% url 'store:categories' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-grid me-2"></i>Explorar Categorias
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <img src="{% static 'store/images/hero-image.png' %}" alt="Tecnologia Hoztech" class="img-fluid rounded-3 shadow">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Categories -->
+<div class="container mb-5">
+    <h2 class="h3 mb-4">Categorias em Destaque</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for category in featured_categories %}
+        <div class="col">
+            <a href="{{ category.get_absolute_url }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-grid text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-dark mb-0">{{ category.name }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Produtos em Destaque -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="h3 mb-0">Produtos em Destaque</h2>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'store:search' %}" class="btn btn-outline-primary">
+                    Ver Todos os Produtos
+                </a>
+            </div>
+        </div>
+        
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {% for product in featured_products %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    {% if product.images.exists %}
+                    <img src="{{ product.images.first.image.url }}" 
+                         class="card-img-top" 
+                         alt="{{ product.name }}"
+                         style="height: 200px; object-fit: contain;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" 
+                         style="height: 200px;">
+                        <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'store:product_detail' product.pk %}" 
+                               class="text-decoration-none text-dark">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text text-muted small">
+                            {{ product.description|truncatechars:100 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if product.sale_price %}
+                                <span class="text-decoration-line-through text-muted">
+                                    R$ {{ product.price }}
+                                </span>
+                                <span class="h5 text-danger mb-0 ms-2">
+                                    R$ {{ product.sale_price }}
+                                </span>
+                                {% else %}
+                                <span class="h5 mb-0">
+                                    R$ {{ product.price }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'store:product_detail' product.pk %}" 
+                               class="btn btn-outline-primary">
+                                Ver Detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="bi bi-truck text-primary" style="font-size: 2.5rem;"></i>
+                    <h3 class="h5 mt-3">Entrega Rápida</h3>
+                    <p class="text-muted small">Entrega em todo o Brasil</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="bi bi-shield-check text-primary" style="font-size: 2.5rem;"></i>
+                    <h3 class="h5 mt-3">Garantia Estendida</h3>
+                    <p class="text-muted small">Produtos com garantia adicional</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="bi bi-credit-card text-primary" style="font-size: 2.5rem;"></i>
+                    <h3 class="h5 mt-3">Pagamento Seguro</h3>
+                    <p class="text-muted small">Diversas formas de pagamento</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center">
+                    <i class="bi bi-headset text-primary" style="font-size: 2.5rem;"></i>
+                    <h3 class="h5 mt-3">Suporte Dedicado</h3>
+                    <p class="text-muted small">Atendimento personalizado</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+</style>
+{% endblock %}
+{% endblock %} 

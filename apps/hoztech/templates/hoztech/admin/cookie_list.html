@@ -137,45 +137,39 @@
             <!-- Formulário de Busca -->
             <div class="search-form">
                 <form method="get" class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label for="name">Nome do Cookie</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{ request.GET.name }}" placeholder="Buscar por nome">
+                            <label for="search">Buscar</label>
+                            <input type="text" class="form-control" id="search" name="search" value="{{ search|default:'' }}" placeholder="Buscar por nome ou IP">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="category">Categoria</label>
-                            <select class="form-select" id="category" name="category">
+                            <select class="form-control" id="category" name="category">
                                 <option value="">Todas</option>
-                                <option value="necessary" {% if request.GET.category == 'necessary' %}selected{% endif %}>Necessário</option>
-                                <option value="preferences" {% if request.GET.category == 'preferences' %}selected{% endif %}>Preferências</option>
-                                <option value="statistics" {% if request.GET.category == 'statistics' %}selected{% endif %}>Estatísticas</option>
-                                <option value="marketing" {% if request.GET.category == 'marketing' %}selected{% endif %}>Marketing</option>
+                                {% for cat_value, cat_label in categories %}
+                                <option value="{{ cat_value }}" {% if category == cat_value %}selected{% endif %}>{{ cat_label }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="date_from">Data Inicial</label>
-                            <input type="date" class="form-control date-picker" id="date_from" name="date_from" value="{{ request.GET.date_from }}">
+                            <input type="date" class="form-control date-picker" id="date_from" name="date_from" value="{{ date_from|default:'' }}">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="date_to">Data Final</label>
-                            <input type="date" class="form-control date-picker" id="date_to" name="date_to" value="{{ request.GET.date_to }}">
+                            <input type="date" class="form-control date-picker" id="date_to" name="date_to" value="{{ date_to|default:'' }}">
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-1">
                         <button type="submit" class="btn btn-primary btn-search">
-                            <i class="fas fa-search"></i> Buscar
+                            <i class="bi bi-search"></i>
                         </button>
-                        {% if request.GET %}
-                        <a href="{% url 'admin_cookies' %}" class="btn btn-outline-secondary btn-search">
-                            <i class="fas fa-times"></i> Limpar Filtros
-                        </a>
-                        {% endif %}
                     </div>
                 </form>
             </div>

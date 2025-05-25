@@ -1,0 +1,70 @@
+:root {
+    --primary-color: #ff0033;
+    --primary-hover: #cc0029;
+    --text-color: #333333;
+    --bg-color: #ffffff;
+    --border-radius: 4px;
+    --transition-speed: 0.3s;
+}
+
+/* Dark mode variables */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #ffffff;
+        --bg-color: #1a1a1a;
+    }
+}
+
+/* Store Button in Navbar */
+.navbar .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    transition: all var(--transition-speed) ease;
+    border-radius: var(--border-radius);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.navbar .btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    text-decoration: none;
+}
+
+.navbar .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.navbar .btn-primary i {
+    font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .navbar .btn-primary {
+        margin: 0.5rem 0;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .navbar .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .navbar .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+} 

@@ -1,0 +1,167 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Cadastrar - Hoztech Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4 text-center">Criar Conta</h1>
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Por favor, corrija os erros abaixo.
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Usuário</label>
+                            <input type="text" 
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                   id="id_username" 
+                                   name="username" 
+                                   required 
+                                   autofocus
+                                   value="{{ form.username.value|default:'' }}">
+                            {% if form.username.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.username.errors.0 }}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Senha</label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                       id="id_password1" 
+                                       name="password1" 
+                                       required>
+                                <button class="btn btn-outline-secondary" 
+                                        type="button"
+                                        onclick="togglePassword('id_password1')">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.password1.errors.0 }}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <ul class="mb-0 ps-3">
+                                    <li>Sua senha não pode ser muito parecida com suas outras informações pessoais.</li>
+                                    <li>Sua senha deve conter pelo menos 8 caracteres.</li>
+                                    <li>Sua senha não pode ser uma senha comumente usada.</li>
+                                    <li>Sua senha não pode ser totalmente numérica.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Confirmação de senha</label>
+                            <div class="input-group">
+                                <input type="password" 
+                                       class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                       id="id_password2" 
+                                       name="password2" 
+                                       required>
+                                <button class="btn btn-outline-secondary" 
+                                        type="button"
+                                        onclick="togglePassword('id_password2')">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password2.errors %}
+                            <div class="invalid-feedback">
+                                {{ form.password2.errors.0 }}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Digite a mesma senha novamente para verificação.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-person-plus me-2"></i>
+                                Criar Conta
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <p class="mb-0">
+                            Já tem uma conta? 
+                            <a href="{% url 'store:login' %}" class="text-decoration-none">
+                                Entrar
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleButton = passwordInput.nextElementSibling.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleButton.classList.remove('bi-eye');
+        toggleButton.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleButton.classList.remove('bi-eye-slash');
+        toggleButton.classList.add('bi-eye');
+    }
+}
+
+// Form validation
+(function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    Array.from(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+
+// Auto-hide alerts after 5 seconds
+setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        alert.style.opacity = '0';
+        alert.style.transition = 'opacity 0.5s ease';
+        setTimeout(function() {
+            alert.remove();
+        }, 500);
+    });
+}, 5000);
+</script>
+{% endblock %}
+{% endblock %} 

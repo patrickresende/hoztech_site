@@ -1,0 +1,158 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+
+{% block title %}Busca{% if query %} - {{ query }}{% endif %} - Hoztech Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Cabeçalho da Busca -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Início</a></li>
+                    <li class="breadcrumb-item active">Busca{% if query %} - {{ query }}{% endif %}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Filtros -->
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filtros</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'store:search' %}">
+                        {% if query %}
+                        <input type="hidden" name="q" value="{{ query }}">
+                        {% endif %}
+                        
+                        <!-- Categoria -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Categoria</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">Todas</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Preço Mínimo -->
+                        <div class="mb-3">
+                            <label for="min_price" class="form-label">Preço Mínimo</label>
+                            <input type="number" class="form-control" id="min_price" name="min_price" 
+                                   value="{{ min_price }}" step="0.01" min="0">
+                        </div>
+                        
+                        <!-- Preço Máximo -->
+                        <div class="mb-3">
+                            <label for="max_price" class="form-label">Preço Máximo</label>
+                            <input type="number" class="form-control" id="max_price" name="max_price" 
+                                   value="{{ max_price }}" step="0.01" min="0">
+                        </div>
+                        
+                        <!-- Ordenação -->
+                        <div class="mb-3">
+                            <label for="sort" class="form-label">Ordenar por</label>
+                            <select class="form-select" id="sort" name="sort">
+                                <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>
+                                    Mais Recentes
+                                </option>
+                                <option value="price" {% if sort == 'price' %}selected{% endif %}>
+                                    Menor Preço
+                                </option>
+                                <option value="-price" {% if sort == '-price' %}selected{% endif %}>
+                                    Maior Preço
+                                </option>
+                                <option value="name" {% if sort == 'name' %}selected{% endif %}>
+                                    Nome A-Z
+                                </option>
+                                <option value="-name" {% if sort == '-name' %}selected{% endif %}>
+                                    Nome Z-A
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            Aplicar Filtros
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resultados -->
+        <div class="col-md-9">
+            {% if query %}
+            <h1 class="h2 mb-4">Resultados para "{{ query }}"</h1>
+            {% else %}
+            <h1 class="h2 mb-4">Todos os Produtos</h1>
+            {% endif %}
+            
+            <!-- Lista de Produtos -->
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        {% if product.images.exists %}
+                        <img src="{{ product.images.first.image.url }}" 
+                             class="card-img-top" 
+                             alt="{{ product.name }}"
+                             style="height: 200px; object-fit: contain;">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" 
+                             style="height: 200px;">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'store:product_detail' product.pk %}" 
+                                   class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
+                            <p class="card-text text-muted small">
+                                {{ product.description|truncatechars:100 }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if product.sale_price %}
+                                    <span class="text-decoration-line-through text-muted">
+                                        R$ {{ product.price }}
+                                    </span>
+                                    <span class="h5 text-danger mb-0 ms-2">
+                                        R$ {{ product.sale_price }}
+                                    </span>
+                                    {% else %}
+                                    <span class="h5 mb-0">
+                                        R$ {{ product.price }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'store:product_detail' product.pk %}" 
+                                   class="btn btn-outline-primary">
+                                    Ver Detalhes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info mb-0">
+                        Nenhum produto encontrado para sua busca.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

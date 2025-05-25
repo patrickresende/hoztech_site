@@ -1,0 +1,241 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+
+{% block title %}Carrinho - Hoztech Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Início</a></li>
+                    <li class="breadcrumb-item active">Carrinho</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h2 mb-4">Seu Carrinho</h1>
+            
+            {% if cart %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Produto</th>
+                            <th scope="col" class="text-center">Quantidade</th>
+                            <th scope="col" class="text-end">Preço Unitário</th>
+                            <th scope="col" class="text-end">Subtotal</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if item.product.images.exists %}
+                                    <img src="{{ item.product.images.first.image.url }}" 
+                                         alt="{{ item.product.name }}"
+                                         class="me-3"
+                                         style="width: 64px; height: 64px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="bg-light d-flex align-items-center justify-content-center me-3"
+                                         style="width: 64px; height: 64px;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="mb-1">
+                                            <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none">
+                                                {{ item.product.name }}
+                                            </a>
+                                        </h5>
+                                        <p class="text-muted small mb-0">
+                                            SKU: {{ item.product.sku }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <form method="post" 
+                                      action="{% url 'store:cart_update' item.product.id %}"
+                                      class="d-flex align-items-center justify-content-center"
+                                      data-cart-update>
+                                    {% csrf_token %}
+                                    <div class="input-group input-group-sm" style="width: 120px;">
+                                        <button type="button" 
+                                                class="btn btn-outline-secondary"
+                                                onclick="updateQuantity(this, -1)">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number" 
+                                               name="quantity" 
+                                               value="{{ item.quantity }}"
+                                               min="1"
+                                               class="form-control text-center"
+                                               onchange="this.form.submit()">
+                                        <button type="button" 
+                                                class="btn btn-outline-secondary"
+                                                onclick="updateQuantity(this, 1)">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                {% if item.product.sale_price %}
+                                <span class="text-decoration-line-through text-muted">
+                                    R$ {{ item.product.price }}
+                                </span>
+                                <span class="text-danger">
+                                    R$ {{ item.product.sale_price }}
+                                </span>
+                                {% else %}
+                                R$ {{ item.price }}
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                R$ {{ item.total_price }}
+                            </td>
+                            <td class="text-end">
+                                <form method="post" 
+                                      action="{% url 'store:cart_remove' item.product.id %}"
+                                      class="d-inline"
+                                      data-cart-remove>
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="3" class="text-end">
+                                <strong>Total:</strong>
+                            </td>
+                            <td class="text-end">
+                                <strong>R$ {{ cart.get_total_price }}</strong>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <form method="post" action="{% url 'store:cart_clear' %}" data-cart-clear>
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-2"></i>
+                        Limpar Carrinho
+                    </button>
+                </form>
+                
+                <div>
+                    <a href="{% url 'store:home' %}" class="btn btn-outline-secondary me-2">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Continuar Comprando
+                    </a>
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Finalizar Compra
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-cart3 text-muted" style="font-size: 4rem;"></i>
+                <h2 class="h4 mt-3">Seu carrinho está vazio</h2>
+                <p class="text-muted">
+                    Adicione produtos ao seu carrinho para continuar comprando.
+                </p>
+                <a href="{% url 'store:home' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    Continuar Comprando
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function updateQuantity(button, change) {
+    const input = button.parentElement.querySelector('input');
+    const newValue = parseInt(input.value) + change;
+    if (newValue >= 1) {
+        input.value = newValue;
+        input.form.submit();
+    }
+}
+
+// AJAX form submissions
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('[data-cart-update], [data-cart-remove], [data-cart-clear]');
+    
+    forms.forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update cart count in navbar
+                const cartCount = document.querySelector('.badge');
+                if (cartCount) {
+                    if (data.cart_items_count > 0) {
+                        cartCount.textContent = data.cart_items_count;
+                        cartCount.style.display = 'block';
+                    } else {
+                        cartCount.style.display = 'none';
+                    }
+                }
+                
+                // Show message
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+                alert.style.zIndex = '1050';
+                alert.innerHTML = `
+                    ${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alert);
+                
+                // Auto-hide alert
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s ease';
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 3000);
+                
+                // If it's a remove or clear action, reload the page
+                if (form.hasAttribute('data-cart-remove') || form.hasAttribute('data-cart-clear')) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.reload();
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

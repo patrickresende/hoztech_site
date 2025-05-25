@@ -1,0 +1,153 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Início</a></li>
+                    <li class="breadcrumb-item active">Contato</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 mb-4">Entre em Contato</h1>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <h2 class="h4 mb-3">Informações de Contato</h2>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <i class="bi bi-geo-alt text-primary me-2"></i>
+                                    <strong>Endereço:</strong><br>
+                                    Av. Paulista, 1000 - Bela Vista<br>
+                                    São Paulo - SP, 01310-100
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-telephone text-primary me-2"></i>
+                                    <strong>Telefone:</strong><br>
+                                    (11) 9999-9999
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-envelope text-primary me-2"></i>
+                                    <strong>E-mail:</strong><br>
+                                    contato@loja.hoztech.com
+                                </li>
+                                <li>
+                                    <i class="bi bi-clock text-primary me-2"></i>
+                                    <strong>Horário de Atendimento:</strong><br>
+                                    Segunda a Sexta: 9h às 18h<br>
+                                    Sábado: 9h às 13h
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <h2 class="h4 mb-3">Redes Sociais</h2>
+                            <div class="d-flex flex-column gap-3">
+                                <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                                    <i class="bi bi-facebook me-2"></i>
+                                    Facebook
+                                </a>
+                                <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                                    <i class="bi bi-instagram me-2"></i>
+                                    Instagram
+                                </a>
+                                <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                                    <i class="bi bi-whatsapp me-2"></i>
+                                    WhatsApp
+                                </a>
+                                <a href="#" class="btn btn-outline-primary d-flex align-items-center">
+                                    <i class="bi bi-youtube me-2"></i>
+                                    YouTube
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-4">Envie uma Mensagem</h2>
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                                <div class="invalid-feedback">
+                                    Por favor, informe seu nome.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback">
+                                    Por favor, informe um e-mail válido.
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="subject" class="form-label">Assunto</label>
+                                <input type="text" class="form-control" id="subject" name="subject" required>
+                                <div class="invalid-feedback">
+                                    Por favor, informe o assunto.
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="message" class="form-label">Mensagem</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                <div class="invalid-feedback">
+                                    Por favor, escreva sua mensagem.
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-send me-2"></i>
+                                    Enviar Mensagem
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    
+    const forms = document.querySelectorAll('.needs-validation');
+    
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}
+{% endblock %} 

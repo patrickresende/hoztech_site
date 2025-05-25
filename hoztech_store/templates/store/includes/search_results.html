@@ -1,0 +1,36 @@
+{% load static %}
+
+{% if products %}
+<div class="list-group">
+    {% for product in products|slice:":5" %}
+    <a href="{{ product.get_absolute_url }}" class="list-group-item list-group-item-action">
+        <div class="d-flex align-items-center">
+            <img src="{% static 'store/images/placeholder.svg' %}" alt="{{ product.name }}" class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
+            <div>
+                <h6 class="mb-1">{{ product.name }}</h6>
+                <small class="text-muted">{{ product.category.name }}</small>
+                <div class="mt-1">
+                    {% if product.sale_price %}
+                    <span class="sale-price">R$ {{ product.price }}</span>
+                    <span class="price">R$ {{ product.sale_price }}</span>
+                    {% else %}
+                    <span class="price">R$ {{ product.price }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    {% if products|length > 5 %}
+    <a href="{% url 'store:search' %}?q={{ query }}" class="list-group-item list-group-item-action text-center">
+        Ver todos os resultados ({{ products|length }})
+    </a>
+    {% endif %}
+</div>
+{% else %}
+<div class="list-group">
+    <div class="list-group-item">
+        <p class="mb-0 text-center">Nenhum produto encontrado para "{{ query }}"</p>
+    </div>
+</div>
+{% endif %} 

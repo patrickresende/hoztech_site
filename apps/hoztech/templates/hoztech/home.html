@@ -35,22 +35,59 @@
         margin-right: auto;
     }
 
-    .pdf-download-card .btn-neon {
+    /* Estilo padronizado para todos os botões */
+    .btn-neon {
         padding: 1rem 2rem;
         font-size: 1.1rem;
         text-transform: uppercase;
         letter-spacing: 1px;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 500;
         transition: all 0.3s ease;
     }
 
-    .pdf-download-card .btn-neon:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(255, 0, 51, 0.3);
+    /* Estilo especial para o botão de segurança */
+    .btn-security {
+        background: linear-gradient(45deg, rgba(255, 0, 51, 0.1), rgba(255, 0, 51, 0.2));
+        border: 2px solid var(--neon-red);
+        box-shadow: 0 0 15px rgba(255, 0, 51, 0.2),
+                    inset 0 0 10px rgba(255, 0, 51, 0.1);
+        animation: pulseSecurity 2s infinite;
     }
 
-    .pdf-download-card .btn-neon i {
+    .btn-security:hover {
+        background: linear-gradient(45deg, rgba(255, 0, 51, 0.2), rgba(255, 0, 51, 0.3));
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(255, 0, 51, 0.3),
+                    inset 0 0 15px rgba(255, 0, 51, 0.2);
+    }
+
+    @keyframes pulseSecurity {
+        0% {
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.2),
+                        inset 0 0 10px rgba(255, 0, 51, 0.1);
+        }
+        50% {
+            box-shadow: 0 0 25px rgba(255, 0, 51, 0.3),
+                        inset 0 0 15px rgba(255, 0, 51, 0.2);
+        }
+        100% {
+            box-shadow: 0 0 15px rgba(255, 0, 51, 0.2),
+                        inset 0 0 10px rgba(255, 0, 51, 0.1);
+        }
+    }
+
+    .btn-neon i {
         font-size: 1.2rem;
         margin-right: 0.5rem;
+    }
+
+    /* Ajuste para botões em telas menores */
+    @media (max-width: 576px) {
+        .btn-neon {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
     }
 
     /* Estilos para o modal personalizado */
@@ -181,159 +218,411 @@
         border: 1px solid rgba(255, 0, 51, 0.2);
         color: #ffffff;
     }
+
+    /* Estilo para os ícones dourados */
+    .gold-icon {
+        color: #FFD700;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        font-size: 2.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .gold-icon:hover {
+        transform: scale(1.1);
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+    }
+
+    /* Estilo para o tagline */
+    .hero-tagline {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 500;
+        color: var(--light-gray);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        letter-spacing: 0.5px;
+        margin: 1rem 0 2rem 0;
+        line-height: 1.2;
+        opacity: 0.95;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 992px) {
+        .hero-tagline {
+            font-size: 1.4rem;
+            letter-spacing: 0.3px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-tagline {
+            font-size: 1.2rem;
+            letter-spacing: 0.2px;
+            margin: 0.8rem 0 1.5rem 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-tagline {
+            font-size: 1.1rem;
+            letter-spacing: 0.1px;
+            margin: 0.6rem 0 1.2rem 0;
+        }
+    }
+
+    /* Estilo para o título de segurança */
+    .security-title {
+        color: var(--light-gray);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+        .security-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .security-title {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Estilos para as seções da home */
+    .home-section {
+        padding: 4rem 0;
+        position: relative;
+    }
+
+    .home-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, rgba(13, 13, 13, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
+        z-index: -1;
+    }
+
+    /* Estilo para a seção de segurança */
+    .security-section {
+        background: linear-gradient(135deg, rgba(13, 13, 13, 0.95), rgba(26, 26, 26, 0.95));
+        border-top: 1px solid var(--neon-red);
+        border-bottom: 1px solid var(--neon-red);
+        box-shadow: 0 0 20px var(--neon-red-soft);
+        padding: 4rem 0;
+        margin: 4rem 0;
+    }
+
+    .partners-section {
+        background: linear-gradient(135deg, rgba(13, 13, 13, 0.95), rgba(26, 26, 26, 0.95));
+        border: 1px solid var(--neon-red);
+        box-shadow: 0 0 20px var(--neon-red-soft);
+        padding: 3rem 0;
+        margin: 4rem 0;
+    }
+
+    .partners-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        align-items: center;
+        justify-items: center;
+        margin-top: 2rem;
+    }
+
+    .partner-item {
+        background: rgba(13, 13, 13, 0.5);
+        border: 1px solid var(--neon-red-soft);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .partner-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 15px var(--neon-red-soft);
+        border-color: var(--neon-red);
+    }
+
+    .partner-logo {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+        filter: grayscale(100%) brightness(1.2);
+        transition: all 0.3s ease;
+    }
+
+    .partner-item:hover .partner-logo {
+        filter: grayscale(0%) brightness(1);
+    }
+
+    .partner-name {
+        color: var(--light-gray);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+        .partners-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .partner-item {
+            padding: 1rem;
+        }
+
+        .partner-logo {
+            width: 100px;
+            height: 100px;
+        }
+    }
+
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+        .home-section {
+            padding: 3rem 0;
+        }
+
+        .security-section {
+            padding: 3rem 0;
+            margin: 3rem 0;
+        }
+
+        .security-content {
+            padding: 0 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .home-section {
+            padding: 2rem 0;
+        }
+
+        .security-section {
+            padding: 2.5rem 0;
+            margin: 2rem 0;
+        }
+
+        .security-content {
+            padding: 0 1rem;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- IP Info Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="ip-info">
-                <div class="ip-header">
-                    <div class="ip-label">
-                        <i class="bi bi-shield-lock-fill"></i>
-                        Endereço IP
-                    </div>
-                    <div class="ip-address">{{ client_ip }}</div>
-                </div>
-                <div class="ip-details">
-                    <div class="location-info" title="Localização atual">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <span class="ip-location">{{ client_location }}</span>
-                    </div>
-                    {% if location_data.isp != 'ISP desconhecido' %}
-                    <div class="isp-info" title="Provedor de Internet">
-                        <i class="bi bi-router-fill"></i>
-                        <span class="ip-isp">{{ location_data.isp }}</span>
-                    </div>
-                    {% endif %}
-                    {% if location_data.timezone != 'UTC' %}
-                    <div class="timezone-info" title="Fuso Horário">
-                        <i class="bi bi-clock-fill"></i>
-                        <span class="ip-timezone">{{ location_data.timezone }}</span>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
+<div class="container-fluid p-0">
     <!-- Hero Section -->
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h1 class="hack-title display-4 mb-4" data-text="BEM-VINDO À HOZ TECH">BEM-VINDO À HOZ TECH</h1>
-            <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="hero-logo mb-4" style="width: 200px; height: auto; filter: drop-shadow(0 0 10px var(--neon-red-soft));">
-            <p class="lead" style="font-size: 1.5rem;">Explorando tecnologia com elegância e inovação.</p>
-            <div class="mt-4">
-                <a href="#servicos" class="btn btn-neon btn-lg me-3">Nossos Serviços</a>
-                <a href="#" class="btn btn-neon btn-lg" data-bs-toggle="modal" data-bs-target="#contatoModal">Entre em Contato</a>
+    <section class="home-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="hero-logo mb-3" style="width: 250px; height: auto; filter: drop-shadow(0 0 10px var(--neon-red-soft));">
+                    <p class="hero-tagline">Soluções tecnológicas inovadoras para o seu negócio!</p>
+                    <div class="mt-5">
+                        <a href="{% url 'services' %}" class="btn btn-neon me-3">
+                            <i class="bi bi-gear-fill"></i>
+                            Nossos Serviços
+                        </a>
+                        <a href="#" class="btn btn-neon" data-bs-toggle="modal" data-bs-target="#contatoModal">
+                            <i class="bi bi-envelope-fill"></i>
+                            Entre em Contato
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Cards Section -->
-    <div class="row mb-5" id="servicos">
-        <div class="col-12 text-center mb-4">
-            <h2 class="neon-text">Nossos Diferenciais</h2>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-lightning-charge-fill neon-icon" style="font-size: 2.5rem;"></i>
-                    <h5 class="card-title mt-3">Inovação</h5>
-                    <p class="card-text">Soluções tecnológicas inovadoras para impulsionar seu negócio ao próximo nível.</p>
+    <section class="home-section" id="servicos">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h2 class="neon-text">Nossos Diferenciais</h2>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-lightning-charge-fill gold-icon"></i>
+                            <h5 class="card-title mt-3">Inovação</h5>
+                            <p class="card-text">Soluções tecnológicas inovadoras para impulsionar seu negócio ao próximo nível.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-award-fill gold-icon"></i>
+                            <h5 class="card-title mt-3">Qualidade</h5>
+                            <p class="card-text">Compromisso com a excelência em cada projeto desenvolvido, garantindo resultados excepcionais.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-headset gold-icon"></i>
+                            <h5 class="card-title mt-3">Suporte</h5>
+                            <p class="card-text">Suporte técnico especializado 24/7 para todas as suas necessidades tecnológicas.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-award-fill neon-icon" style="font-size: 2.5rem;"></i>
-                    <h5 class="card-title mt-3">Qualidade</h5>
-                    <p class="card-text">Compromisso com a excelência em cada projeto desenvolvido, garantindo resultados excepcionais.</p>
+    </section>
+
+    <!-- Security Section -->
+    <section class="security-section">
+        <div class="security-content">
+            <div class="row justify-content-center">
+                <div class="col-12 text-center">
+                    <h3 class="security-title">Você está seguro?</h3>
+                    <a href="{% url 'minha_seguranca' %}" class="btn btn-neon btn-security" target="_blank" rel="noopener">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        Verificar Vulnerabilidades da Minha Conexão
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-headset neon-icon" style="font-size: 2.5rem;"></i>
-                    <h5 class="card-title mt-3">Suporte</h5>
-                    <p class="card-text">Suporte técnico especializado 24/7 para todas as suas necessidades tecnológicas.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!-- Why Choose Us Section -->
-    <div class="row mt-5" id="sobre">
-        <div class="col-12 text-center mb-5">
-            <h2>Por que escolher a HOZ TECH?</h2>
-        </div>
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <ul class="list-unstyled">
-                        <li class="mb-4">
-                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
-                            <h5 class="d-inline-block mb-2">Equipe Altamente Qualificada</h5>
-                            <p class="mt-2 mb-0">Profissionais certificados e em constante atualização para garantir a excelência em nossos serviços.</p>
-                        </li>
-                        <li class="mb-4">
-                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
-                            <h5 class="d-inline-block mb-2">Tecnologias Modernas</h5>
-                            <p class="mt-2 mb-0">Utilizamos as mais recentes tecnologias do mercado para desenvolver soluções inovadoras e eficientes.</p>
-                        </li>
-                        <li class="mb-4">
-                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
-                            <h5 class="d-inline-block mb-2">Suporte 24/7</h5>
-                            <p class="mt-2 mb-0">Atendimento técnico disponível a qualquer momento para garantir a continuidade do seu negócio.</p>
-                        </li>
-                    </ul>
+    <section class="home-section" id="sobre">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2>Por que escolher a HOZ TECH?</h2>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-4">
+                                    <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                                    <h5 class="d-inline-block mb-2">Equipe Altamente Qualificada</h5>
+                                    <p class="mt-2 mb-0">Profissionais certificados e em constante atualização para garantir a excelência em nossos serviços.</p>
+                                </li>
+                                <li class="mb-4">
+                                    <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                                    <h5 class="d-inline-block mb-2">Tecnologias Modernas</h5>
+                                    <p class="mt-2 mb-0">Utilizamos as mais recentes tecnologias do mercado para desenvolver soluções inovadoras e eficientes.</p>
+                                </li>
+                                <li class="mb-4">
+                                    <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                                    <h5 class="d-inline-block mb-2">Suporte 24/7</h5>
+                                    <p class="mt-2 mb-0">Atendimento técnico disponível a qualquer momento para garantir a continuidade do seu negócio.</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-4">
+                                    <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                                    <h5 class="d-inline-block mb-2">Soluções Personalizadas</h5>
+                                    <p class="mt-2 mb-0">Desenvolvemos soluções sob medida para seu negócio, atendendo às suas necessidades específicas.</p>
+                                </li>
+                                <li class="mb-4">
+                                    <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                                    <h5 class="d-inline-block mb-2">Preços Competitivos</h5>
+                                    <p class="mt-2 mb-0">Oferecemos o melhor custo-benefício do mercado, sem comprometer a qualidade dos serviços.</p>
+                                </li>
+                                <li class="mb-4">
+                                    <i class="bi bi-check-circle-fill neon-icon me-2"></i>
+                                    <h5 class="d-inline-block mb-2">Garantia de Satisfação</h5>
+                                    <p class="mt-2 mb-0">Compromisso total com a qualidade e satisfação do cliente em todos os nossos projetos.</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <ul class="list-unstyled">
-                        <li class="mb-4">
-                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
-                            <h5 class="d-inline-block mb-2">Soluções Personalizadas</h5>
-                            <p class="mt-2 mb-0">Desenvolvemos soluções sob medida para seu negócio, atendendo às suas necessidades específicas.</p>
-                        </li>
-                        <li class="mb-4">
-                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
-                            <h5 class="d-inline-block mb-2">Preços Competitivos</h5>
-                            <p class="mt-2 mb-0">Oferecemos o melhor custo-benefício do mercado, sem comprometer a qualidade dos serviços.</p>
-                        </li>
-                        <li class="mb-4">
-                            <i class="bi bi-check-circle-fill neon-icon me-2"></i>
-                            <h5 class="d-inline-block mb-2">Garantia de Satisfação</h5>
-                            <p class="mt-2 mb-0">Compromisso total com a qualidade e satisfação do cliente em todos os nossos projetos.</p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     <!-- PDF Download Section -->
-    <div class="row mt-5 mb-5">
-        <div class="col-12">
-            <div class="card pdf-download-card">
-                <div class="card-body text-center py-5">
-                    <h2 class="neon-text mb-4">Manual da Cybersegurança</h2>
-                    <p class="lead mb-4">Baixe gratuitamente nosso manual sobre cybersegurança e aprenda como proteger seu negócio.</p>
-                    <button type="button" class="btn btn-neon btn-lg" onclick="openDownloadModal()">
-                        <i class="bi bi-download me-2"></i>
-                        Baixar Manual
-                    </button>
+    <section class="home-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card pdf-download-card">
+                        <div class="card-body text-center py-5">
+                            <h2 class="neon-text mb-4">Manual da Cybersegurança</h2>
+                            <p class="lead mb-4">Baixe gratuitamente nosso manual sobre cybersegurança e aprenda como proteger seu negócio.</p>
+                            <button type="button" class="btn btn-neon btn-lg" onclick="openDownloadModal()">
+                                <i class="bi bi-download me-2"></i>
+                                Baixar Manual
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Seção de Parceiros -->
+    <section class="partners-section">
+        <div class="container">
+            <div class="text-center mb-4">
+                <h2 class="neon-text mb-3">Nossos Parceiros</h2>
+                <p class="lead">Empresas que confiam em nossa tecnologia e inovação</p>
+            </div>
+            <div class="partners-grid">
+                <div class="partner-item">
+                    <img src="/static/images/partners/offences.png" alt="Offences" class="partner-logo">
+                    <p class="partner-name">Offences</p>
+                </div>
+                <div class="partner-item">
+                    <img src="/static/images/partners/topone.png" alt="Top One" class="partner-logo">
+                    <p class="partner-name">Top One</p>
+                </div>
+                <div class="partner-item">
+                    <img src="/static/images/partners/insecta.png" alt="Insecta Shoes" class="partner-logo">
+                    <p class="partner-name">Insecta Shoes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA Section -->
+    <section class="home-section" id="contato">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="card">
+                        <div class="card-body py-5">
+                            <h2 class="neon-text mb-4">Pronto para Transformar seu Negócio?</h2>
+                            <p class="lead mb-4">Entre em contato conosco e descubra como podemos ajudar você a alcançar o próximo nível.</p>
+                            <a href="#" class="btn btn-neon" data-bs-toggle="modal" data-bs-target="#contatoModal">
+                                <i class="bi bi-envelope-fill"></i>
+                                Fale Conosco
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Download Modal -->
     <div id="downloadModal" class="modal-overlay" style="display: none;">
@@ -412,19 +701,6 @@
                             </button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contact CTA Section -->
-    <div class="row mt-5" id="contato">
-        <div class="col-12 text-center">
-            <div class="card">
-                <div class="card-body py-5">
-                    <h2 class="neon-text mb-4">Pronto para Transformar seu Negócio?</h2>
-                    <p class="lead mb-4">Entre em contato conosco e descubra como podemos ajudar você a alcançar o próximo nível.</p>
-                    <a href="#" class="btn btn-neon btn-lg" data-bs-toggle="modal" data-bs-target="#contatoModal">Fale Conosco</a>
                 </div>
             </div>
         </div>

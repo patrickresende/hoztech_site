@@ -1,0 +1,139 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Início</a></li>
+                    <li class="breadcrumb-item active">Termos de Uso</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 mb-4">Termos de Uso</h1>
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">1. Aceitação dos Termos</h2>
+                    <p>
+                        Ao acessar e utilizar a Hoztech Store, você concorda com estes termos de uso. 
+                        Se você não concordar com qualquer parte destes termos, não deverá utilizar nosso site.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">2. Uso do Site</h2>
+                    <p>
+                        O site da Hoztech Store é destinado apenas para uso pessoal e não comercial. 
+                        Você concorda em não utilizar o site para:
+                    </p>
+                    <ul>
+                        <li>Violar qualquer lei aplicável</li>
+                        <li>Infringir direitos de propriedade intelectual</li>
+                        <li>Enviar material malicioso ou prejudicial</li>
+                        <li>Interferir no funcionamento do site</li>
+                        <li>Coletar informações de outros usuários sem autorização</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">3. Contas de Usuário</h2>
+                    <p>
+                        Para realizar compras em nossa loja, você precisará criar uma conta. 
+                        Você é responsável por:
+                    </p>
+                    <ul>
+                        <li>Manter a confidencialidade de sua senha</li>
+                        <li>Fornecer informações precisas e atualizadas</li>
+                        <li>Notificar-nos imediatamente sobre qualquer uso não autorizado</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">4. Produtos e Serviços</h2>
+                    <p>
+                        Todos os produtos são descritos com o máximo de precisão possível. 
+                        Reservamo-nos o direito de:
+                    </p>
+                    <ul>
+                        <li>Modificar ou descontinuar produtos a qualquer momento</li>
+                        <li>Limitar a quantidade de produtos por compra</li>
+                        <li>Recusar pedidos que violem estes termos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">5. Preços e Pagamentos</h2>
+                    <p>
+                        Os preços dos produtos estão sujeitos a alterações sem aviso prévio. 
+                        Aceitamos diversos métodos de pagamento e garantimos a segurança das transações.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">6. Entrega e Devoluções</h2>
+                    <p>
+                        As políticas de entrega e devolução estão detalhadas em nossa página de 
+                        Política de Devoluções. Entregamos em todo o Brasil e oferecemos garantia 
+                        para todos os produtos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">7. Propriedade Intelectual</h2>
+                    <p>
+                        Todo o conteúdo do site, incluindo textos, imagens, logos e software, 
+                        é propriedade da Hoztech Store e está protegido por leis de propriedade 
+                        intelectual.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">8. Limitação de Responsabilidade</h2>
+                    <p>
+                        A Hoztech Store não será responsável por danos indiretos, incidentais, 
+                        especiais ou consequentes resultantes do uso ou da impossibilidade de 
+                        uso de nossos serviços.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">9. Alterações nos Termos</h2>
+                    <p>
+                        Reservamo-nos o direito de modificar estes termos a qualquer momento. 
+                        As alterações entram em vigor imediatamente após sua publicação no site. 
+                        O uso continuado do site após as alterações constitui aceitação dos novos termos.
+                    </p>
+                    <p class="mb-0">
+                        <strong>Última atualização:</strong> 24 de Maio de 2024
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

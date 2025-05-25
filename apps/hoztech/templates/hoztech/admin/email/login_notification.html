@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .content {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #6c757d;
+            text-align: center;
+        }
+        .alert {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .info-item {
+            margin: 10px 0;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Novo Acesso à Sua Conta Administrativa</h2>
+    </div>
+    
+    <div class="content">
+        <p>Olá {{ user.get_full_name|default:user.username }},</p>
+        
+        <p>Detectamos um novo acesso à sua conta administrativa. Abaixo estão os detalhes do acesso:</p>
+        
+        <div class="info-item">
+            <span class="info-label">Data e Hora:</span>
+            {{ timestamp|date:"d/m/Y H:i:s" }}
+        </div>
+        
+        <div class="info-item">
+            <span class="info-label">Endereço IP:</span>
+            {{ ip_address }}
+        </div>
+        
+        <div class="info-item">
+            <span class="info-label">Navegador:</span>
+            {{ browser }}
+        </div>
+        
+        <div class="info-item">
+            <span class="info-label">Sistema Operacional:</span>
+            {{ os }}
+        </div>
+        
+        <div class="info-item">
+            <span class="info-label">Dispositivo:</span>
+            {{ device }}
+        </div>
+        
+        <div class="alert">
+            <strong>Importante:</strong> Se você não reconhece este acesso, por favor, altere sua senha imediatamente e entre em contato com o suporte.
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Esta é uma mensagem automática. Por favor, não responda a este email.</p>
+        <p>&copy; {% now "Y" %} Hoztech. Todos os direitos reservados.</p>
+    </div>
+</body>
+</html> 

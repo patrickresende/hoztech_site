@@ -1,0 +1,130 @@
+{% extends 'store/base_loja.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Início</a></li>
+                    <li class="breadcrumb-item active">Sobre Nós</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 mb-4">Sobre a Hoztech Store</h1>
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Nossa História</h2>
+                    <p class="lead">
+                        A Hoztech Store nasceu da paixão por tecnologia e do desejo de oferecer produtos de qualidade 
+                        para impulsionar o sucesso dos nossos clientes.
+                    </p>
+                    <p>
+                        Fundada em 2024, nossa loja se dedica a fornecer as melhores soluções em tecnologia e 
+                        informática, sempre com foco na satisfação do cliente e na excelência do atendimento.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Nossa Missão</h2>
+                    <p>
+                        Nossa missão é ser referência no mercado de tecnologia, oferecendo produtos de alta qualidade 
+                        e um atendimento excepcional, ajudando nossos clientes a alcançarem seus objetivos através 
+                        das melhores soluções tecnológicas.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Nossos Valores</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            <strong>Qualidade:</strong> Trabalhamos apenas com produtos de marcas reconhecidas e 
+                            garantimos a satisfação total do cliente.
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            <strong>Inovação:</strong> Estamos sempre atualizados com as últimas tendências e 
+                            tecnologias do mercado.
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            <strong>Atendimento:</strong> Oferecemos um suporte personalizado e eficiente para 
+                            todas as necessidades dos nossos clientes.
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            <strong>Confiança:</strong> Construímos relacionamentos duradouros baseados na 
+                            transparência e honestidade.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Por que escolher a Hoztech Store?</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <i class="bi bi-truck text-primary fs-4 me-3"></i>
+                                <div>
+                                    <h3 class="h5">Entrega Rápida</h3>
+                                    <p class="text-muted mb-0">
+                                        Entregamos em todo o Brasil com rapidez e segurança.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <i class="bi bi-shield-check text-primary fs-4 me-3"></i>
+                                <div>
+                                    <h3 class="h5">Garantia Estendida</h3>
+                                    <p class="text-muted mb-0">
+                                        Todos os produtos possuem garantia e suporte técnico.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <i class="bi bi-credit-card text-primary fs-4 me-3"></i>
+                                <div>
+                                    <h3 class="h5">Pagamento Seguro</h3>
+                                    <p class="text-muted mb-0">
+                                        Diversas formas de pagamento com total segurança.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <i class="bi bi-headset text-primary fs-4 me-3"></i>
+                                <div>
+                                    <h3 class="h5">Suporte Dedicado</h3>
+                                    <p class="text-muted mb-0">
+                                        Equipe técnica especializada para ajudar você.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

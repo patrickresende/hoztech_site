@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 import uuid
 import json
 from user_agents import parse
+from django.db.models import Index, Count, Avg, Q, FloatField
+from django.core.cache import cache
+from django.conf import settings
+from datetime import timedelta
+from django.db.models.functions import Cast
+import os
 
 class CookiePreference(models.Model):
     # Identificador único para o cliente
@@ -169,55 +175,284 @@ class CookiePreference(models.Model):
 class VisitorAccess(models.Model):
     """Modelo para registrar acessos de visitantes"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ip_address = models.GenericIPAddressField()
+    ip_address = models.GenericIPAddressField(db_index=True)
     user_agent = models.TextField()
-    endpoint = models.CharField(max_length=255)
+    endpoint = models.CharField(max_length=255, db_index=True)
     method = models.CharField(max_length=10)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    country = models.CharField(max_length=100, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    country = models.CharField(max_length=100, null=True, blank=True, db_index=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     isp = models.CharField(max_length=255, null=True, blank=True)
-    browser = models.CharField(max_length=100, null=True, blank=True)
-    os = models.CharField(max_length=100, null=True, blank=True)
-    device_type = models.CharField(max_length=50, null=True, blank=True)
-    session_id = models.CharField(max_length=100, null=True, blank=True)
+    browser = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    browser_version = models.CharField(max_length=50, null=True, blank=True)
+    os = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    os_version = models.CharField(max_length=50, null=True, blank=True)
+    device_type = models.CharField(max_length=50, null=True, blank=True, db_index=True)
+    device_model = models.CharField(max_length=100, null=True, blank=True)
+    device_brand = models.CharField(max_length=100, null=True, blank=True)
+    screen_width = models.IntegerField(null=True, blank=True)
+    screen_height = models.IntegerField(null=True, blank=True)
+    screen_resolution = models.CharField(max_length=50, null=True, blank=True)
+    referrer = models.URLField(max_length=500, null=True, blank=True)
+    referrer_domain = models.CharField(max_length=255, null=True, blank=True, db_index=True)
+    session_id = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    time_on_page = models.IntegerField(null=True, blank=True, help_text="Tempo em segundos")
+    pages_visited = models.JSONField(default=list, blank=True, help_text="Lista de páginas visitadas em sequência")
+    is_bounce = models.BooleanField(default=False, help_text="Visitante saiu sem interagir")
+    is_conversion = models.BooleanField(default=False, help_text="Visitante realizou uma conversão")
+    conversion_type = models.CharField(max_length=50, null=True, blank=True, help_text="Tipo de conversão (download, contato, etc)")
+    language = models.CharField(max_length=10, null=True, blank=True)
+    timezone = models.CharField(max_length=50, null=True, blank=True)
+    is_mobile = models.BooleanField(default=False, db_index=True)
+    is_tablet = models.BooleanField(default=False, db_index=True)
+    is_desktop = models.BooleanField(default=False, db_index=True)
+    is_bot = models.BooleanField(default=False, db_index=True)
     
     class Meta:
         indexes = [
-            models.Index(fields=['ip_address']),
-            models.Index(fields=['timestamp']),
-            models.Index(fields=['session_id']),
+            Index(fields=['ip_address', 'timestamp']),
+            Index(fields=['session_id', 'timestamp']),
+            Index(fields=['browser', 'os', 'device_type']),
+            Index(fields=['country', 'city']),
+            Index(fields=['is_mobile', 'is_tablet', 'is_desktop']),
+            Index(fields=['is_conversion', 'conversion_type']),
+            Index(fields=['referrer_domain']),
         ]
         ordering = ['-timestamp']
+        verbose_name = 'Acesso de Visitante'
+        verbose_name_plural = 'Acessos de Visitantes'
+        get_latest_by = 'timestamp'
 
     def __str__(self):
         return f"{self.ip_address} - {self.timestamp}"
 
+    @property
+    def screen_size(self):
+        """Retorna a resolução da tela formatada"""
+        if self.screen_width and self.screen_height:
+            return f"{self.screen_width}x{self.screen_height}"
+        return None
+
+    @property
+    def device_info(self):
+        """Retorna informações do dispositivo formatadas"""
+        parts = []
+        if self.device_brand:
+            parts.append(self.device_brand)
+        if self.device_model:
+            parts.append(self.device_model)
+        if self.device_type:
+            parts.append(self.device_type)
+        return " ".join(parts) if parts else None
+
+    @property
+    def browser_info(self):
+        """Retorna informações do navegador formatadas"""
+        if self.browser and self.browser_version:
+            return f"{self.browser} {self.browser_version}"
+        return self.browser or None
+
+    @property
+    def os_info(self):
+        """Retorna informações do sistema operacional formatadas"""
+        if self.os and self.os_version:
+            return f"{self.os} {self.os_version}"
+        return self.os or None
+
+    @classmethod
+    def get_visitor_stats(cls, days=30):
+        """Retorna estatísticas de visitantes para o período especificado"""
+        start_date = timezone.now() - timedelta(days=days)
+        
+        # Filtra registros do período
+        visitors = cls.objects.filter(timestamp__gte=start_date)
+        
+        # Estatísticas básicas
+        total_visits = visitors.count()
+        unique_visitors = visitors.values('ip_address').distinct().count()
+        
+        # Estatísticas por dispositivo
+        device_stats = visitors.values('device_type').annotate(
+            count=Count('id')
+        ).order_by('-count')[:5]
+        
+        # Estatísticas por navegador
+        browser_stats = visitors.values('browser').annotate(
+            count=Count('id')
+        ).order_by('-count')[:5]
+        
+        # Estatísticas por país
+        country_stats = visitors.values('country').annotate(
+            count=Count('id')
+        ).order_by('-count')[:5]
+        
+        # Estatísticas de conversão
+        conversion_stats = visitors.filter(is_conversion=True).values(
+            'conversion_type'
+        ).annotate(
+            count=Count('id')
+        ).order_by('-count')
+        
+        # Estatísticas de bounce
+        bounce_rate = visitors.filter(is_bounce=True).count() / total_visits * 100 if total_visits > 0 else 0
+        
+        # Tempo médio na página
+        avg_time = visitors.exclude(time_on_page__isnull=True).aggregate(
+            avg_time=Avg('time_on_page')
+        )['avg_time'] or 0
+        
+        return {
+            'total_visits': total_visits,
+            'unique_visitors': unique_visitors,
+            'device_stats': list(device_stats),
+            'browser_stats': list(browser_stats),
+            'country_stats': list(country_stats),
+            'conversion_stats': list(conversion_stats),
+            'bounce_rate': round(bounce_rate, 2),
+            'avg_time_on_page': round(avg_time, 2),
+            'period_days': days
+        }
+
+    @classmethod
+    def cleanup_old_records(cls, days=90):
+        """Remove registros antigos para manter o banco de dados otimizado"""
+        cutoff_date = timezone.now() - timedelta(days=days)
+        deleted, _ = cls.objects.filter(timestamp__lt=cutoff_date).delete()
+        return deleted
+
 class CookieConsent(models.Model):
     """Modelo para registrar consentimentos de cookies"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    visitor = models.ForeignKey(VisitorAccess, on_delete=models.CASCADE, related_name='cookie_consents')
-    cookie_name = models.CharField(max_length=100)
+    visitor = models.ForeignKey(VisitorAccess, on_delete=models.CASCADE, related_name='cookie_consents', db_index=True)
+    cookie_name = models.CharField(max_length=100, db_index=True)
     value = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     expires_at = models.DateTimeField(null=True, blank=True)
     category = models.CharField(max_length=50, choices=[
         ('essential', 'Essencial'),
         ('performance', 'Desempenho'),
         ('marketing', 'Marketing'),
-        ('analytics', 'Analytics')
-    ])
+        ('analytics', 'Analytics'),
+        ('preferences', 'Preferências'),
+        ('security', 'Segurança')
+    ], db_index=True)
+    browser_version = models.CharField(max_length=50, null=True, blank=True)
+    browser_settings = models.JSONField(default=dict, blank=True, help_text="Configurações de privacidade do navegador")
+    consent_source = models.CharField(max_length=50, choices=[
+        ('banner', 'Banner de Cookies'),
+        ('settings', 'Configurações'),
+        ('preferences', 'Preferências do Usuário'),
+        ('auto', 'Automático')
+    ], default='banner')
+    consent_method = models.CharField(max_length=50, choices=[
+        ('click', 'Clique'),
+        ('scroll', 'Scroll'),
+        ('auto', 'Automático'),
+        ('settings', 'Configurações')
+    ], default='click')
+    consent_duration = models.IntegerField(null=True, blank=True, help_text="Duração do consentimento em dias")
+    is_third_party = models.BooleanField(default=False, help_text="Cookie de terceiros")
+    third_party_domain = models.CharField(max_length=255, null=True, blank=True)
+    purpose = models.TextField(null=True, blank=True, help_text="Propósito do cookie")
+    data_retention = models.IntegerField(null=True, blank=True, help_text="Período de retenção em dias")
     
     class Meta:
         indexes = [
-            models.Index(fields=['cookie_name']),
-            models.Index(fields=['timestamp']),
-            models.Index(fields=['category']),
+            Index(fields=['cookie_name', 'timestamp']),
+            Index(fields=['category', 'timestamp']),
+            Index(fields=['visitor', 'category']),
+            Index(fields=['is_third_party', 'third_party_domain']),
+            Index(fields=['consent_source', 'consent_method']),
         ]
         ordering = ['-timestamp']
+        verbose_name = 'Consentimento de Cookie'
+        verbose_name_plural = 'Consentimentos de Cookies'
+        get_latest_by = 'timestamp'
 
     def __str__(self):
-        return f"{self.cookie_name} - {self.visitor.ip_address}"
+        return f"{self.cookie_name} - {self.timestamp}"
+
+    @property
+    def is_expired(self):
+        """Verifica se o consentimento expirou"""
+        if not self.expires_at:
+            return False
+        return timezone.now() > self.expires_at
+
+    @property
+    def days_until_expiry(self):
+        """Retorna o número de dias até a expiração"""
+        if not self.expires_at:
+            return None
+        delta = self.expires_at - timezone.now()
+        return max(0, delta.days)
+
+    @classmethod
+    def get_consent_stats(cls, days=30):
+        """Retorna estatísticas de consentimento para o período especificado"""
+        start_date = timezone.now() - timedelta(days=days)
+        
+        # Filtra registros do período
+        consents = cls.objects.filter(timestamp__gte=start_date)
+        
+        # Estatísticas básicas
+        total_consents = consents.count()
+        
+        # Estatísticas por categoria
+        category_stats = consents.values('category').annotate(
+            count=Count('id')
+        ).order_by('-count')
+        
+        # Estatísticas por cookie
+        cookie_stats = consents.values('cookie_name').annotate(
+            count=Count('id')
+        ).order_by('-count')[:10]
+        
+        # Estatísticas por país
+        country_stats = consents.values('visitor__country').annotate(
+            count=Count('id')
+        ).order_by('-count')[:5]
+        
+        # Estatísticas por navegador
+        browser_stats = consents.values('visitor__browser').annotate(
+            count=Count('id')
+        ).order_by('-count')[:5]
+        
+        # Estatísticas de terceiros
+        third_party_stats = consents.filter(is_third_party=True).values(
+            'third_party_domain'
+        ).annotate(
+            count=Count('id')
+        ).order_by('-count')[:5]
+        
+        # Taxa de aceitação por categoria
+        acceptance_rates = {}
+        for category in dict(cls._meta.get_field('category').choices).keys():
+            category_total = consents.filter(category=category).count()
+            if total_consents > 0:
+                rate = (category_total / total_consents) * 100
+                acceptance_rates[category] = round(rate, 2)
+            else:
+                acceptance_rates[category] = 0
+        
+        return {
+            'total_consents': total_consents,
+            'category_stats': list(category_stats),
+            'cookie_stats': list(cookie_stats),
+            'country_stats': list(country_stats),
+            'browser_stats': list(browser_stats),
+            'third_party_stats': list(third_party_stats),
+            'acceptance_rates': acceptance_rates,
+            'period_days': days
+        }
+
+    @classmethod
+    def cleanup_expired_consents(cls):
+        """Remove consentimentos expirados"""
+        expired = cls.objects.filter(expires_at__lt=timezone.now())
+        count = expired.count()
+        expired.delete()
+        return count
 
 class AdminAccessLog(models.Model):
     """Modelo para registrar acessos à área administrativa"""
@@ -236,9 +471,11 @@ class AdminAccessLog(models.Model):
             models.Index(fields=['action']),
         ]
         ordering = ['-timestamp']
+        verbose_name = 'Log de Acesso Administrativo'
+        verbose_name_plural = 'Logs de Acesso Administrativo'
 
     def __str__(self):
-        return f"{self.user.username if self.user else 'Anonymous'} - {self.action}"
+        return f"{self.user.username if self.user else 'Unknown'} - {self.action} - {self.timestamp}"
 
 class AdminAuthImage(models.Model):
     """Modelo para armazenar imagens de autenticação 2FA"""
@@ -255,6 +492,8 @@ class AdminAuthImage(models.Model):
             models.Index(fields=['is_active']),
         ]
         ordering = ['category', 'name']
+        verbose_name = 'Imagem de Autenticação'
+        verbose_name_plural = 'Imagens de Autenticação'
 
     def __str__(self):
         return f"{self.name} ({self.category})"
@@ -268,45 +507,215 @@ class AdminUserAuthPreference(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # Campos de segurança
+    login_attempts = models.IntegerField(default=0)
+    last_login_attempt = models.DateTimeField(null=True, blank=True)
+    is_locked = models.BooleanField(default=False)
+    lock_expires_at = models.DateTimeField(null=True, blank=True)
+    require_password_change = models.BooleanField(default=False)
+    last_password_change = models.DateTimeField(null=True, blank=True)
+    session_timeout = models.IntegerField(default=30)  # minutos
+    allowed_ips = models.JSONField(default=list, blank=True)
+    notify_on_login = models.BooleanField(default=True)
+    notify_on_password_change = models.BooleanField(default=True)
+    
     class Meta:
         indexes = [
             models.Index(fields=['is_2fa_enabled']),
+            models.Index(fields=['is_locked']),
+            models.Index(fields=['last_login_attempt']),
+            models.Index(fields=['require_password_change']),
         ]
+        verbose_name = 'Preferência de Autenticação'
+        verbose_name_plural = 'Preferências de Autenticação'
 
     def __str__(self):
-        return f"Preferências de autenticação de {self.user.username}"
+        return f"Preferências de {self.user.username}"
+
+    def increment_login_attempts(self):
+        """Incrementa o contador de tentativas de login"""
+        self.login_attempts += 1
+        self.last_login_attempt = timezone.now()
+        
+        # Bloqueia após 5 tentativas por 30 minutos
+        if self.login_attempts >= 5:
+            self.is_locked = True
+            self.lock_expires_at = timezone.now() + timedelta(minutes=30)
+        
+        self.save()
+
+    def reset_login_attempts(self):
+        """Reseta o contador de tentativas de login"""
+        self.login_attempts = 0
+        self.is_locked = False
+        self.lock_expires_at = None
+        self.save()
+
+    def check_lock_status(self):
+        """Verifica se a conta está bloqueada"""
+        if self.is_locked and self.lock_expires_at:
+            if timezone.now() > self.lock_expires_at:
+                self.reset_login_attempts()
+                return False
+            return True
+        return False
+
+    def add_allowed_ip(self, ip_address):
+        """Adiciona um IP à lista de IPs permitidos"""
+        if ip_address not in self.allowed_ips:
+            self.allowed_ips.append(ip_address)
+            self.save()
+
+    def remove_allowed_ip(self, ip_address):
+        """Remove um IP da lista de IPs permitidos"""
+        if ip_address in self.allowed_ips:
+            self.allowed_ips.remove(ip_address)
+            self.save()
+
+    def is_ip_allowed(self, ip_address):
+        """Verifica se um IP está na lista de IPs permitidos"""
+        return not self.allowed_ips or ip_address in self.allowed_ips
 
 class DataExport(models.Model):
-    """Modelo para registrar exportações de dados"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    export_type = models.CharField(max_length=50, choices=[
+    """Modelo para registro de exportações de dados."""
+    
+    EXPORT_TYPES = [
         ('cookies', 'Cookies'),
         ('access', 'Acessos'),
         ('all', 'Todos os Dados')
-    ])
-    date_range_start = models.DateTimeField()
-    date_range_end = models.DateTimeField()
-    file_path = models.CharField(max_length=255)
-    status = models.CharField(max_length=50, choices=[
+    ]
+    
+    FORMAT_TYPES = [
+        ('json', 'JSON'),
+        ('csv', 'CSV'),
+        ('xlsx', 'Excel (XLSX)')
+    ]
+    
+    STATUS_CHOICES = [
         ('pending', 'Pendente'),
         ('processing', 'Processando'),
         ('completed', 'Concluído'),
         ('failed', 'Falhou')
-    ], default='pending')
-    error_message = models.TextField(null=True, blank=True)
+    ]
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='exports',
+        verbose_name='Usuário'
+    )
+    
+    export_type = models.CharField(
+        max_length=10,
+        choices=EXPORT_TYPES,
+        verbose_name='Tipo de Exportação'
+    )
+    
+    date_range_start = models.DateField(
+        verbose_name='Data Inicial'
+    )
+    
+    date_range_end = models.DateField(
+        verbose_name='Data Final'
+    )
+    
+    format = models.CharField(
+        max_length=10,
+        choices=FORMAT_TYPES,
+        default='json',
+        verbose_name='Formato'
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending',
+        verbose_name='Status'
+    )
+    
+    file_path = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name='Caminho do Arquivo'
+    )
+    
+    error_message = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name='Mensagem de Erro'
+    )
+    
+    compress = models.BooleanField(
+        default=False,
+        verbose_name='Comprimido'
+    )
+    
+    include_headers = models.BooleanField(
+        default=True,
+        verbose_name='Incluir Cabeçalhos'
+    )
+    
+    download_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Downloads'
+    )
+    
+    last_download = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Último Download'
+    )
+    
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Criado em'
+    )
+    
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Atualizado em'
+    )
     
     class Meta:
+        verbose_name = 'Exportação'
+        verbose_name_plural = 'Exportações'
+        ordering = ['-created_at']
         indexes = [
-            models.Index(fields=['user']),
-            models.Index(fields=['timestamp']),
-            models.Index(fields=['export_type']),
+            models.Index(fields=['user', 'export_type', 'status']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['status'])
         ]
-        ordering = ['-timestamp']
-
+    
     def __str__(self):
-        return f"{self.export_type} - {self.timestamp}"
+        return f"{self.get_export_type_display()} - {self.date_range_start} a {self.date_range_end}"
+    
+    def get_file_name(self):
+        """Retorna o nome do arquivo para download."""
+        if not self.file_path:
+            return None
+        return os.path.basename(self.file_path)
+    
+    def get_file_size(self):
+        """Retorna o tamanho do arquivo em bytes."""
+        if not self.file_path or not os.path.exists(self.file_path):
+            return 0
+        return os.path.getsize(self.file_path)
+    
+    def get_file_size_display(self):
+        """Retorna o tamanho do arquivo formatado."""
+        size = self.get_file_size()
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size < 1024:
+                return f"{size:.1f} {unit}"
+            size /= 1024
+        return f"{size:.1f} TB"
+    
+    def delete(self, *args, **kwargs):
+        """Remove o arquivo físico ao deletar o registro."""
+        if self.file_path and os.path.exists(self.file_path):
+            os.remove(self.file_path)
+        super().delete(*args, **kwargs)
 
 class PDFDownload(models.Model):
     """Modelo para armazenar informações de leads que baixam o PDF"""
@@ -347,7 +756,7 @@ class PDFDownload(models.Model):
         null=True,
         blank=True,
         verbose_name="Último download",
-        help_text="Data e hora do último download do PDF"
+        help_text="Data e hora do último download"
     )
     
     class Meta:
@@ -358,13 +767,14 @@ class PDFDownload(models.Model):
             models.Index(fields=['email']),
             models.Index(fields=['created_at']),
             models.Index(fields=['marketing_consent']),
+            models.Index(fields=['source']),
         ]
-    
+
     def __str__(self):
-        return f"{self.name} - {self.email} ({self.created_at.strftime('%d/%m/%Y')})"
-    
+        return f"{self.name} - {self.email}"
+
     def increment_download_count(self):
-        """Incrementa o contador de downloads e atualiza a data do último download"""
+        """Incrementa o contador de downloads"""
         self.download_count += 1
         self.last_download = timezone.now()
-        self.save(update_fields=['download_count', 'last_download'])
+        self.save()

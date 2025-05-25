@@ -26,6 +26,7 @@
     <!-- CSS -->
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- CSS específico para dispositivos -->
     <link href="{% static 'css/mobile.css' %}" media="(max-width: 767px)" rel="stylesheet">
@@ -65,6 +66,126 @@
     </script>
 </head>
 <body class="{% block body_class %}{% endblock %}">
-    <!-- ... resto do conteúdo ... -->
+    <!-- Header/Navigation -->
+    <header class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'img/logo.png' %}" alt="Hoztech" height="40">
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'services' %}">Serviços</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sobre_nos' %}">Sobre Nós</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contato' %}">Contato</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary btn-sm ms-2" href="{% url 'store:home' %}">
+                            <i class="bi bi-shop"></i> Loja
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Área de login/usuário -->
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'minha_seguranca' %}">
+                                    <i class="bi bi-shield-lock"></i> Minha Segurança
+                                </a>
+                            </li>
+                            {% if user.is_staff %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin_dashboard' %}">
+                                    <i class="bi bi-speedometer2"></i> Painel Admin
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin_logout' %}">
+                                    <i class="bi bi-box-arrow-right"></i> Sair
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> Área do Cliente
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- ... rest of the template ... -->
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Hoz Tech</h5>
+                    <p class="text-muted">Soluções tecnológicas inovadoras para seu negócio.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Links Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-muted">Início</a></li>
+                        <li><a href="{% url 'services' %}" class="text-muted">Serviços</a></li>
+                        <li><a href="{% url 'sobre_nos' %}" class="text-muted">Sobre Nós</a></li>
+                        <li><a href="{% url 'contato' %}" class="text-muted">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contato</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><i class="bi bi-envelope"></i> contato@hoztech.com.br</li>
+                        <li><i class="bi bi-telephone"></i> (11) 99999-9999</li>
+                        <li><i class="bi bi-geo-alt"></i> São Paulo, SP</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted">&copy; {% now "Y" %} Hoz Tech. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-muted me-3">Política de Privacidade</a>
+                    <a href="#" class="text-muted">Termos de Uso</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts personalizados -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- Rastreamento de visitantes -->
+    {% include 'hoztech/includes/visitor_tracking.html' %}
 </body>
 </html> 

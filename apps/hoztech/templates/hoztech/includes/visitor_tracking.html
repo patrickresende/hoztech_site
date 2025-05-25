@@ -1,0 +1,205 @@
+{% comment %}
+Template para rastreamento de visitantes.
+Inclua este template em sua base.html ou em páginas específicas.
+{% endcomment %}
+
+<script>
+(function() {
+    // Função para enviar dados do visitante
+    function sendVisitorData(data) {
+        // Usa sendBeacon para garantir que os dados sejam enviados mesmo durante o unload
+        if (navigator.sendBeacon) {
+            const formData = new FormData();
+            for (const [key, value] of Object.entries(data)) {
+                if (value !== null && value !== undefined) {
+                    formData.append(key, value);
+                }
+            }
+            navigator.sendBeacon(window.location.pathname, formData);
+        }
+    }
+
+    // Captura informações da tela
+    function getScreenInfo() {
+        return {
+            width: window.screen.width,
+            height: window.screen.height,
+            availWidth: window.screen.availWidth,
+            availHeight: window.screen.availHeight,
+            colorDepth: window.screen.colorDepth,
+            pixelDepth: window.screen.pixelDepth,
+            devicePixelRatio: window.devicePixelRatio || 1
+        };
+    }
+
+    // Captura informações do navegador
+    function getBrowserInfo() {
+        const ua = navigator.userAgent;
+        const browserInfo = {
+            userAgent: ua,
+            language: navigator.language || navigator.userLanguage,
+            platform: navigator.platform,
+            vendor: navigator.vendor,
+            cookiesEnabled: navigator.cookieEnabled,
+            doNotTrack: navigator.doNotTrack,
+            online: navigator.onLine,
+            javaEnabled: navigator.javaEnabled ? navigator.javaEnabled() : false,
+            plugins: Array.from(navigator.plugins).map(p => ({
+                name: p.name,
+                description: p.description,
+                filename: p.filename
+            })),
+            mimeTypes: Array.from(navigator.mimeTypes).map(m => ({
+                type: m.type,
+                description: m.description,
+                suffixes: m.suffixes
+            }))
+        };
+
+        // Detecta recursos do navegador
+        const features = {
+            localStorage: !!window.localStorage,
+            sessionStorage: !!window.sessionStorage,
+            indexedDB: !!window.indexedDB,
+            webGL: !!window.WebGLRenderingContext,
+            webRTC: !!(window.RTCPeerConnection || window.webkitRTCPeerConnection),
+            webWorkers: !!window.Worker,
+            serviceWorker: 'serviceWorker' in navigator,
+            pushNotifications: 'PushManager' in window,
+            geolocation: 'geolocation' in navigator,
+            touch: 'ontouchstart' in window,
+            webp: (function() {
+                const elem = document.createElement('canvas');
+                if (elem.getContext && elem.getContext('2d')) {
+                    return elem.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+                }
+                return false;
+            })()
+        };
+
+        return { ...browserInfo, features };
+    }
+
+    // Captura informações de performance
+    function getPerformanceInfo() {
+        if (!window.performance) return null;
+
+        const perf = window.performance;
+        const timing = perf.timing;
+        const navigation = perf.navigation;
+
+        return {
+            navigationType: navigation ? navigation.type : null,
+            redirectCount: navigation ? navigation.redirectCount : null,
+            timing: timing ? {
+                navigationStart: timing.navigationStart,
+                unloadEventStart: timing.unloadEventStart,
+                unloadEventEnd: timing.unloadEventEnd,
+                redirectStart: timing.redirectStart,
+                redirectEnd: timing.redirectEnd,
+                fetchStart: timing.fetchStart,
+                domainLookupStart: timing.domainLookupStart,
+                domainLookupEnd: timing.domainLookupEnd,
+                connectStart: timing.connectStart,
+                connectEnd: timing.connectEnd,
+                secureConnectionStart: timing.secureConnectionStart,
+                requestStart: timing.requestStart,
+                responseStart: timing.responseStart,
+                responseEnd: timing.responseEnd,
+                domLoading: timing.domLoading,
+                domInteractive: timing.domInteractive,
+                domContentLoadedEventStart: timing.domContentLoadedEventStart,
+                domContentLoadedEventEnd: timing.domContentLoadedEventEnd,
+                domComplete: timing.domComplete,
+                loadEventStart: timing.loadEventStart,
+                loadEventEnd: timing.loadEventEnd
+            } : null,
+            memory: perf.memory ? {
+                jsHeapSizeLimit: perf.memory.jsHeapSizeLimit,
+                totalJSHeapSize: perf.memory.totalJSHeapSize,
+                usedJSHeapSize: perf.memory.usedJSHeapSize
+            } : null
+        };
+    }
+
+    // Inicializa o rastreamento
+    function initTracking() {
+        // Envia informações iniciais
+        sendVisitorData({
+            screen_info: JSON.stringify(getScreenInfo()),
+            browser_info: JSON.stringify(getBrowserInfo()),
+            performance_info: JSON.stringify(getPerformanceInfo())
+        });
+
+        // Configura o rastreamento de tempo na página
+        let startTime = Date.now();
+        let lastActiveTime = startTime;
+        let isActive = true;
+
+        // Atualiza o tempo de inatividade
+        function updateActivity() {
+            lastActiveTime = Date.now();
+            isActive = true;
+        }
+
+        // Eventos para detectar atividade do usuário
+        const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        activityEvents.forEach(event => {
+            document.addEventListener(event, updateActivity, { passive: true });
+        });
+
+        // Verifica inatividade a cada 5 segundos
+        setInterval(() => {
+            const now = Date.now();
+            if (now - lastActiveTime > 30000) { // 30 segundos de inatividade
+                if (isActive) {
+                    isActive = false;
+                    // Envia tempo de atividade quando o usuário fica inativo
+                    sendVisitorData({
+                        time_on_page: Math.round((lastActiveTime - startTime) / 1000)
+                    });
+                }
+            }
+        }, 5000);
+
+        // Envia dados quando o usuário sai da página
+        window.addEventListener('beforeunload', () => {
+            const timeSpent = Math.round((Date.now() - startTime) / 1000);
+            sendVisitorData({
+                time_on_page: timeSpent,
+                is_leaving: true
+            });
+        }, { passive: true });
+
+        // Rastreia cliques em links externos
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link && link.hostname !== window.location.hostname) {
+                sendVisitorData({
+                    external_link: link.href,
+                    external_link_text: link.textContent.trim()
+                });
+            }
+        }, { passive: true });
+
+        // Rastreia formulários
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (form.method === 'post') {
+                sendVisitorData({
+                    form_submit: form.action,
+                    form_id: form.id,
+                    form_name: form.name
+                });
+            }
+        }, { passive: true });
+    }
+
+    // Inicia o rastreamento quando o DOM estiver pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTracking);
+    } else {
+        initTracking();
+    }
+})();
+</script> 

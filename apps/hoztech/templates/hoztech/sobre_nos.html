@@ -1,0 +1,598 @@
+{% extends 'hoztech/base.html' %}
+{% load static %}
+
+{% block title %}Sobre Nós - Hoz Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Variáveis */
+    :root {
+        --timeline-color: var(--neon-red);
+        --timeline-bg: var(--darker-gray);
+        --timeline-dot: var(--neon-red-soft);
+        --timeline-line: rgba(255, 0, 51, 0.3);
+        --section-spacing: 5rem;
+    }
+
+    /* Hero Section */
+    .about-hero {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+                    url('/static/images/about-bg.jpg') center/cover;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at center, var(--neon-red-soft) 0%, transparent 70%);
+        opacity: 0.1;
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.1; }
+        50% { opacity: 0.2; }
+    }
+
+    .about-hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Timeline */
+    .timeline-section {
+        padding: var(--section-spacing) 0;
+        background: var(--timeline-bg);
+        position: relative;
+    }
+
+    .timeline-container {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .timeline-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        background: var(--timeline-line);
+        transform: translateX(-50%);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 3rem;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-content {
+        width: 45%;
+        padding: 1.5rem;
+        background: rgba(13, 13, 13, 0.95);
+        border: 1px solid var(--timeline-color);
+        border-radius: 8px;
+        box-shadow: 0 0 20px var(--timeline-dot);
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px var(--timeline-dot);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content {
+        margin-right: auto;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content {
+        margin-left: auto;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        top: 50%;
+        width: 20px;
+        height: 20px;
+        background: var(--timeline-dot);
+        border-radius: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-dot {
+        right: -10px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-dot {
+        left: -10px;
+    }
+
+    .timeline-year {
+        font-size: 1.5rem;
+        color: var(--timeline-color);
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .timeline-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+        color: var(--light-gray);
+    }
+
+    .timeline-description {
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    /* Stats Section */
+    .stats-section {
+        padding: var(--section-spacing) 0;
+        background: var(--darker-gray);
+    }
+
+    .stat-card {
+        background: rgba(13, 13, 13, 0.95);
+        border: 1px solid var(--neon-red);
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px var(--neon-red-soft);
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        color: var(--neon-red);
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .stat-label {
+        color: var(--light-gray);
+        font-size: 1.1rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .timeline-container::before {
+            left: 30px;
+        }
+
+        .timeline-content {
+            width: calc(100% - 60px);
+            margin-left: 60px !important;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot,
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: 20px;
+        }
+
+        .stat-card {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    /* Animações */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* New styles for mission, vision, and values */
+    .mission-vision-section {
+        padding: var(--section-spacing) 0;
+        background: var(--darker-gray);
+    }
+
+    .mission-vision-card {
+        background: rgba(13, 13, 13, 0.95);
+        border: 1px solid var(--timeline-color);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .mission-vision-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px var(--timeline-dot);
+    }
+
+    .mission-vision-card h3 {
+        color: var(--timeline-color);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .value-card {
+        background: rgba(13, 13, 13, 0.95);
+        border: 1px solid var(--timeline-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px var(--timeline-dot);
+    }
+
+    .value-card i {
+        font-size: 2rem;
+        color: var(--timeline-color);
+        margin-bottom: 1rem;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .service-card {
+        background: rgba(13, 13, 13, 0.95);
+        border: 1px solid var(--timeline-color);
+        border-radius: 8px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px var(--timeline-dot);
+    }
+
+    .service-card i {
+        font-size: 2.5rem;
+        color: var(--timeline-color);
+        margin-bottom: 1rem;
+    }
+
+    .cta-section {
+        padding: var(--section-spacing) 0;
+        background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+                    url('/static/images/cta-bg.jpg') center/cover;
+        text-align: center;
+    }
+
+    .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .cta-button {
+        margin-top: 2rem;
+        padding: 1rem 2.5rem;
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center about-hero-content">
+                <h1 class="display-4 mb-4">Sobre Nós</h1>
+                <p class="lead">Transformando vidas através do conhecimento e da segurança digital</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission, Vision, and Values Section -->
+<section class="mission-vision-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="neon-text">Nossa História</h2>
+                <p class="lead">Fundada por Patrick Resende, apaixonado por informática e formado em Análise de Sistemas, 
+                a Hoztech nasceu para transformar vidas através do conhecimento e da segurança digital.</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mission-vision-card fade-in">
+                    <h3><i class="bi bi-bullseye me-2"></i>Nossa Missão</h3>
+                    <p>Promover a inclusão digital com paciência, dedicação e soluções personalizadas, 
+                    garantindo que cada cliente se sinta seguro e capaz de usar a tecnologia no dia a dia.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mission-vision-card fade-in">
+                    <h3><i class="bi bi-eye me-2"></i>Nossa Visão</h3>
+                    <p>Ser referência no ensino de informática e na oferta de soluções tecnológicas acessíveis, 
+                    impactando positivamente a vida de pessoas e pequenos negócios.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="text-center mb-4 neon-text">Nossos Valores</h3>
+                <div class="values-grid">
+                    <div class="value-card fade-in">
+                        <i class="bi bi-people"></i>
+                        <h4>Inclusão e Acessibilidade</h4>
+                        <p>Para todas as idades e perfis, garantindo que ninguém fique para trás no mundo digital.</p>
+                    </div>
+                    <div class="value-card fade-in">
+                        <i class="bi bi-heart"></i>
+                        <h4>Paciência e Didática</h4>
+                        <p>Respeitando o ritmo de cada pessoa, com uma abordagem humanizada e acolhedora.</p>
+                    </div>
+                    <div class="value-card fade-in">
+                        <i class="bi bi-lightning"></i>
+                        <h4>Inovação Constante</h4>
+                        <p>Sempre atentos às novidades do mundo digital para oferecer as melhores soluções.</p>
+                    </div>
+                    <div class="value-card fade-in">
+                        <i class="bi bi-shield-check"></i>
+                        <h4>Compromisso com Segurança</h4>
+                        <p>Protegendo dados e informações, priorizando a segurança digital dos nossos clientes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- What We Do Section -->
+<section class="timeline-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="neon-text">O Que Fazemos Por Você</h2>
+                <p class="lead">Soluções tecnológicas completas para impulsionar seu negócio e sua vida digital</p>
+            </div>
+        </div>
+        <div class="services-grid">
+            <div class="service-card fade-in">
+                <i class="bi bi-laptop"></i>
+                <h3>Aulas de Informática</h3>
+                <p>Do básico ao avançado, para todas as idades e necessidades. Aprenda no seu ritmo com professores dedicados.</p>
+            </div>
+            <div class="service-card fade-in">
+                <i class="bi bi-shield-lock"></i>
+                <h3>Consultoria e Segurança Digital</h3>
+                <p>Orientações práticas para proteger você e sua empresa contra golpes e fraudes digitais.</p>
+            </div>
+            <div class="service-card fade-in">
+                <i class="bi bi-tools"></i>
+                <h3>Manutenção de Computadores</h3>
+                <p>Formatação, limpeza, instalação de programas, montagem de setups e muito mais.</p>
+            </div>
+            <div class="service-card fade-in">
+                <i class="bi bi-globe"></i>
+                <h3>Criação de Sites Profissionais</h3>
+                <p>Páginas que atraem clientes e transmitem confiança, com design moderno e responsivo.</p>
+            </div>
+            <div class="service-card fade-in">
+                <i class="bi bi-book"></i>
+                <h3>Venda de Cursos Parceiros</h3>
+                <p>Conteúdos diversos, de informática a marketing e vendas, para expandir seus conhecimentos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Timeline Section -->
+<section class="timeline-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="neon-text">Nossa Jornada</h2>
+                <p class="lead">Conheça os marcos que definiram nossa trajetória</p>
+            </div>
+        </div>
+        <div class="timeline-container">
+            <!-- 2020 -->
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2020</div>
+                    <h3 class="timeline-title">O Início</h3>
+                    <p class="timeline-description">
+                        Fundada em meio à pandemia, a Hoz Tech nasceu com o propósito de ajudar pessoas 
+                        a se adaptarem ao mundo digital. Começamos oferecendo aulas particulares e 
+                        suporte básico de informática.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2021 -->
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2021</div>
+                    <h3 class="timeline-title">Expansão de Serviços</h3>
+                    <p class="timeline-description">
+                        Ampliamos nosso portfólio com serviços de consultoria em segurança digital 
+                        e manutenção de computadores. Nossa equipe cresceu e nos especializamos em 
+                        diferentes áreas da tecnologia.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2022 -->
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2022</div>
+                    <h3 class="timeline-title">Inovação e Tecnologia</h3>
+                    <p class="timeline-description">
+                        Implementamos metodologias modernas de ensino e adotamos as mais recentes 
+                        tecnologias do mercado. Começamos a oferecer cursos online e consultoria 
+                        em segurança digital.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2023 -->
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2023</div>
+                    <h3 class="timeline-title">Reconhecimento</h3>
+                    <p class="timeline-description">
+                        Recebemos reconhecimento por nossa excelência em atendimento e qualidade 
+                        dos serviços. Expandimos nossa atuação para incluir desenvolvimento web 
+                        e soluções digitais completas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2024 -->
+            <div class="timeline-item fade-in">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2024</div>
+                    <h3 class="timeline-title">Presente e Futuro</h3>
+                    <p class="timeline-description">
+                        Hoje, continuamos inovando e buscando as melhores soluções para nossos clientes. 
+                        Nosso compromisso é com a inclusão digital e a satisfação total dos nossos parceiros.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="neon-text">Números que Contam Nossa História</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card fade-in">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Alunos Formados</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card fade-in">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfação dos Clientes</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card fade-in">
+                    <div class="stat-number">4+</div>
+                    <div class="stat-label">Anos de Experiência</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card fade-in">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Projetos Entregues</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="neon-text mb-4">Vamos Juntos Dar o Próximo Passo?</h2>
+            <p class="lead mb-4">Na Hoztech, o atendimento é feito com carinho, atenção e sem enrolação. 
+            Nossa prioridade é o seu aprendizado e a sua segurança. Com a gente, a tecnologia deixa de 
+            ser um problema e se torna uma ferramenta poderosa para o seu dia a dia.</p>
+            <a href="{% url 'contato' %}" class="btn btn-neon btn-lg cta-button">
+                Fale Conosco
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Função para verificar se um elemento está visível na viewport
+    function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    // Função para adicionar a classe 'visible' aos elementos visíveis
+    function handleScroll() {
+        const elements = document.querySelectorAll('.fade-in');
+        elements.forEach(element => {
+            if (isElementInViewport(element)) {
+                element.classList.add('visible');
+            }
+        });
+    }
+
+    // Adiciona o evento de scroll
+    window.addEventListener('scroll', handleScroll);
+    
+    // Executa uma vez ao carregar a página
+    handleScroll();
+});
+</script>
+{% endblock %} 

@@ -55,6 +55,7 @@
         main {
             position: relative;
             z-index: 1;
+            margin-top: 76px; /* Restaurado para 76px */
         }
 
         h1, h2, h3, h4, h5, h6, .navbar-brand {
@@ -70,12 +71,12 @@
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--neon-red);
             box-shadow: 0 0 10px var(--neon-red-soft);
-        }
-
-        .navbar-brand img {
-            height: 40px;
-            margin-right: 10px;
-            filter: drop-shadow(0 0 5px var(--neon-red-soft));
+            padding: 0.5rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
         }
 
         .navbar-brand {
@@ -87,41 +88,46 @@
             color: var(--neon-red);
             text-shadow: 0 0 5px var(--neon-red-soft),
                          0 0 10px var(--neon-red-soft);
+            margin-right: 3rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+            filter: drop-shadow(0 0 5px var(--neon-red-soft));
         }
 
         .navbar-brand:hover {
-            color: var(--neon-red);
-            text-shadow: 0 0 10px var(--neon-red-soft),
-                         0 0 20px var(--neon-red-soft);
+            color: var(--light-gray);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5),
+                         0 0 10px rgba(255, 255, 255, 0.3);
         }
 
-        .navbar-brand .neon-text {
-            color: var(--neon-red);
-            text-shadow: 0 0 5px var(--neon-red-soft),
-                         0 0 10px var(--neon-red-soft);
-            animation: neonPulse 2s infinite;
+        .navbar-brand .logo-neon-text {
+            transition: all 0.3s ease;
         }
 
-        @keyframes neonPulse {
-            0% {
-                text-shadow: 0 0 5px var(--neon-red-soft),
-                             0 0 10px var(--neon-red-soft),
-                             0 0 20px var(--neon-red-soft);
-            }
-            50% {
-                text-shadow: 0 0 10px var(--neon-red-soft),
-                             0 0 20px var(--neon-red-soft),
-                             0 0 30px var(--neon-red-soft);
-            }
-            100% {
-                text-shadow: 0 0 5px var(--neon-red-soft),
-                             0 0 10px var(--neon-red-soft),
-                             0 0 20px var(--neon-red-soft);
-            }
+        .navbar-brand:hover .logo-neon-text {
+            color: var(--light-gray);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5),
+                         0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+        }
+
+        .nav-item {
+            margin: 0 1rem;
         }
 
         .nav-link {
             color: var(--light-gray) !important;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            padding: 0.5rem 1rem !important;
             transition: all 0.3s ease;
         }
 
@@ -956,6 +962,102 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* Estilos para o modal de contato */
+        .modal-content {
+            background-color: rgba(13, 13, 13, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+        }
+
+        .form-control {
+            background-color: rgba(13, 13, 13, 0.5) !important;
+            border: 1px solid var(--neon-red-soft);
+            color: var(--light-gray) !important;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background-color: rgba(13, 13, 13, 0.7) !important;
+            border-color: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red-soft);
+            color: var(--light-gray) !important;
+        }
+
+        .form-control::placeholder {
+            color: rgba(230, 230, 230, 0.5);
+        }
+
+        .form-label {
+            color: var(--light-gray);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-text {
+            color: var(--light-gray) !important;
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+
+        .form-check-label {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--neon-red);
+            border-color: var(--neon-red);
+        }
+
+        .form-check-input:focus {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 0 0.25rem rgba(255, 0, 51, 0.25);
+        }
+
+        /* Estilo para o campo de mensagem auto-expansível */
+        .message-field {
+            min-height: 100px;
+            resize: none;
+            overflow-y: hidden;
+            max-height: 500px; /* Limita a altura máxima para não ficar muito grande */
+        }
+
+        .message-field:focus {
+            min-height: 150px;
+        }
+
+        /* Estilo para o contador de caracteres */
+        .char-counter {
+            color: var(--light-gray);
+            opacity: 0.7;
+            font-size: 0.8rem;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .char-counter.warning {
+            color: #ffc107;
+        }
+
+        .char-counter.danger {
+            color: var(--neon-red);
+        }
+
+        /* Grid para os campos do formulário */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -963,30 +1065,31 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="logo">
-                <span class="logo-neon-text">HOZ TECH</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#servicos">Serviços</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#sobre">A Empresa</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/contato/' %}active{% endif %}" href="{% url 'contato' %}">Contato</a>
-                    </li>
-                </ul>
-            </div>
+        <a class="navbar-brand" href="{% url 'home' %}" data-text="HOZ TECH">
+            <img src="/static/images/logo.png" alt="Hoz Tech Logo" class="logo">
+            <span class="logo-neon-text">HOZ TECH</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Início</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/servicos/' %}active{% endif %}" href="{% url 'services' %}">Serviços</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/sobre-nos/' %}active{% endif %}" href="{% url 'sobre_nos' %}">A Empresa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/loja/' %}active{% endif %}" href="{% url 'store:home' %}">Loja</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/contato/' %}active{% endif %}" href="{% url 'contato' %}">Contato</a>
+                </li>
+            </ul>
         </div>
     </nav>
 
@@ -1155,49 +1258,62 @@
                     <form id="contatoForm" class="needs-validation" novalidate>
                         {% csrf_token %}
                         
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">Nome Completo *</label>
-                            <input type="text" class="form-control bg-dark text-light border-neon" 
-                                   id="nome" name="nome" required
-                                   pattern="[A-Za-zÀ-ÿ\s]+" minlength="3" maxlength="100"
-                                   placeholder="Digite seu nome completo">
-                            <div class="invalid-feedback">
-                                Por favor, insira seu nome completo (apenas letras e espaços).
+                        <div class="form-grid">
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome Completo *</label>
+                                <input type="text" class="form-control" 
+                                       id="nome" name="nome" required
+                                       pattern="[A-Za-zÀ-ÿ\s]+" minlength="3" maxlength="100"
+                                       placeholder="Digite seu nome completo">
+                                <div class="invalid-feedback">
+                                    Por favor, insira seu nome completo (apenas letras e espaços).
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telefone" class="form-label">Telefone *</label>
+                                <input type="tel" class="form-control" 
+                                       id="telefone" name="telefone" required
+                                       pattern="\(\d{2}\)\s\d{5}-\d{4}"
+                                       placeholder="(00) 00000-0000">
+                                <div class="invalid-feedback">
+                                    Por favor, insira um número de telefone válido.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-mail *</label>
+                                <input type="email" class="form-control" 
+                                       id="email" name="email" required
+                                       placeholder="seu@email.com">
+                                <div class="invalid-feedback">
+                                    Por favor, insira um e-mail válido.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="assunto_titulo" class="form-label">Assunto *</label>
+                                <input type="text" class="form-control" 
+                                       id="assunto_titulo" name="assunto_titulo" required
+                                       maxlength="100"
+                                       placeholder="Digite o título do assunto">
+                                <div class="invalid-feedback">
+                                    Por favor, insira o título do assunto.
+                                </div>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="telefone" class="form-label">Telefone *</label>
-                            <input type="tel" class="form-control bg-dark text-light border-neon" 
-                                   id="telefone" name="telefone" required
-                                   pattern="\(\d{2}\)\s\d{5}-\d{4}"
-                                   placeholder="(00) 00000-0000">
-                            <div class="invalid-feedback">
-                                Por favor, insira um número de telefone válido.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">E-mail *</label>
-                            <input type="email" class="form-control bg-dark text-light border-neon" 
-                                   id="email" name="email" required
-                                   placeholder="seu@email.com">
-                            <div class="invalid-feedback">
-                                Por favor, insira um e-mail válido.
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="assunto" class="form-label">Assunto *</label>
-                            <textarea class="form-control bg-dark text-light border-neon" 
+                            <label for="assunto" class="form-label">Mensagem *</label>
+                            <textarea class="form-control message-field" 
                                       id="assunto" name="assunto" required
-                                      rows="5" maxlength="1000"
-                                      placeholder="Digite sua mensagem (máximo 1000 caracteres)"></textarea>
+                                      maxlength="5000"
+                                      placeholder="Digite sua mensagem (máximo 5000 caracteres)"></textarea>
                             <div class="invalid-feedback">
                                 Por favor, insira sua mensagem.
                             </div>
-                            <div class="form-text text-light">
-                                <span id="contador">0</span>/1000 caracteres
+                            <div class="char-counter">
+                                <span id="contador">0</span>/5000 caracteres
                             </div>
                         </div>
 
@@ -1291,32 +1407,79 @@
             alert.classList.remove('d-none');
         }
 
-        // Máscara para telefone
-        const telefoneInput = document.getElementById('telefone');
-        telefoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-                e.target.value = value;
-            }
-        });
+        // Função para sanitizar texto (remover scripts e tags HTML)
+        function sanitizeText(text) {
+            const temp = document.createElement('div');
+            temp.textContent = text;
+            return temp.innerHTML
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
 
-        // Contador de caracteres
-        const assuntoTextarea = document.getElementById('assunto');
+        // Função para validar e sanitizar todos os campos do formulário
+        function sanitizeFormData(formData) {
+            const sanitizedData = new FormData();
+            for (let [key, value] of formData.entries()) {
+                // Sanitiza apenas campos de texto
+                if (key === 'nome' || key === 'email' || key === 'assunto_titulo' || key === 'assunto') {
+                    sanitizedData.append(key, sanitizeText(value));
+                } else {
+                    sanitizedData.append(key, value);
+                }
+            }
+            return sanitizedData;
+        }
+
+        // Auto-expand textarea com sanitização
+        const messageField = document.getElementById('assunto');
         const contador = document.getElementById('contador');
         
-        assuntoTextarea.addEventListener('input', function() {
+        messageField.addEventListener('input', function(e) {
+            // Sanitiza o input em tempo real
+            const sanitizedValue = sanitizeText(this.value);
+            if (sanitizedValue !== this.value) {
+                this.value = sanitizedValue;
+            }
+
+            // Ajusta a altura
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 500) + 'px';
+            
+            // Atualiza o contador
             const length = this.value.length;
             contador.textContent = length;
             
-            if (length > 1000) {
-                this.value = this.value.substring(0, 1000);
-                contador.textContent = 1000;
+            // Adiciona classes de aviso baseado no número de caracteres
+            const counterDiv = contador.parentElement;
+            counterDiv.classList.remove('warning', 'danger');
+            if (length > 4000) {
+                counterDiv.classList.add('danger');
+            } else if (length > 3000) {
+                counterDiv.classList.add('warning');
+            }
+            
+            // Limita a 5000 caracteres
+            if (length > 5000) {
+                this.value = this.value.substring(0, 5000);
+                contador.textContent = 5000;
             }
         });
 
-        // Envio do formulário via AJAX
+        // Sanitização para outros campos de texto
+        const textInputs = document.querySelectorAll('input[type="text"], input[type="email"]');
+        textInputs.forEach(input => {
+            input.addEventListener('input', function(e) {
+                const sanitizedValue = sanitizeText(this.value);
+                if (sanitizedValue !== this.value) {
+                    this.value = sanitizedValue;
+                }
+            });
+        });
+
+        // Envio do formulário via AJAX com sanitização
         const form = document.getElementById('contatoForm');
         form.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -1328,12 +1491,19 @@
             }
 
             const formData = new FormData(form);
+            const sanitizedData = sanitizeFormData(formData);
+            
+            // Adiciona o título do assunto à mensagem
+            const assuntoTitulo = sanitizedData.get('assunto_titulo');
+            const mensagem = sanitizedData.get('assunto');
+            sanitizedData.set('assunto', `Assunto: ${assuntoTitulo}\n\nMensagem:\n${mensagem}`);
             
             fetch('{% url "contato" %}', {
                 method: 'POST',
-                body: formData,
+                body: sanitizedData,
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
             })
             .then(response => response.json())
@@ -1342,6 +1512,9 @@
                     showAlert(data.message, 'success');
                     form.reset();
                     form.classList.remove('was-validated');
+                    messageField.style.height = 'auto';
+                    contador.textContent = '0';
+                    contador.parentElement.classList.remove('warning', 'danger');
                     setTimeout(() => {
                         const modal = bootstrap.Modal.getInstance(document.getElementById('contatoModal'));
                         modal.hide();

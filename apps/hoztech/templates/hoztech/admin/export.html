@@ -60,108 +60,406 @@
     .export-status.warning {
         border-left: 4px solid var(--admin-warning);
     }
+    
+    .export-progress {
+        display: none;
+        margin-top: 1rem;
+    }
+    
+    .export-progress.active {
+        display: block;
+    }
+    
+    .export-history {
+        margin-top: 2rem;
+    }
+    
+    .export-history .table th {
+        background: var(--admin-card-bg);
+    }
+    
+    .filter-section {
+        background: var(--admin-card-bg);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-section h5 {
+        margin-bottom: 1rem;
+        color: var(--admin-text);
+    }
+    
+    .date-range-picker {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+    
+    .date-range-picker .form-group {
+        flex: 1;
+    }
+    
+    .quick-date-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .quick-date-buttons .btn {
+        flex: 1;
+    }
+    
+    .export-options {
+        background: var(--admin-card-bg);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    
+    .export-options h5 {
+        margin-bottom: 1rem;
+        color: var(--admin-text);
+    }
+    
+    .export-options .form-check {
+        margin-bottom: 0.5rem;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="admin-card export-form">
-    <form method="post" id="export-form" action="{% url 'admin_export_data' %}" target="_blank">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="export_type">Tipo de Exportação</label>
-            <select class="form-select" id="export_type" name="export_type" required>
-                <option value="">Selecione o tipo de exportação</option>
-                <option value="cookies">Cookies</option>
-                <option value="access">Acessos</option>
-                <option value="all">Todos os Dados</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="date_from">Data Inicial</label>
-            <input type="date" 
-                   class="form-control date-picker" 
-                   id="date_from" 
-                   name="date_from"
-                   required>
-        </div>
-        
-        <div class="form-group">
-            <label for="date_to">Data Final</label>
-            <input type="date" 
-                   class="form-control date-picker" 
-                   id="date_to" 
-                   name="date_to"
-                   required>
-        </div>
-        
-        <div class="form-group">
-            <label>Formato</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="format" id="format_json" value="json" checked>
-                <label class="form-check-label" for="format_json">
-                    JSON
-                </label>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Formulário de Exportação -->
+            <div class="admin-card export-form">
+                <form method="post" id="export-form" action="{% url 'admin_export_data' %}">
+                    {% csrf_token %}
+                    
+                    <!-- Tipo de Exportação -->
+                    <div class="form-group">
+                        <label for="export_type">Tipo de Exportação</label>
+                        <select class="form-select" id="export_type" name="export_type" required>
+                            <option value="">Selecione o tipo de exportação</option>
+                            <option value="cookies">Cookies</option>
+                            <option value="access">Acessos</option>
+                            <option value="all">Todos os Dados</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Filtros Avançados -->
+                    <div class="filter-section">
+                        <h5>Filtros</h5>
+                        
+                        <!-- Seleção Rápida de Datas -->
+                        <div class="quick-date-buttons">
+                            <button type="button" class="btn btn-outline-secondary" data-days="7">Últimos 7 dias</button>
+                            <button type="button" class="btn btn-outline-secondary" data-days="30">Últimos 30 dias</button>
+                            <button type="button" class="btn btn-outline-secondary" data-days="90">Últimos 90 dias</button>
+                            <button type="button" class="btn btn-outline-secondary" data-days="365">Último ano</button>
+                        </div>
+                        
+                        <!-- Seleção de Data -->
+                        <div class="date-range-picker">
+                            <div class="form-group">
+                                <label for="date_from">Data Inicial</label>
+                                <input type="date" class="form-control" id="date_from" name="date_from" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="date_to">Data Final</label>
+                                <input type="date" class="form-control" id="date_to" name="date_to" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Filtros Adicionais -->
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="country">País</label>
+                                    <select class="form-select" id="country" name="country">
+                                        <option value="">Todos</option>
+                                        {% for country in countries %}
+                                        <option value="{{ country }}">{{ country }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="device_type">Dispositivo</label>
+                                    <select class="form-select" id="device_type" name="device_type">
+                                        <option value="">Todos</option>
+                                        {% for device in device_types %}
+                                        <option value="{{ device }}">{{ device }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="browser">Navegador</label>
+                                    <select class="form-select" id="browser" name="browser">
+                                        <option value="">Todos</option>
+                                        {% for browser in browsers %}
+                                        <option value="{{ browser }}">{{ browser }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Opções de Exportação -->
+                    <div class="export-options">
+                        <h5>Opções de Exportação</h5>
+                        
+                        <!-- Formato -->
+                        <div class="form-group">
+                            <label>Formato</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_json" value="json" checked>
+                                <label class="form-check-label" for="format_json">JSON</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv">
+                                <label class="form-check-label" for="format_csv">CSV</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_excel" value="xlsx">
+                                <label class="form-check-label" for="format_excel">Excel (XLSX)</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Opções Adicionais -->
+                        <div class="form-group">
+                            <label>Opções Adicionais</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="include_headers" name="include_headers" checked>
+                                <label class="form-check-label" for="include_headers">Incluir cabeçalhos</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="compress" name="compress">
+                                <label class="form-check-label" for="compress">Comprimir arquivo (ZIP)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="async_export" name="async_export" checked>
+                                <label class="form-check-label" for="async_export">Exportação assíncrona (recomendado para grandes volumes)</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão de Exportação -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-export">
+                            <i class="bi bi-download me-2"></i>
+                            Exportar Dados
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Barra de Progresso -->
+                <div class="export-progress" id="export-progress">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: 0%"
+                             aria-valuenow="0" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">0%</div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small class="text-muted" id="export-status">Preparando exportação...</small>
+                    </div>
+                </div>
+                
+                <!-- Mensagens de Status -->
+                {% if messages %}
+                <div class="export-status {% if messages.0.tags %}{{ messages.0.tags }}{% endif %}">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} mb-0">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv">
-                <label class="form-check-label" for="format_csv">
-                    CSV
-                </label>
+            
+            <!-- Histórico de Exportações -->
+            <div class="admin-card export-history">
+                <h2 class="card-title">
+                    <i class="bi bi-clock-history"></i>
+                    Histórico de Exportações
+                </h2>
+                <div class="table-responsive">
+                    <table class="table admin-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Período</th>
+                                <th>Formato</th>
+                                <th>Status</th>
+                                <th>Data/Hora</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for export in recent_exports %}
+                            <tr>
+                                <td>
+                                    {% if export.export_type == 'cookies' %}
+                                    <span class="badge bg-info">Cookies</span>
+                                    {% elif export.export_type == 'access' %}
+                                    <span class="badge bg-primary">Acessos</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Todos</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ export.date_range_start|date:"d/m/Y" }} - 
+                                    {{ export.date_range_end|date:"d/m/Y" }}
+                                </td>
+                                <td>{{ export.format|upper }}</td>
+                                <td>
+                                    {% if export.status == 'completed' %}
+                                    <span class="badge bg-success">Concluído</span>
+                                    {% elif export.status == 'processing' %}
+                                    <span class="badge bg-warning">Processando</span>
+                                    {% elif export.status == 'failed' %}
+                                    <span class="badge bg-danger">Falhou</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Pendente</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ export.timestamp|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if export.status == 'completed' %}
+                                    <a href="{% url 'admin_download' export.id %}" 
+                                       class="btn btn-sm btn-primary"
+                                       data-bs-toggle="tooltip"
+                                       title="Download">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">Nenhuma exportação realizada</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-export">
-                <i class="bi bi-download me-2"></i>
-                Exportar Dados
-            </button>
-        </div>
-    </form>
-    
-    {% if messages %}
-    <div class="export-status {% if messages.0.tags %}{{ messages.0.tags }}{% endif %}">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} mb-0">
-            {{ message }}
-        </div>
-        {% endfor %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Admin Controls -->
 <script src="{% static 'admin/js/admin-controls.js' %}"></script>
 <script>
-    $(document).ready(function() {
-        // Configura validação de datas
-        $('#date_from, #date_to').on('change', function() {
-            const dateFrom = $('#date_from').val();
-            const dateTo = $('#date_to').val();
-            
-            if (dateFrom && dateTo && dateFrom > dateTo) {
-                alert('A data inicial não pode ser maior que a data final.');
-                $(this).val('');
-            }
-        });
+$(document).ready(function() {
+    // Configuração inicial
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    
+    // Define datas padrão
+    $('#date_from').val(thirtyDaysAgo.toISOString().split('T')[0]);
+    $('#date_to').val(today.toISOString().split('T')[0]);
+    
+    // Botões de data rápida
+    $('.quick-date-buttons button').on('click', function() {
+        const days = $(this).data('days');
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - days);
         
-        // Configura o formulário para mostrar mensagem de processamento
-        $('#export-form').on('submit', function() {
-            const submitBtn = $(this).find('button[type="submit"]');
+        $('#date_from').val(startDate.toISOString().split('T')[0]);
+        $('#date_to').val(endDate.toISOString().split('T')[0]);
+    });
+    
+    // Validação de datas
+    $('#date_from, #date_to').on('change', function() {
+        const dateFrom = new Date($('#date_from').val());
+        const dateTo = new Date($('#date_to').val());
+        
+        if (dateFrom > dateTo) {
+            alert('A data inicial não pode ser maior que a data final.');
+            $(this).val('');
+        }
+        
+        // Limita a 365 dias
+        const diffTime = Math.abs(dateTo - dateFrom);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays > 365) {
+            alert('O período máximo de exportação é de 365 dias.');
+            const newDateFrom = new Date(dateTo);
+            newDateFrom.setDate(dateTo.getDate() - 365);
+            $('#date_from').val(newDateFrom.toISOString().split('T')[0]);
+        }
+    });
+    
+    // Configuração do formulário
+    $('#export-form').on('submit', function(e) {
+        const submitBtn = $(this).find('button[type="submit"]');
+        const asyncExport = $('#async_export').is(':checked');
+        
+        if (asyncExport) {
+            e.preventDefault();
             submitBtn.prop('disabled', true);
             submitBtn.html('<i class="bi bi-hourglass-split me-2"></i>Processando...');
             
-            // Reabilita o botão após 5 segundos (caso o download não inicie)
-            setTimeout(function() {
-                submitBtn.prop('disabled', false);
-                submitBtn.html('<i class="bi bi-download me-2"></i>Exportar Dados');
-            }, 5000);
-        });
+            // Mostra barra de progresso
+            $('#export-progress').addClass('active');
+            
+            // Simula progresso (será substituído por WebSocket)
+            let progress = 0;
+            const progressInterval = setInterval(function() {
+                progress += 5;
+                if (progress > 90) {
+                    clearInterval(progressInterval);
+                }
+                updateProgress(progress);
+            }, 1000);
+            
+            // Envia requisição AJAX
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    clearInterval(progressInterval);
+                    updateProgress(100);
+                    $('#export-status').text('Exportação concluída!');
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                },
+                error: function(xhr) {
+                    clearInterval(progressInterval);
+                    $('#export-progress').removeClass('active');
+                    submitBtn.prop('disabled', false);
+                    submitBtn.html('<i class="bi bi-download me-2"></i>Exportar Dados');
+                    alert('Erro ao exportar dados: ' + xhr.responseText);
+                }
+            });
+        }
     });
+    
+    function updateProgress(percent) {
+        $('.progress-bar')
+            .css('width', percent + '%')
+            .attr('aria-valuenow', percent)
+            .text(percent + '%');
+    }
+    
+    // Tooltips
+    $('[data-bs-toggle="tooltip"]').tooltip();
+});
 </script>
 {% endblock %} 

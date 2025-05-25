@@ -1,0 +1,469 @@
+{% extends 'hoztech/base.html' %}
+{% load static %}
+
+{% block title %}Minha Segurança - HozTech{% endblock %}
+
+{% block extra_css %}
+<style>
+    .security-card {
+        background: var(--dark-gray);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+        border: 1px solid rgba(255, 0, 0, 0.1);
+    }
+
+    .security-card h2 {
+        color: var(--neon-red);
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        border-bottom: 2px solid var(--neon-red);
+        padding-bottom: 0.5rem;
+    }
+
+    .info-group {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        border-left: 3px solid var(--neon-red);
+    }
+
+    .info-group h3 {
+        color: var(--neon-red);
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+    }
+
+    .info-label {
+        color: #fff;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: #ccc;
+    }
+
+    .security-status {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-left: 0.5rem;
+    }
+
+    .status-safe {
+        background: rgba(0, 255, 0, 0.1);
+        color: #00ff00;
+        border: 1px solid rgba(0, 255, 0, 0.3);
+    }
+
+    .status-warning {
+        background: rgba(255, 165, 0, 0.1);
+        color: #ffa500;
+        border: 1px solid rgba(255, 165, 0, 0.3);
+    }
+
+    .status-danger {
+        background: rgba(255, 0, 0, 0.1);
+        color: #ff0000;
+        border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    .security-tips {
+        margin-top: 2rem;
+    }
+
+    .security-tips h3 {
+        color: var(--neon-red);
+        margin-bottom: 1rem;
+    }
+
+    .tip-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        border-left: 3px solid var(--neon-red);
+    }
+
+    .tip-icon {
+        color: var(--neon-red);
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .tip-content {
+        flex-grow: 1;
+    }
+
+    .tip-title {
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .tip-description {
+        color: #ccc;
+        font-size: 0.9rem;
+    }
+
+    .map-container {
+        height: 300px;
+        margin: 2rem 0;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 0, 0, 0.1);
+    }
+
+    .last-updated {
+        text-align: right;
+        color: #666;
+        font-size: 0.8rem;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .security-card {
+            padding: 1rem;
+        }
+
+        .info-item {
+            flex-direction: column;
+        }
+
+        .info-value {
+            margin-top: 0.25rem;
+        }
+
+        .map-container {
+            height: 200px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="security-card">
+        <h2>Informações de Segurança</h2>
+        
+        <!-- Informações de IP e Localização -->
+        <div class="info-group">
+            <h3>IP e Localização</h3>
+            <div class="info-item">
+                <span class="info-label">Endereço IP:</span>
+                <span class="info-value">{{ ip }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Localização:</span>
+                <span class="info-value">{{ location_data.city }}, {{ location_data.region }}, {{ location_data.country }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Coordenadas:</span>
+                <span class="info-value">{{ location_data.latitude }}, {{ location_data.longitude }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Fuso Horário:</span>
+                <span class="info-value">{{ location_data.timezone }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">ISP:</span>
+                <span class="info-value">{{ location_data.isp }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">ASN:</span>
+                <span class="info-value">{{ location_data.asn }}</span>
+            </div>
+            {% if location_data.postal %}
+            <div class="info-item">
+                <span class="info-label">CEP/Código Postal:</span>
+                <span class="info-value">{{ location_data.postal }}</span>
+            </div>
+            {% endif %}
+            {% if location_data.continent %}
+            <div class="info-item">
+                <span class="info-label">Continente:</span>
+                <span class="info-value">{{ location_data.continent }}</span>
+            </div>
+            {% endif %}
+            {% if location_data.currency %}
+            <div class="info-item">
+                <span class="info-label">Moeda:</span>
+                <span class="info-value">{{ location_data.currency_name }} ({{ location_data.currency }})</span>
+            </div>
+            {% endif %}
+            {% if location_data.languages %}
+            <div class="info-item">
+                <span class="info-label">Idiomas:</span>
+                <span class="info-value">{{ location_data.languages }}</span>
+            </div>
+            {% endif %}
+            {% if location_data.calling_code %}
+            <div class="info-item">
+                <span class="info-label">Código de Discagem:</span>
+                <span class="info-value">+{{ location_data.calling_code }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Informações de Conexão -->
+        <div class="info-group">
+            <h3>Informações de Conexão</h3>
+            <div class="info-item">
+                <span class="info-label">Hostname:</span>
+                <span class="info-value">{{ connection_info.hostname }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Protocolo:</span>
+                <span class="info-value">{{ connection_info.protocol }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tipo de IP:</span>
+                <span class="info-value">
+                    {% if connection_info.is_private %}
+                        Privado
+                    {% elif connection_info.is_loopback %}
+                        Loopback
+                    {% elif connection_info.is_link_local %}
+                        Link Local
+                    {% elif connection_info.is_multicast %}
+                        Multicast
+                    {% elif connection_info.is_reserved %}
+                        Reservado
+                    {% else %}
+                        Público
+                    {% endif %}
+                </span>
+            </div>
+            {% if location_data.connection_type %}
+            <div class="info-item">
+                <span class="info-label">Tipo de Conexão:</span>
+                <span class="info-value">{{ location_data.connection_type }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Informações do Navegador -->
+        <div class="info-group">
+            <h3>Informações do Navegador</h3>
+            <div class="info-item">
+                <span class="info-label">Navegador:</span>
+                <span class="info-value">{{ browser_info.browser }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Sistema Operacional:</span>
+                <span class="info-value">{{ browser_info.os }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Dispositivo:</span>
+                <span class="info-value">
+                    {% if browser_info.device_brand %}
+                        {{ browser_info.device_brand }} {{ browser_info.device_model }}
+                    {% else %}
+                        {{ browser_info.device }}
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tipo de Dispositivo:</span>
+                <span class="info-value">
+                    {% if browser_info.is_mobile %}
+                        Mobile
+                    {% elif browser_info.is_tablet %}
+                        Tablet
+                    {% elif browser_info.is_pc %}
+                        Desktop
+                    {% else %}
+                        Desconhecido
+                    {% endif %}
+                </span>
+            </div>
+            {% if browser_info.is_bot %}
+            <div class="info-item">
+                <span class="info-label">Status:</span>
+                <span class="info-value status-warning">Bot Detectado</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Status de Segurança -->
+        <div class="info-group">
+            <h3>Status de Segurança</h3>
+            <div class="info-item">
+                <span class="info-label">VPN:</span>
+                <span class="info-value">
+                    {% if location_data.is_vpn %}
+                        <span class="security-status status-warning">Detectado</span>
+                    {% else %}
+                        <span class="security-status status-safe">Não Detectado</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Proxy:</span>
+                <span class="info-value">
+                    {% if location_data.is_proxy %}
+                        <span class="security-status status-warning">Detectado</span>
+                    {% else %}
+                        <span class="security-status status-safe">Não Detectado</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tor:</span>
+                <span class="info-value">
+                    {% if location_data.is_tor %}
+                        <span class="security-status status-warning">Detectado</span>
+                    {% else %}
+                        <span class="security-status status-safe">Não Detectado</span>
+                    {% endif %}
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Hosting:</span>
+                <span class="info-value">
+                    {% if location_data.is_hosting %}
+                        <span class="security-status status-warning">Detectado</span>
+                    {% else %}
+                        <span class="security-status status-safe">Não Detectado</span>
+                    {% endif %}
+                </span>
+            </div>
+            {% if location_data.is_eu %}
+            <div class="info-item">
+                <span class="info-label">Região:</span>
+                <span class="info-value">
+                    <span class="security-status status-safe">União Europeia</span>
+                </span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Mapa de Localização -->
+        {% if location_data.latitude != '0' and location_data.longitude != '0' %}
+        <div class="map-container" id="map"></div>
+        {% endif %}
+
+        <!-- Dicas de Segurança -->
+        <div class="security-tips">
+            <h3>Dicas de Segurança</h3>
+            
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <div class="tip-content">
+                    <div class="tip-title">Proteja seu IP</div>
+                    <div class="tip-description">
+                        Considere usar uma VPN confiável para proteger sua privacidade online e ocultar seu endereço IP real.
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="bi bi-browser-chrome"></i>
+                </div>
+                <div class="tip-content">
+                    <div class="tip-title">Mantenha seu Navegador Atualizado</div>
+                    <div class="tip-description">
+                        Mantenha seu navegador sempre atualizado para garantir que você tenha as últimas correções de segurança.
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="bi bi-key"></i>
+                </div>
+                <div class="tip-content">
+                    <div class="tip-title">Use Senhas Fortes</div>
+                    <div class="tip-description">
+                        Crie senhas fortes e únicas para cada serviço que você usa. Considere usar um gerenciador de senhas.
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-item">
+                <div class="tip-icon">
+                    <i class="bi bi-phone"></i>
+                </div>
+                <div class="tip-content">
+                    <div class="tip-title">Ative a Autenticação em Duas Etapas</div>
+                    <div class="tip-description">
+                        Sempre que possível, ative a autenticação em duas etapas para adicionar uma camada extra de segurança às suas contas.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="last-updated">
+            Última atualização: {{ location_data.last_updated }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if location_data.latitude != '0' and location_data.longitude != '0' %}
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+<script>
+function initMap() {
+    const location = {
+        lat: parseFloat('{{ location_data.latitude }}'),
+        lng: parseFloat('{{ location_data.longitude }}')
+    };
+
+    const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: location,
+        styles: [
+            {
+                "featureType": "all",
+                "elementType": "all",
+                "stylers": [
+                    { "invert_lightness": true },
+                    { "saturation": 10 },
+                    { "lightness": 30 },
+                    { "gamma": 0.5 },
+                    { "hue": "#ff0000" }
+                ]
+            }
+        ]
+    });
+
+    const marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: '{{ location_data.city }}, {{ location_data.region }}, {{ location_data.country }}',
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: '#ff0000',
+            fillOpacity: 0.7,
+            strokeColor: '#ffffff',
+            strokeWeight: 2
+        }
+    });
+}
+
+// Inicializa o mapa quando a página carregar
+window.onload = initMap;
+</script>
+{% endif %}
+{% endblock %} 

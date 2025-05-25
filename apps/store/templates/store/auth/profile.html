@@ -1,0 +1,30 @@
+{% extends 'store/base_loja.html' %}
+
+{% block title %}Meu Perfil - Hoztech Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Meu Perfil</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Nome de usuário:</dt>
+                        <dd class="col-sm-8">{{ user.username }}</dd>
+                        <dt class="col-sm-4">Nome completo:</dt>
+                        <dd class="col-sm-8">{{ user.get_full_name|default:'-' }}</dd>
+                        <dt class="col-sm-4">E-mail:</dt>
+                        <dd class="col-sm-8">{{ user.email }}</dd>
+                        <dt class="col-sm-4">Data de cadastro:</dt>
+                        <dd class="col-sm-8">{{ user.date_joined|date:'d/m/Y H:i' }}</dd>
+                    </dl>
+                    <a href="{% url 'store:logout' %}" class="btn btn-danger">Sair</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
