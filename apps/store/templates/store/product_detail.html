@@ -27,16 +27,35 @@
                 <div class="card-body p-0">
                     {% if product.images.exists %}
                     <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
+                        <!-- Indicadores -->
+                        {% if product.images.count > 1 %}
+                        <div class="carousel-indicators">
+                            {% for image in product.images.all %}
+                            <button type="button" 
+                                    data-bs-target="#productCarousel" 
+                                    data-bs-slide-to="{{ forloop.counter0 }}"
+                                    {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                                    aria-label="Slide {{ forloop.counter }}">
+                            </button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Slides -->
+                        <div class="carousel-inner rounded-4 overflow-hidden">
                             {% for image in product.images.all %}
                             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <img src="{{ image.image.url }}" 
-                                     class="d-block w-100" 
-                                     alt="{{ product.name }}"
-                                     style="height: 400px; object-fit: contain;">
+                                <div class="ratio ratio-1x1 bg-light">
+                                    <img src="{{ image.image.url }}" 
+                                         class="d-block w-100 h-100" 
+                                         alt="{{ product.name }}"
+                                         style="object-fit: contain;">
+                                </div>
                             </div>
                             {% endfor %}
                         </div>
+
+                        <!-- Controles -->
                         {% if product.images.count > 1 %}
                         <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -51,20 +70,23 @@
                     
                     <!-- Miniaturas -->
                     {% if product.images.count > 1 %}
-                    <div class="row g-2 mt-2 p-2">
+                    <div class="row g-2 mt-3">
                         {% for image in product.images.all %}
                         <div class="col-3">
-                            <img src="{{ image.image.url }}" 
-                                 class="img-thumbnail cursor-pointer" 
-                                 alt="{{ product.name }}"
-                                 style="height: 80px; object-fit: cover; cursor: pointer;"
-                                 onclick="$('#productCarousel').carousel({{ forloop.counter0 }})">
+                            <button class="btn btn-light p-0 border-0 w-100 ratio ratio-1x1 rounded-3 overflow-hidden"
+                                    onclick="$('#productCarousel').carousel({{ forloop.counter0 }})"
+                                    aria-label="Ver imagem {{ forloop.counter }}">
+                                <img src="{{ image.image.url }}" 
+                                     class="w-100 h-100" 
+                                     alt="{{ product.name }}"
+                                     style="object-fit: cover;">
+                            </button>
                         </div>
                         {% endfor %}
                     </div>
                     {% endif %}
                     {% else %}
-                    <div class="bg-light d-flex align-items-center justify-content-center" 
+                    <div class="bg-light rounded-4 d-flex align-items-center justify-content-center" 
                          style="height: 400px;">
                         <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
                     </div>
@@ -273,6 +295,52 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.getElementById('productCarousel');
+    if (!carousel) return;
+
+    // Inicializa o carrossel com opções personalizadas
+    const bsCarousel = new bootstrap.Carousel(carousel, {
+        interval: 5000,
+        touch: true,
+        pause: 'hover'
+    });
+
+    // Adiciona suporte a gestos de toque
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    carousel.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                bsCarousel.next();
+            } else {
+                bsCarousel.prev();
+            }
+        }
+    }
+
+    // Atualiza indicadores ao mudar de slide
+    carousel.addEventListener('slide.bs.carousel', function(e) {
+        const indicators = carousel.querySelectorAll('.carousel-indicators button');
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === e.to);
+        });
+    });
 });
 </script>
 {% endblock %}

@@ -5,6 +5,9 @@
     --mobile-font-size: 16px;
     --mobile-line-height: 1.5;
     --mobile-spacing: 0.75rem;
+    --cookie-bg: rgba(13, 13, 13, 0.95);
+    --cookie-border: var(--neon-red);
+    --cookie-shadow: var(--neon-red-soft);
 }
 
 /* Ajustes gerais para mobile */
@@ -79,17 +82,190 @@ img {
     padding-right: var(--mobile-padding);
 }
 
-/* Modal de cookies */
+/* Modal de cookies - Novo design responsivo */
 #cookieConsent {
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    background: var(--cookie-bg);
+    border-top: 1px solid var(--cookie-border);
+    box-shadow: 0 -5px 20px var(--cookie-shadow);
+    padding: var(--mobile-padding);
+    z-index: 1050;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+#cookieConsent.show {
+    transform: translateY(0);
+}
+
+#cookieConsent .cookie-content {
+    max-width: 100%;
+    margin: 0 auto;
     padding: 1rem;
-    border-radius: 0;
+}
+
+#cookieConsent .cookie-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+#cookieConsent .cookie-header i {
+    font-size: 1.5rem;
+    color: var(--cookie-border);
+    margin-right: 0.75rem;
+}
+
+#cookieConsent .cookie-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+#cookieConsent .cookie-text {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+#cookieConsent .cookie-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#cookieConsent .btn-cookie {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#cookieConsent .btn-accept {
+    background: var(--cookie-border);
+    color: #fff;
+    border: none;
+}
+
+#cookieConsent .btn-accept:hover {
+    background: var(--cookie-shadow);
+    transform: translateY(-2px);
+}
+
+#cookieConsent .btn-settings {
+    background: transparent;
+    color: #fff;
+    border: 1px solid var(--cookie-border);
+}
+
+#cookieConsent .btn-settings:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
 }
 
 #cookieSettingsModal .modal-dialog {
     margin: 0.5rem;
+    max-width: 100%;
+}
+
+#cookieSettingsModal .modal-content {
+    background: var(--cookie-bg);
+    border: 1px solid var(--cookie-border);
+    border-radius: 8px;
+}
+
+#cookieSettingsModal .modal-header {
+    border-bottom: 1px solid var(--cookie-border);
+    padding: 1rem;
+}
+
+#cookieSettingsModal .modal-title {
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+#cookieSettingsModal .modal-body {
+    padding: 1rem;
+}
+
+#cookieSettingsModal .cookie-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#cookieSettingsModal .cookie-option:last-child {
+    border-bottom: none;
+}
+
+#cookieSettingsModal .cookie-option-label {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+#cookieSettingsModal .form-switch {
+    padding-left: 2.5rem;
+}
+
+#cookieSettingsModal .form-check-input {
+    width: 2rem;
+    height: 1rem;
+    margin-left: -2.5rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--cookie-border);
+}
+
+#cookieSettingsModal .form-check-input:checked {
+    background-color: var(--cookie-border);
+    border-color: var(--cookie-border);
+}
+
+#cookieSettingsModal .modal-footer {
+    border-top: 1px solid var(--cookie-border);
+    padding: 1rem;
+}
+
+#cookieSettingsModal .btn-save {
+    background: var(--cookie-border);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+#cookieSettingsModal .btn-save:hover {
+    background: var(--cookie-shadow);
+}
+
+@media (max-width: 576px) {
+    #cookieConsent .cookie-actions {
+        flex-direction: column;
+    }
+    
+    #cookieConsent .btn-cookie {
+        width: 100%;
+    }
+    
+    #cookieSettingsModal .modal-dialog {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-end;
+    }
+    
+    #cookieSettingsModal .modal-content {
+        border-radius: 8px 8px 0 0;
+    }
 }
 
 /* Tabelas responsivas */

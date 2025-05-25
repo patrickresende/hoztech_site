@@ -5,10 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hoz Tech Store - Produtos e serviços tecnológicos">
     <title>{% block title %}Loja Hoztech{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{% static 'store/images/favicon.png' %}">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,159 +21,341 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'store/css/style.css' %}">
-    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --background: #ffffff;
+            --light-background: #f3f4f6;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--background);
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--background);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 0.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+        }
+
+        /* Store Specific Styles */
+        .store-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .store-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .product-card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card .card-img-top {
+            border-radius: 1rem 1rem 0 0;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card .card-title {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-card .card-price {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .product-card .card-text {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .category-badge {
+            background-color: var(--light-background);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .category-badge:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .category-badge.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Cart Styles */
+        .cart-badge {
+            position: relative;
+        }
+
+        .cart-badge .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--light-background);
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-title {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-link {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .store-header {
+                padding: 1.5rem 0;
+                text-align: center;
+            }
+
+            .store-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .navbar-collapse {
+                background-color: var(--background);
+                padding: 1rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                margin-top: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.75rem 1rem;
+            }
+
+            .product-card .card-img-top {
+                height: 180px;
+            }
+        }
+
+        /* Utility Classes */
+        .section-padding {
+            padding: 4rem 0;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bg-gradient {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
-<body class="d-flex flex-column min-vh-100">
-    <!-- Header -->
-    <header class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'store:home' %}">
-                <img src="{% static 'store/images/logo.png' %}" alt="Hoztech Store" height="40">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'store:home' %}">
+                <img src="{% static 'store/images/logo.png' %}" alt="Hoztech Store">
+                <span>HOZ TECH STORE</span>
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarStore">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarMain">
+            <div class="collapse navbar-collapse" id="navbarStore">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'store:home' %}">Início</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'store:home' %}active{% endif %}" 
+                           href="{% url 'store:home' %}">Início</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            Categorias
-                        </a>
-                        <ul class="dropdown-menu">
-                            {% for category in categories %}
-                            <li>
-                                <a class="dropdown-item" href="{{ category.get_absolute_url }}">
-                                    {{ category.name }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'store:products' %}active{% endif %}" 
+                           href="{% url 'store:products' %}">Produtos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'store:categories' %}active{% endif %}" 
+                           href="{% url 'store:categories' %}">Categorias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'store:contact' %}active{% endif %}" 
+                           href="{% url 'store:contact' %}">Contato</a>
                     </li>
                 </ul>
                 
-                <!-- Search Form -->
-                <form class="d-flex me-3" action="{% url 'store:search' %}" method="get">
-                    <div class="input-group">
-                        <input type="search" name="q" class="form-control" placeholder="Buscar produtos...">
-                        <button class="btn btn-outline-light" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- User Menu -->
-                <ul class="navbar-nav">
+                <div class="d-flex align-items-center gap-3">
                     {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}
+                        <a href="{% url 'store:profile' %}" class="nav-link">
+                            <i class="bi bi-person-circle"></i>
+                            Minha Conta
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'store:profile' %}">
-                                    <i class="bi bi-person"></i> Meu Perfil
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'store:orders' %}">
-                                    <i class="bi bi-box"></i> Meus Pedidos
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'store:logout' %}">
-                                    <i class="bi bi-box-arrow-right"></i> Sair
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
                     {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'store:login' %}">
-                            <i class="bi bi-box-arrow-in-right"></i> Entrar
+                        <a href="{% url 'store:login' %}" class="nav-link">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Entrar
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'store:register' %}">
-                            <i class="bi bi-person-plus"></i> Cadastrar
-                        </a>
-                    </li>
                     {% endif %}
                     
-                    <!-- Cart -->
-                    <li class="nav-item">
-                        <a class="nav-link position-relative" href="{% url 'store:cart' %}">
-                            <i class="bi bi-cart3"></i>
-                            {% if cart_items_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ cart_items_count }}
-                            </span>
-                            {% endif %}
-                        </a>
-                    </li>
-                </ul>
+                    <a href="{% url 'store:cart' %}" class="nav-link cart-badge">
+                        <i class="bi bi-cart3"></i>
+                        {% if cart_count > 0 %}
+                            <span class="badge">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                </div>
             </div>
         </div>
-    </header>
-
-    <!-- Messages -->
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+    </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow-1">
+    <main>
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer>
         <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Hoztech Store</h5>
-                    <p class="text-muted">Sua loja de tecnologia.</p>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="footer-title">Sobre a Loja</h5>
+                    <p class="text-muted">
+                        A Hoz Tech Store oferece os melhores produtos e serviços tecnológicos 
+                        para impulsionar seu negócio e sua produtividade.
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Links Rápidos</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'store:home' %}" class="text-muted">Início</a></li>
-                        <li><a href="{% url 'store:categories' %}" class="text-muted">Categorias</a></li>
-                        <li><a href="{% url 'store:about' %}" class="text-muted">Sobre Nós</a></li>
-                        <li><a href="{% url 'store:contact' %}" class="text-muted">Contato</a></li>
-                    </ul>
+                <div class="col-lg-2">
+                    <h5 class="footer-title">Links Rápidos</h5>
+                    <a href="{% url 'store:home' %}" class="footer-link">Início</a>
+                    <a href="{% url 'store:products' %}" class="footer-link">Produtos</a>
+                    <a href="{% url 'store:categories' %}" class="footer-link">Categorias</a>
+                    <a href="{% url 'store:contact' %}" class="footer-link">Contato</a>
                 </div>
-                <div class="col-md-4">
-                    <h5>Contato</h5>
-                    <ul class="list-unstyled text-muted">
-                        <li><i class="bi bi-envelope"></i> loja@hoztech.com.br</li>
-                        <li><i class="bi bi-telephone"></i> (11) 99999-9999</li>
-                        <li><i class="bi bi-geo-alt"></i> São Paulo, SP</li>
-                    </ul>
+                <div class="col-lg-3">
+                    <h5 class="footer-title">Contato</h5>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-geo-alt me-2"></i>
+                        São Paulo, SP - Brasil
+                    </p>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-envelope me-2"></i>
+                        loja@hoztech.com.br
+                    </p>
+                    <p class="text-muted">
+                        <i class="bi bi-telephone me-2"></i>
+                        (11) 99999-9999
+                    </p>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="footer-title">Redes Sociais</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-link fs-5">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="footer-link fs-5">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="footer-link fs-5">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                        <a href="#" class="footer-link fs-5">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
             <hr class="my-4">
             <div class="row">
-                <div class="col-md-6">
-                    <p class="mb-0 text-muted">&copy; {% now "Y" %} Hoztech Store. Todos os direitos reservados.</p>
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-muted mb-0">
+                        &copy; {% now "Y" %} Hoz Tech Store. Todos os direitos reservados.
+                    </p>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-muted me-3">Política de Privacidade</a>
-                    <a href="#" class="text-muted">Termos de Uso</a>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="footer-link">Termos de Uso</a>
+                    <span class="text-muted mx-2">|</span>
+                    <a href="#" class="footer-link">Política de Privacidade</a>
                 </div>
             </div>
         </div>
@@ -180,8 +366,5 @@
     
     <!-- Scripts personalizados -->
     {% block extra_js %}{% endblock %}
-
-    <!-- Rastreamento de visitantes -->
-    {% include 'hoztech/includes/visitor_tracking.html' %}
 </body>
 </html> 

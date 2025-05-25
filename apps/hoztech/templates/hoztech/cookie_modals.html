@@ -1,71 +1,73 @@
 <!-- Cookie Consent Modal -->
 <div id="cookieConsent" class="cookie-modal">
     <div class="cookie-content">
-        <div class="d-flex justify-content-between align-items-start">
-            <div>
-                <h5 class="neon-text mb-2">Política de Cookies</h5>
-                <p class="mb-0">Utilizamos cookies para melhorar sua experiência em nosso site. 
-                Ao continuar navegando, você concorda com o uso de cookies conforme nossa 
-                <a href="#" data-bs-toggle="modal" data-bs-target="#cookiePolicyModal">Política de Cookies</a>.</p>
-            </div>
-            <div class="cookie-buttons">
-                <button type="button" class="btn btn-cookie btn-cookie-settings" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
-                    Configurações
-                </button>
-                <button type="button" class="btn btn-cookie btn-cookie-accept" id="acceptCookies">
-                    Aceitar Todos
-                </button>
-            </div>
+        <div class="cookie-header">
+            <i class="bi bi-shield-lock"></i>
+            <h5 class="cookie-title">Política de Cookies</h5>
+        </div>
+        <p class="cookie-text">
+            Utilizamos cookies para melhorar sua experiência em nosso site. 
+            Ao continuar navegando, você concorda com o uso de cookies conforme nossa 
+            <a href="#" data-bs-toggle="modal" data-bs-target="#cookiePolicyModal" class="text-primary">Política de Cookies</a>.
+        </p>
+        <div class="cookie-actions">
+            <button type="button" class="btn btn-cookie btn-settings" data-bs-toggle="modal" data-bs-target="#cookieSettingsModal">
+                <i class="bi bi-gear me-2"></i>Configurações
+            </button>
+            <button type="button" class="btn btn-cookie btn-accept" id="acceptCookies">
+                <i class="bi bi-check-lg me-2"></i>Aceitar Todos
+            </button>
         </div>
     </div>
 </div>
 
 <!-- Cookie Settings Modal -->
 <div class="modal fade" id="cookieSettingsModal" tabindex="-1" aria-labelledby="cookieSettingsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark text-light">
-            <div class="modal-header border-neon">
-                <h5 class="modal-title" id="cookieSettingsModalLabel">Configurações de Cookies</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cookieSettingsModalLabel">
+                    <i class="bi bi-gear me-2"></i>Configurações de Cookies
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="cookieSettingsForm">
-                    <div class="cookie-category">
-                        <h6>Cookies Essenciais</h6>
-                        <p class="text-muted small">Necessários para o funcionamento básico do site. Não podem ser desativados.</p>
-                        <div class="form-check">
+                    <div class="cookie-option">
+                        <div class="cookie-option-label">
+                            <h6>Cookies Essenciais</h6>
+                            <p class="text-muted small mb-0">Necessários para o funcionamento básico do site.</p>
+                        </div>
+                        <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
-                            <label class="form-check-label" for="essentialCookies">
-                                Cookies Essenciais
-                            </label>
                         </div>
                     </div>
 
-                    <div class="cookie-category">
-                        <h6>Cookies de Desempenho</h6>
-                        <p class="text-muted small">Nos ajudam a entender como os visitantes interagem com o site.</p>
-                        <div class="form-check">
+                    <div class="cookie-option">
+                        <div class="cookie-option-label">
+                            <h6>Cookies de Desempenho</h6>
+                            <p class="text-muted small mb-0">Nos ajudam a entender como os visitantes interagem com o site.</p>
+                        </div>
+                        <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="performanceCookies">
-                            <label class="form-check-label" for="performanceCookies">
-                                Cookies de Análise
-                            </label>
                         </div>
                     </div>
 
-                    <div class="cookie-category">
-                        <h6>Cookies de Marketing</h6>
-                        <p class="text-muted small">Usados para personalizar anúncios e conteúdo.</p>
-                        <div class="form-check">
+                    <div class="cookie-option">
+                        <div class="cookie-option-label">
+                            <h6>Cookies de Marketing</h6>
+                            <p class="text-muted small mb-0">Usados para personalizar anúncios e conteúdo.</p>
+                        </div>
+                        <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="marketingCookies">
-                            <label class="form-check-label" for="marketingCookies">
-                                Cookies de Marketing
-                            </label>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer border-neon">
-                <button type="button" class="btn btn-neon" id="saveCookieSettings">Salvar Preferências</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-save" id="saveCookieSettings">
+                    <i class="bi bi-save me-2"></i>Salvar Preferências
+                </button>
             </div>
         </div>
     </div>
@@ -73,37 +75,50 @@
 
 <!-- Cookie Policy Modal -->
 <div class="modal fade" id="cookiePolicyModal" tabindex="-1" aria-labelledby="cookiePolicyModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark text-light">
-            <div class="modal-header border-neon">
-                <h5 class="modal-title" id="cookiePolicyModalLabel">Política de Cookies</h5>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cookiePolicyModalLabel">
+                    <i class="bi bi-shield-lock me-2"></i>Política de Cookies
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h6 class="mb-3">O que são cookies?</h6>
-                <p>Cookies são pequenos arquivos de texto que são armazenados no seu dispositivo quando você visita nosso site. Eles nos ajudam a melhorar sua experiência de navegação e a entender como você interage com nosso conteúdo.</p>
-
-                <h6 class="mt-4 mb-3">Tipos de cookies que utilizamos</h6>
-                <div class="mb-4">
-                    <h6 class="text-neon">Cookies Essenciais</h6>
-                    <p>Necessários para o funcionamento básico do site. Incluem cookies que permitem que você faça login em áreas seguras do site.</p>
+                <div class="cookie-policy-section">
+                    <h6 class="text-primary mb-3">O que são cookies?</h6>
+                    <p>Cookies são pequenos arquivos de texto que são armazenados no seu dispositivo quando você visita nosso site. 
+                    Eles nos ajudam a melhorar sua experiência de navegação e a entender como você interage com nosso conteúdo.</p>
                 </div>
 
-                <div class="mb-4">
-                    <h6 class="text-neon">Cookies de Desempenho</h6>
-                    <p>Nos ajudam a entender como os visitantes interagem com o site, coletando e relatando informações anonimamente.</p>
+                <div class="cookie-policy-section">
+                    <h6 class="text-primary mb-3">Tipos de cookies que utilizamos</h6>
+                    
+                    <div class="cookie-type mb-4">
+                        <h6 class="text-primary">Cookies Essenciais</h6>
+                        <p class="mb-0">Necessários para o funcionamento básico do site. Incluem cookies que permitem que você faça login em áreas seguras do site.</p>
+                    </div>
+
+                    <div class="cookie-type mb-4">
+                        <h6 class="text-primary">Cookies de Desempenho</h6>
+                        <p class="mb-0">Nos ajudam a entender como os visitantes interagem com o site, coletando e relatando informações anonimamente.</p>
+                    </div>
+
+                    <div class="cookie-type mb-4">
+                        <h6 class="text-primary">Cookies de Marketing</h6>
+                        <p class="mb-0">São usados para rastrear visitantes em websites. A intenção é exibir anúncios que sejam relevantes e envolventes para o usuário individual.</p>
+                    </div>
                 </div>
 
-                <div class="mb-4">
-                    <h6 class="text-neon">Cookies de Marketing</h6>
-                    <p>São usados para rastrear visitantes em websites. A intenção é exibir anúncios que sejam relevantes e envolventes para o usuário individual.</p>
+                <div class="cookie-policy-section">
+                    <h6 class="text-primary mb-3">Como controlar os cookies</h6>
+                    <p>Você pode controlar e/ou excluir cookies conforme desejar. Você pode excluir todos os cookies que já estão no seu computador 
+                    e pode configurar a maioria dos navegadores para impedir que eles sejam colocados.</p>
                 </div>
-
-                <h6 class="mt-4 mb-3">Como controlar os cookies</h6>
-                <p>Você pode controlar e/ou excluir cookies conforme desejar. Você pode excluir todos os cookies que já estão no seu computador e pode configurar a maioria dos navegadores para impedir que eles sejam colocados.</p>
             </div>
-            <div class="modal-footer border-neon">
-                <button type="button" class="btn btn-neon" data-bs-dismiss="modal">Fechar</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-save" data-bs-dismiss="modal">
+                    <i class="bi bi-check-lg me-2"></i>Entendi
+                </button>
             </div>
         </div>
     </div>

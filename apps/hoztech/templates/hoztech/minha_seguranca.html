@@ -5,62 +5,114 @@
 
 {% block extra_css %}
 <style>
+    /* Variáveis CSS */
+    :root {
+        --security-bg: rgba(13, 13, 13, 0.95);
+        --security-border: var(--neon-red);
+        --security-shadow: var(--neon-red-soft);
+        --security-text: #ffffff;
+        --security-text-light: #cccccc;
+        --security-card-bg: rgba(0, 0, 0, 0.2);
+        --security-card-border: rgba(255, 0, 0, 0.1);
+        --security-card-hover: rgba(255, 0, 0, 0.05);
+    }
+
+    /* Container principal */
+    .security-container {
+        padding: 2rem 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Card de segurança */
     .security-card {
-        background: var(--dark-gray);
-        border-radius: 15px;
+        background: var(--security-bg);
+        border-radius: 1rem;
         padding: 2rem;
         margin-bottom: 2rem;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
-        border: 1px solid rgba(255, 0, 0, 0.1);
+        box-shadow: 0 0 20px var(--security-shadow);
+        border: 1px solid var(--security-card-border);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .security-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 25px var(--security-shadow);
     }
 
     .security-card h2 {
-        color: var(--neon-red);
+        color: var(--security-border);
         margin-bottom: 1.5rem;
         font-size: 1.8rem;
-        border-bottom: 2px solid var(--neon-red);
+        border-bottom: 2px solid var(--security-border);
         padding-bottom: 0.5rem;
+        font-weight: 600;
     }
 
+    /* Grupos de informação */
     .info-group {
         margin-bottom: 1.5rem;
-        padding: 1rem;
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-        border-left: 3px solid var(--neon-red);
+        padding: 1.5rem;
+        background: var(--security-card-bg);
+        border-radius: 0.75rem;
+        border-left: 3px solid var(--security-border);
+        transition: background-color 0.3s ease;
+    }
+
+    .info-group:hover {
+        background: var(--security-card-hover);
     }
 
     .info-group h3 {
-        color: var(--neon-red);
+        color: var(--security-border);
         font-size: 1.2rem;
         margin-bottom: 1rem;
+        font-weight: 500;
     }
 
+    /* Itens de informação */
     .info-item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
-        padding: 0.5rem;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding: 0.75rem;
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 5px;
+        border-radius: 0.5rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: rgba(255, 255, 255, 0.08);
     }
 
     .info-label {
-        color: #fff;
+        color: var(--security-text);
         font-weight: 500;
+        flex: 1;
     }
 
     .info-value {
-        color: #ccc;
+        color: var(--security-text-light);
+        text-align: right;
+        flex: 1;
+        padding-left: 1rem;
     }
 
+    /* Status de segurança */
     .security-status {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        border-radius: 1rem;
         font-size: 0.9rem;
         font-weight: 500;
         margin-left: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .security-status i {
+        margin-right: 0.35rem;
     }
 
     .status-safe {
@@ -81,27 +133,36 @@
         border: 1px solid rgba(255, 0, 0, 0.3);
     }
 
+    /* Dicas de segurança */
     .security-tips {
         margin-top: 2rem;
     }
 
     .security-tips h3 {
-        color: var(--neon-red);
-        margin-bottom: 1rem;
+        color: var(--security-border);
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        font-weight: 600;
     }
 
     .tip-item {
         display: flex;
         align-items: flex-start;
         margin-bottom: 1rem;
-        padding: 1rem;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
-        border-left: 3px solid var(--neon-red);
+        padding: 1.25rem;
+        background: var(--security-card-bg);
+        border-radius: 0.75rem;
+        border-left: 3px solid var(--security-border);
+        transition: all 0.3s ease;
+    }
+
+    .tip-item:hover {
+        transform: translateX(5px);
+        background: var(--security-card-hover);
     }
 
     .tip-icon {
-        color: var(--neon-red);
+        color: var(--security-border);
         font-size: 1.5rem;
         margin-right: 1rem;
         flex-shrink: 0;
@@ -112,59 +173,185 @@
     }
 
     .tip-title {
-        color: #fff;
+        color: var(--security-text);
         font-weight: 500;
         margin-bottom: 0.5rem;
+        font-size: 1.1rem;
     }
 
     .tip-description {
-        color: #ccc;
-        font-size: 0.9rem;
+        color: var(--security-text-light);
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
 
+    /* Mapa de localização */
     .map-container {
         height: 300px;
         margin: 2rem 0;
-        border-radius: 10px;
+        border-radius: 0.75rem;
         overflow: hidden;
-        border: 1px solid rgba(255, 0, 0, 0.1);
+        border: 1px solid var(--security-card-border);
+        box-shadow: 0 0 15px var(--security-shadow);
     }
 
+    /* Última atualização */
     .last-updated {
         text-align: right;
-        color: #666;
-        font-size: 0.8rem;
-        margin-top: 1rem;
+        color: var(--security-text-light);
+        font-size: 0.85rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--security-card-border);
+    }
+
+    /* Media Queries */
+    @media (max-width: 992px) {
+        .security-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .security-card {
+            padding: 1.5rem;
+        }
+
+        .security-card h2 {
+            font-size: 1.6rem;
+        }
+
+        .info-group {
+            padding: 1.25rem;
+        }
+
+        .tip-item {
+            padding: 1rem;
+        }
     }
 
     @media (max-width: 768px) {
-        .security-card {
+        .security-container {
             padding: 1rem;
+        }
+
+        .security-card {
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .security-card h2 {
+            font-size: 1.4rem;
+        }
+
+        .info-group {
+            padding: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .info-item {
             flex-direction: column;
+            align-items: flex-start;
+            padding: 0.75rem;
         }
 
         .info-value {
-            margin-top: 0.25rem;
+            text-align: left;
+            padding-left: 0;
+            margin-top: 0.35rem;
+        }
+
+        .security-status {
+            margin-left: 0;
+            margin-top: 0.35rem;
+        }
+
+        .map-container {
+            height: 250px;
+            margin: 1.5rem 0;
+        }
+
+        .tip-item {
+            padding: 1rem;
+        }
+
+        .tip-icon {
+            font-size: 1.25rem;
+        }
+
+        .tip-title {
+            font-size: 1rem;
+        }
+
+        .tip-description {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .security-container {
+            padding: 0.75rem;
+        }
+
+        .security-card {
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+
+        .security-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-group {
+            padding: 0.875rem;
+            border-radius: 0.5rem;
+        }
+
+        .info-group h3 {
+            font-size: 1.1rem;
+        }
+
+        .info-item {
+            padding: 0.625rem;
         }
 
         .map-container {
             height: 200px;
+            margin: 1.25rem 0;
+        }
+
+        .tip-item {
+            padding: 0.875rem;
+        }
+
+        .tip-icon {
+            font-size: 1.1rem;
+            margin-right: 0.75rem;
+        }
+
+        .tip-title {
+            font-size: 0.95rem;
+        }
+
+        .tip-description {
+            font-size: 0.85rem;
+        }
+
+        .last-updated {
+            font-size: 0.8rem;
+            margin-top: 1.25rem;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="security-container">
     <div class="security-card">
-        <h2>Informações de Segurança</h2>
+        <h2><i class="bi bi-shield-lock me-2"></i>Informações de Segurança</h2>
         
         <!-- Informações de IP e Localização -->
         <div class="info-group">
-            <h3>IP e Localização</h3>
+            <h3><i class="bi bi-geo-alt me-2"></i>IP e Localização</h3>
             <div class="info-item">
                 <span class="info-label">Endereço IP:</span>
                 <span class="info-value">{{ ip }}</span>
@@ -260,7 +447,7 @@
 
         <!-- Informações do Navegador -->
         <div class="info-group">
-            <h3>Informações do Navegador</h3>
+            <h3><i class="bi bi-browser-chrome me-2"></i>Informações do Navegador</h3>
             <div class="info-item">
                 <span class="info-label">Navegador:</span>
                 <span class="info-value">{{ browser_info.browser }}</span>
@@ -283,34 +470,42 @@
                 <span class="info-label">Tipo de Dispositivo:</span>
                 <span class="info-value">
                     {% if browser_info.is_mobile %}
-                        Mobile
+                        <i class="bi bi-phone me-1"></i>Mobile
                     {% elif browser_info.is_tablet %}
-                        Tablet
+                        <i class="bi bi-tablet me-1"></i>Tablet
                     {% elif browser_info.is_pc %}
-                        Desktop
+                        <i class="bi bi-pc-display me-1"></i>Desktop
                     {% else %}
-                        Desconhecido
+                        <i class="bi bi-question-circle me-1"></i>Desconhecido
                     {% endif %}
                 </span>
             </div>
             {% if browser_info.is_bot %}
             <div class="info-item">
                 <span class="info-label">Status:</span>
-                <span class="info-value status-warning">Bot Detectado</span>
+                <span class="info-value">
+                    <span class="security-status status-warning">
+                        <i class="bi bi-robot"></i>Bot Detectado
+                    </span>
+                </span>
             </div>
             {% endif %}
         </div>
 
         <!-- Status de Segurança -->
         <div class="info-group">
-            <h3>Status de Segurança</h3>
+            <h3><i class="bi bi-shield-check me-2"></i>Status de Segurança</h3>
             <div class="info-item">
                 <span class="info-label">VPN:</span>
                 <span class="info-value">
                     {% if location_data.is_vpn %}
-                        <span class="security-status status-warning">Detectado</span>
+                        <span class="security-status status-warning">
+                            <i class="bi bi-shield-slash"></i>Detectado
+                        </span>
                     {% else %}
-                        <span class="security-status status-safe">Não Detectado</span>
+                        <span class="security-status status-safe">
+                            <i class="bi bi-shield-check"></i>Não Detectado
+                        </span>
                     {% endif %}
                 </span>
             </div>
@@ -318,9 +513,13 @@
                 <span class="info-label">Proxy:</span>
                 <span class="info-value">
                     {% if location_data.is_proxy %}
-                        <span class="security-status status-warning">Detectado</span>
+                        <span class="security-status status-warning">
+                            <i class="bi bi-shield-slash"></i>Detectado
+                        </span>
                     {% else %}
-                        <span class="security-status status-safe">Não Detectado</span>
+                        <span class="security-status status-safe">
+                            <i class="bi bi-shield-check"></i>Não Detectado
+                        </span>
                     {% endif %}
                 </span>
             </div>
@@ -328,9 +527,13 @@
                 <span class="info-label">Tor:</span>
                 <span class="info-value">
                     {% if location_data.is_tor %}
-                        <span class="security-status status-warning">Detectado</span>
+                        <span class="security-status status-warning">
+                            <i class="bi bi-shield-slash"></i>Detectado
+                        </span>
                     {% else %}
-                        <span class="security-status status-safe">Não Detectado</span>
+                        <span class="security-status status-safe">
+                            <i class="bi bi-shield-check"></i>Não Detectado
+                        </span>
                     {% endif %}
                 </span>
             </div>
@@ -338,9 +541,13 @@
                 <span class="info-label">Hosting:</span>
                 <span class="info-value">
                     {% if location_data.is_hosting %}
-                        <span class="security-status status-warning">Detectado</span>
+                        <span class="security-status status-warning">
+                            <i class="bi bi-shield-slash"></i>Detectado
+                        </span>
                     {% else %}
-                        <span class="security-status status-safe">Não Detectado</span>
+                        <span class="security-status status-safe">
+                            <i class="bi bi-shield-check"></i>Não Detectado
+                        </span>
                     {% endif %}
                 </span>
             </div>
@@ -348,7 +555,9 @@
             <div class="info-item">
                 <span class="info-label">Região:</span>
                 <span class="info-value">
-                    <span class="security-status status-safe">União Europeia</span>
+                    <span class="security-status status-safe">
+                        <i class="bi bi-globe-europe-africa"></i>União Europeia
+                    </span>
                 </span>
             </div>
             {% endif %}
@@ -361,7 +570,7 @@
 
         <!-- Dicas de Segurança -->
         <div class="security-tips">
-            <h3>Dicas de Segurança</h3>
+            <h3><i class="bi bi-lightbulb me-2"></i>Dicas de Segurança</h3>
             
             <div class="tip-item">
                 <div class="tip-icon">
@@ -413,7 +622,7 @@
         </div>
 
         <div class="last-updated">
-            Última atualização: {{ location_data.last_updated }}
+            <i class="bi bi-clock-history me-1"></i>Última atualização: {{ location_data.last_updated }}
         </div>
     </div>
 </div>
@@ -423,47 +632,50 @@
 {% if location_data.latitude != '0' and location_data.longitude != '0' %}
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 <script>
-function initMap() {
-    const location = {
-        lat: parseFloat('{{ location_data.latitude }}'),
-        lng: parseFloat('{{ location_data.longitude }}')
-    };
+    function initMap() {
+        const location = {
+            lat: parseFloat('{{ location_data.latitude }}'),
+            lng: parseFloat('{{ location_data.longitude }}')
+        };
 
-    const map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 8,
-        center: location,
-        styles: [
-            {
-                "featureType": "all",
-                "elementType": "all",
-                "stylers": [
-                    { "invert_lightness": true },
-                    { "saturation": 10 },
-                    { "lightness": 30 },
-                    { "gamma": 0.5 },
-                    { "hue": "#ff0000" }
-                ]
-            }
-        ]
-    });
+        const map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: location,
+            styles: [
+                {
+                    "featureType": "all",
+                    "elementType": "all",
+                    "stylers": [
+                        { "invert_lightness": true },
+                        { "saturation": 10 },
+                        { "lightness": 30 },
+                        { "gamma": 0.5 },
+                        { "hue": "#ff0000" }
+                    ]
+                }
+            ]
+        });
 
-    const marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: '{{ location_data.city }}, {{ location_data.region }}, {{ location_data.country }}',
-        icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 8,
-            fillColor: '#ff0000',
-            fillOpacity: 0.7,
-            strokeColor: '#ffffff',
-            strokeWeight: 2
-        }
-    });
-}
+        const marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            title: '{{ location_data.city }}, {{ location_data.region }}',
+            animation: google.maps.Animation.DROP
+        });
 
-// Inicializa o mapa quando a página carregar
-window.onload = initMap;
+        // Adiciona evento de clique para centralizar o mapa
+        map.addListener('click', function() {
+            map.panTo(location);
+        });
+
+        // Adiciona suporte a touch para dispositivos móveis
+        map.addListener('touchstart', function() {
+            map.panTo(location);
+        });
+    }
+
+    // Inicializa o mapa quando a página carregar
+    window.addEventListener('load', initMap);
 </script>
 {% endif %}
 {% endblock %} 
