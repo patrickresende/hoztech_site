@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import environ
+import dj_database_url
 
 # Initialize environ
 env = environ.Env()
@@ -130,26 +131,18 @@ WSGI_APPLICATION = 'techsite.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('POSTGRES_DB', default='hoztech_db'),
-        'USER': env('POSTGRES_USER', default='hoztech_user'),
-        'PASSWORD': env('POSTGRES_PASSWORD', default='hoztech_pass'),
-        'HOST': env('POSTGRES_HOST', default='localhost'),
-        'PORT': env('POSTGRES_PORT', default='5432'),
-        'CONN_MAX_AGE': 600,  # 10 minutos
-        'OPTIONS': {
+    'default': dj_database_url.parse(
+        env('DATABASE_URL', default='postgres://hoztech_user:hoztech_pass@localhost:5432/hoztech_db'),
+        conn_max_age=600,  # 10 minutos
+        conn_health_checks=True,
+        options={
             'connect_timeout': 10,
             'keepalives': 1,
             'keepalives_idle': 30,
             'keepalives_interval': 10,
             'keepalives_count': 5,
-        },
-        'ATOMIC_REQUESTS': True,
-        'TEST': {
-            'NAME': 'test_hoztech_db',
         }
-    }
+    )
 }
 
 # Cache
